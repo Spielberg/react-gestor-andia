@@ -9,6 +9,8 @@ import { createLogger } from 'redux-logger';
 import App from './components/app/index';
 import * as serviceWorker from './serviceWorker';
 
+import { sessionMiddleware } from './components/session/duck';
+
 import config from '../src/site.config';
 
 import reducers from './reducer';
@@ -17,6 +19,7 @@ import 'tabler-react/dist/Tabler.css';
 import './scss/main.scss';
 
 const middlewares = [
+  sessionMiddleware,
   thunkMiddleware,
 ];
 

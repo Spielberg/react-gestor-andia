@@ -7,10 +7,10 @@ const sessionMiddleware = store => next => (action) => {
   const auth = new Auth();
   switch (action.type) {
     case types.RECEIVE_LOGIN_SUCCESS:
-      auth.setToken(action.payload.authToken);
+      auth.setToken(action.payload.data.token);
       action.payload = {
         authenticated: true,
-        authToken: action.payload.authToken,
+        authToken: action.payload.data.token,
         profile: auth.getProfile(),
       };
       next(action);

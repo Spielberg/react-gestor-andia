@@ -2,6 +2,7 @@ import config from './config';
 import types from './types';
 
 import dictionary from './dictionary';
+import loginDiccionary from '../../login/duck/dictionary';
 
 const defaultState = {
   i18n: {
@@ -9,6 +10,7 @@ const defaultState = {
     messages: { 
       es: {
         ...dictionary.es,
+        ...loginDiccionary.es,
       },
     },
   },

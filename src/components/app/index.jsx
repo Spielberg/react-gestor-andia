@@ -8,6 +8,7 @@ import es from 'react-intl/locale-data/es';
 import config from './duck/config';
 
 import Loading from '../loading/index.component';
+import Login from '../login/index.component';
 
 const propTypes = {
   app: PropTypes.object.isRequired,
@@ -32,7 +33,7 @@ const App = (props) => {
     </IntlProvider>
   );
 
-  if (props.session.authenticated) {
+  if (!props.session.authenticated) {
     return coverage(
       provider(
         <Login />

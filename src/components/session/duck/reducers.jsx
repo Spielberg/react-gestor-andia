@@ -20,8 +20,7 @@ export default (state = { ...defaultState }, action) => {
   switch (action.type) {
     case types.REQUEST_LOGIN:
     case types.RECEIVE_LOGOUT_SUCCESS:
-    case types.RECEIVE_LOGOUT_ERROR:
-    case types.REQUEST_LOGOUT:
+    case types.RECEIVE_LOGIN_ERROR:
       return {
         ...emptyState,
       };
