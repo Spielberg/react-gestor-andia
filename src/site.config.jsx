@@ -10,7 +10,7 @@ config.PROJECT = process.env.REACT_APP_PROJECT || 'react-gestor-andia';
 
 config.API_DOMAIN = process.env.REACT_APP_API_DOMAIN || 'http://localhost:8080';
 
-config.STATIC_CONTENT_URL = process.env.REACT_APP_STATIC_CONTENT_URL || '//s3-eu-west-1.amazonaws.com/office.tweetbinder.com/ahorrometro';
+config.STATIC_CONTENT_URL = process.env.REACT_APP_STATIC_CONTENT_URL || '//s3.us-east-2.amazonaws.com/artworks-s3/construcciones-andia';
 
 config.DEFAULT_USER_PROFILE = process.env.REACT_APP_DEFAULT_USER_PROFILE || `${config.STATIC_CONTENT_URL}/img/icon.svg`;
 

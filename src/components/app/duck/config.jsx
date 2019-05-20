@@ -9,7 +9,12 @@ config.I18N = {
 
 config.PATHS = {
   homepage: '/',
-  form: '/form',
+  visitas: '/visitas',
+  configuracion: {
+    usuarios: '/configuracion/usuarios',
+    promociones: '/configuracion/promociones',
+    tiposInmuebles: '/configuracion/tipos-de-inmuebles',
+  }
 };
 
 export default config;

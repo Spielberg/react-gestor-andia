@@ -4,11 +4,20 @@ import { connect } from 'react-redux';
 import { BrowserRouter, HashRouter, Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import es from 'react-intl/locale-data/es';
+import {
+  Page,
+} from 'tabler-react';
 
 import config from './duck/config';
 
+import Header from '../header/index.component';
 import Loading from '../loading/index.component';
 import Login from '../login/index.component';
+import Home from '../home/index.component';
+import Visitas from '../visitas/index.component';
+import Usuarios from '../usuarios/index.component';
+import Promociones from '../promociones/index.component';
+import TiposInmuebles from '../tipos-inmuebles/index.component';
 
 const propTypes = {
   app: PropTypes.object.isRequired,
@@ -40,23 +49,23 @@ const App = (props) => {
       )
     );
   }
-  /*
+
   return coverage(
     provider(
       <Fragment>
-        <Switch>
-          <Route
-            path={config.PATHS.form}
-            component={Form}
-          />
-          <Route
-            component={Home}
-          />
-        </Switch>
+        <Header />
+        <Page.Content>
+          <Switch>
+            <Route path={config.PATHS.visitas} component={Visitas} />
+            <Route path={config.PATHS.configuracion.usuarios} component={Usuarios} />
+            <Route path={config.PATHS.configuracion.promociones} component={Promociones} />
+            <Route path={config.PATHS.configuracion.tiposInmuebles} component={TiposInmuebles} />
+            <Route component={Home} />
+          </Switch>
+        </Page.Content>
       </Fragment>,
     )
   );
-  */
 };
 
 App.propTypes = propTypes;
