@@ -24,3 +24,7 @@ style:
       - secondary
       - success
       - warning
+
+example of use:
+  {!isEmpty(this.props.alerts) &&
+          map(this.props.alerts, (content, id) => <AppAlert key={`${i18nComponentKey}-alert-${id}`} content={content} />)}

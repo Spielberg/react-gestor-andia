@@ -1,23 +1,28 @@
 const config = {};
 
-config.DEBUG = process.env.DEBUG || true;
+config.DEBUG = process.env.REACT_APP_DEBUG || true;
 
-config.VERSION = '0.1';
+config.COMPANY = 'javier.sanchezostiz@gmail.com';
 
-config.PROJECT = 'tweetbinder-dublin';
+config.VERSION = '20190513-1';
 
-config.API_DOMAIN = process.env.API_DOMAIN || 'https://www.tweetbinder.com';
+config.PROJECT = process.env.REACT_APP_PROJECT || 'react-gestor-andia';
 
-config.STATIC_CONTENT_URL = process.env.STATIC_CONTENT_URL || '//s3-eu-west-1.amazonaws.com/office.tweetbinder.com/tut';
+config.API_DOMAIN = process.env.REACT_APP_API_DOMAIN || 'http://localhost:8080';
 
-config.DEFAULT_USER_PROFILE = process.env.DEFAULT_USER_PROFILE || '//s3-eu-west-1.amazonaws.com/office.tweetbinder.com/3.0/images/logo.svg';
+config.STATIC_CONTENT_URL = process.env.REACT_APP_STATIC_CONTENT_URL || '//s3-eu-west-1.amazonaws.com/office.tweetbinder.com/ahorrometro';
 
-config.TOKEN_NAME = process.env.TOKEN_NAME || `${config.PROJECT}-${config.VERSION.replace(/\./g, '-')}-token`;
+config.DEFAULT_USER_PROFILE = process.env.REACT_APP_DEFAULT_USER_PROFILE || `${config.STATIC_CONTENT_URL}/img/icon.svg`;
 
-config.LOCALSTORAGE = process.env.LOCALSTORAGE || `${config.PROJECT}-${config.VERSION}-warehouse`;
+config.TOKEN_NAME = process.env.REACT_APP_TOKEN_NAME || `${config.PROJECT}-${config.VERSION.replace(/\./g, '-')}-token`;
+
+config.LOCALSTORAGE = process.env.REACT_APP_LOCALSTORAGE || `${config.PROJECT}-${config.VERSION}-warehouse`;
 
 config.PATHS = {};
 
-config.REPORT_ID = process.env.REPORT_ID || '30c34adb';
+config.HASH_ROUTER = process.env.REACT_APP_HASH_ROUTER ?
+  process.env.REACT_APP_HASH_ROUTER !== 'false' : true;
+
+if (config.DEBUG) console.log(`${config.PROJECT}: v.${config.VERSION}`);
 
 module.exports = config;

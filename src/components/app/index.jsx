@@ -1,74 +1,70 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { addLocaleData, IntlProvider } from 'react-intl';
+import { connect } from 'react-redux';
+import { BrowserRouter, HashRouter, Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { matchPath } from 'react-router';
-import en from 'react-intl/locale-data/en';
 import es from 'react-intl/locale-data/es';
-import { each } from 'lodash';
 
 import config from './duck/config';
 
 import Loading from '../loading/index.component';
 
-import {
-  appSelectors,
-} from './duck';
-
-import PartialAlertsHOC from '../partial-alerts/index.hoc.component';
-
-import Stats from '../stats/index.component';
-
-addLocaleData([ ...en, ...es]);
-
-const defaultProps = {
-  partialAlert: PropTypes.object.isRequired,
+const propTypes = {
+  app: PropTypes.object.isRequired,
+  loading: PropTypes.bool,
 };
 
-const propTypes = {};
+const defaultProps = {
+  loading: false,
+};
 
-class App extends Component {
-  constructor(props) {
-    super(props);
+addLocaleData([ ...es]);
 
-    const match = matchPath(window.location.pathname, {
-      path: '/:locale(en|es)?',
-      exact: true,
-      strict: false
-    });
-    
-    this.state = {
-      loading: false,
-      locale: match.params.locale || config.I18N.default,
-      report: {
-        id: config.REPORT_ID,
-        stats: {},
-      },
-    };
+const App = (props) => {
+  const { app: { i18n } } = props;
+  const provider = (child) => config.HASH_ROUTER ? <HashRouter>{child}</HashRouter> : <BrowserRouter>{child}</BrowserRouter>;
+  const coverage = (child) => (
+    <IntlProvider locale={i18n.locale} messages={i18n.messages[i18n.locale]}>
+      <Fragment>
+        {props.loading && <Loading color="#DB2120" />}
+        {child}
+      </Fragment>
+    </IntlProvider>
+  );
 
-    // bind actions
-    this.actions = {};
-    each(appSelectors, (func, w) => 
-      this.actions[w] = appSelectors[w].bind(this));
-  }
-
-  render() {
-    return (
-      <IntlProvider locale={this.state.locale} messages={config.I18N.dictionary[this.state.locale]}>
-        <Fragment>
-          {this.state.loading && <Loading />}
-          <Stats
-            actions={{...this.actions}}
-            {...this.state}
-            {...this.props}
-          />
-        </Fragment>
-      </IntlProvider>
+  if (props.session.authenticated) {
+    return coverage(
+      provider(
+        <Login />
+      )
     );
   }
-}
-
-App.defaultProps = defaultProps;
+  /*
+  return coverage(
+    provider(
+      <Fragment>
+        <Switch>
+          <Route
+            path={config.PATHS.form}
+            component={Form}
+          />
+          <Route
+            component={Home}
+          />
+        </Switch>
+      </Fragment>,
+    )
+  );
+  */
+};
 
 App.propTypes = propTypes;
+App.defaultProps = defaultProps;
 
-export default PartialAlertsHOC(App);
+export default connect(
+    state => ({
+      loading: state.loading.display,
+      app: state.app,
+      session: state.session,
+    }),
+  )(App);

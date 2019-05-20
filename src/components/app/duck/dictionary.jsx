@@ -1,9 +1,9 @@
 export default {
-  en: {
-    'app.components.stats.hello-word': 'Hello word I',
-  },
+  en: {},
   es: {
-    'app.components.stats.hello-word': 'Hola mundo I',
-    'app.account-details.duck.actions.fetch-account.required-err': 'El report id es nulo o está vacío',
+    'app.accounts-list.pagination.goto-page': 'Ir a la página {value, number}',
+    'app.accounts-list.pagination.next-page': 'Siguiente',
+    'app.accounts-list.pagination.page': 'Página {value, number}',
+    'app.accounts-list.pagination.previous': 'Anterior',
   },
 };

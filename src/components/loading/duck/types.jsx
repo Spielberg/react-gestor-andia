@@ -1,0 +1,8 @@
+
+const DISPLAY_LOADING = 'DISPLAY_LOADING';
+const HIDE_LOADING = 'HIDE_LOADING';
+
+export default {
+  DISPLAY_LOADING,
+  HIDE_LOADING,
+};
