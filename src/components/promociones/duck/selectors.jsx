@@ -2,10 +2,13 @@ import axios from 'axios';
 
 import config from './config';
 
-const i18nComponentKey = 'app.home.index';
+const i18nComponentKey = 'app.promociones.index';
 
-/*
-function validate(cb = () => (null)) {
+function onMount() {
+
+}
+
+function fetch(cb = () => (null)) {
   const { values } = this.state;
   const current = {
     ...this.state,
@@ -27,7 +30,6 @@ function validate(cb = () => (null)) {
   }
   this.setState(current, () => cb(valid));
 }
-*/
 
 export default {
   //handleChange,

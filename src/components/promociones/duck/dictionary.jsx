@@ -1,3 +1,5 @@
 export default {
-  es: {},
+  es: {
+    'app.promociones.index.title': 'Listado de promociones',
+  },
 };
