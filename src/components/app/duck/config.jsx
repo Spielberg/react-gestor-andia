@@ -17,4 +17,8 @@ config.PATHS = {
   }
 };
 
+config.TABLES = {
+  limit: 15, 
+};
+
 export default config;

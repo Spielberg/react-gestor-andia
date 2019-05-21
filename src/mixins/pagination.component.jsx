@@ -1,13 +1,15 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
-import _ from 'lodash';
+import { injectIntl, intlShape } from 'react-intl';
+import {
+  isUndefined,
+  isNull,
+} from 'lodash';
 
 const i18nComponentKey = 'app.accounts-list.pagination';
 
 const propTypes = {
-  intl: PropTypes.object.isRequired,
+  intl: intlShape.isRequired,
   current: PropTypes.number.isRequired,
   last: PropTypes.number.isRequired,
   onClick: PropTypes.func,
@@ -20,8 +22,8 @@ const defaultProps = {
   name: i18nComponentKey,
 };
 
-const PaginationBulma = ({ intl, onClick, current, delta, last, name }) => {
-  if (_.isUndefined(last) || last === 1) {
+const Pagination = ({ intl, onClick, current, delta, last, name }) => {
+  if (isUndefined(last) || last === 1) {
     return null;
   }
 
@@ -40,12 +42,12 @@ const PaginationBulma = ({ intl, onClick, current, delta, last, name }) => {
     for (const i of range) {
       if (l) {
         if (i - l === 2) {
-          rangeWithDots.push({ value: l + 1, txt: l + 1, className: ['pagination-link', 'pointer'] });
+          rangeWithDots.push({ value: l + 1, txt: l + 1, className: ['page-link', 'pointer'] });
         } else if (i - l !== 1) {
-          rangeWithDots.push({ txt: '&hellip;', className: ['pagination-ellipsis'] });
+          rangeWithDots.push({ txt: '&hellip;', className: ['pagination-ellipsis', 'page-link'] });
         }
       }
-      rangeWithDots.push({ value: i, txt: i, className: ['pagination-link', 'pointer'] });
+      rangeWithDots.push({ value: i, txt: i, className: ['page-link', 'pointer'] });
       l = i;
     }
 
@@ -55,24 +57,25 @@ const PaginationBulma = ({ intl, onClick, current, delta, last, name }) => {
   const range = get();
   return (
     <Fragment>
-      <nav className="pagination" role="navigation" aria-label="pagination">
-        {current !== 1 && <span className="pagination-previous pointer" onClick={() => onClick(current - 1)}>{intl.formatMessage({ id: `${i18nComponentKey}.previous`, defaultMessage: 'Previous' })}</span>}
-        {current !== last && <span className="pagination-next pointer" onClick={() => onClick(current + 1)}>{intl.formatMessage({ id: `${i18nComponentKey}.next-page`, defaultMessage: 'Next page' })}</span>}
-        <ul className="pagination-list">
+      <nav role="navigation" aria-label="pagination">
+        <ul className="pagination">
+          <li class={`page-item ${current === 1 ? 'disabled' : ''}`}>
+            <span className="page-link pointer" onClick={() => onClick(current - 2)}>{intl.formatMessage({ id: `${i18nComponentKey}.previous`, defaultMessage: `${i18nComponentKey}.previous` })}</span>
+          </li>
           {range.map((row, i) => {
             const { txt, className, value = null } = row;
-            const enabled = !_.isNull(value);
+            const enabled = !isNull(value);
             const aClass = className;
             const key = enabled ? `pagination-${name}-${className}-value-${value}` : `pagination-${name}-${className}-index-${i}`;
             const isCurrent = value === current;
             if (isCurrent) {
-              aClass.push('is-current');
+              aClass.push('active');
             }
             return enabled ? (
-              <li key={key}>
+              <li className={`page-item ${isCurrent ? 'active' : ''}`} key={key}>
                 <span
                   className={aClass ? aClass.join(' ') : ''}
-                  onClick={() => onClick(value)}
+                  onClick={() => onClick(value - 1)}
                   aria-label={isCurrent ?
                     intl.formatMessage({ id: `${i18nComponentKey}.goto-page`, defaultMessage: 'Goto page {value, number}' }, { value }) :
                     intl.formatMessage({ id: `${i18nComponentKey}.page`, defaultMessage: 'Page {value, number}' }, { value })}
@@ -80,24 +83,21 @@ const PaginationBulma = ({ intl, onClick, current, delta, last, name }) => {
                 >{txt}</span>
               </li>
             ) : (
-              <li key={key}>
+              <li className="page-item disabled" key={key}>
                 <span className={className.join(' ')} dangerouslySetInnerHTML={{ __html: txt }} />
               </li>
               );
           })}
+          <li class={`page-item ${current === last ? 'disabled' : ''}`}>
+            <span className="page-link pointer" onClick={() => onClick(current)}>{intl.formatMessage({ id: `${i18nComponentKey}.next-page`, defaultMessage: `${i18nComponentKey}.next-page` })}</span>
+          </li>
         </ul>
       </nav>
     </Fragment>
   );
 };
 
-PaginationBulma.propTypes = propTypes;
-PaginationBulma.defaultProps = defaultProps;
+Pagination.propTypes = propTypes;
+Pagination.defaultProps = defaultProps;
 
-export default injectIntl(
-  connect(
-    // mapStateToProps
-    state => ({
-      //locale: state.i18n.locale,
-    }),
-  )(PaginationBulma));
+export default injectIntl(Pagination);

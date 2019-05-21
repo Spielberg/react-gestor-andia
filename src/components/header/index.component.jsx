@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
@@ -39,11 +39,12 @@ const Header = (props) => {
   return (
     <Fragment>
       <Site.Header>
-        <Site.Logo
-          alt={intl.formatMessage({ id: `${i18nComponentKey}.logotipo`, defaultMessage: `${i18nComponentKey}.logotipo` })}
-          src={`${config.STATIC_CONTENT_URL}/images/logo.png`}
-          href={config.PATHS.homepage}
-        />
+        <Link to={config.PATHS.homepage} className="header-brand">
+          <img
+            alt={intl.formatMessage({ id: `${i18nComponentKey}.logotipo`, defaultMessage: `${i18nComponentKey}.logotipo` })}
+            src={`${config.STATIC_CONTENT_URL}/images/logo.png`}
+          />
+        </Link>      
         <Card.Options>
           <Button color="gray" size="sm" onClick={props.requestLogout}>logout</Button>
         </Card.Options>

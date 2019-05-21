@@ -5,6 +5,7 @@ import dictionary from './dictionary';
 import loginDiccionary from '../../login/duck/dictionary';
 import homeDictionary from '../../home/duck/dictionary';
 import promocionesDictionary from '../../promociones/duck/dictionary';
+import tableListDictionary from '../../table-list/duck/dictionary';
 
 const defaultState = {
   i18n: {
@@ -15,6 +16,7 @@ const defaultState = {
         ...loginDiccionary.es,
         ...homeDictionary.es,
         ...promocionesDictionary.es,
+        ...tableListDictionary.es,
       },
     },
   },
