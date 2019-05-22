@@ -12,7 +12,12 @@ config.PATHS = {
   visitas: '/visitas',
   configuracion: {
     usuarios: '/configuracion/usuarios',
+
+    // promociones
+    promociones_anadir: '/configuracion/promociones/anadir',
+    promociones_editar: '/configuracion/promociones/:id',
     promociones: '/configuracion/promociones',
+    
     tiposInmuebles: '/configuracion/tipos-de-inmuebles',
   }
 };

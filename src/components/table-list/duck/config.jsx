@@ -2,8 +2,6 @@ import base from '../../../site.config';
 
 const config = {};
 
-config.TABLE = {
-  defaults: {},
-};
+config.TABLE = {};
 
 export default { ...config, ...base };

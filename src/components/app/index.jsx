@@ -17,6 +17,7 @@ import Home from '../home/index.component';
 import Visitas from '../visitas/index.component';
 import Usuarios from '../usuarios/index.component';
 import Promociones from '../promociones/index.component';
+import PromocionesForm from '../promociones/form.component';
 import TiposInmuebles from '../tipos-inmuebles/index.component';
 
 const propTypes = {
@@ -58,7 +59,13 @@ const App = (props) => {
           <Switch>
             <Route path={config.PATHS.visitas} component={Visitas} />
             <Route path={config.PATHS.configuracion.usuarios} component={Usuarios} />
+
+            {/* promociones */}
+            <Route path={config.PATHS.configuracion.promociones_anadir} component={PromocionesForm} />
+            <Route path={config.PATHS.configuracion.promociones_editar} component={PromocionesForm} />
             <Route path={config.PATHS.configuracion.promociones} component={Promociones} />
+            
+            
             <Route path={config.PATHS.configuracion.tiposInmuebles} component={TiposInmuebles} />
             <Route component={Home} />
           </Switch>

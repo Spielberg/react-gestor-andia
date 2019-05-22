@@ -2,7 +2,7 @@ import {
   map,
 } from 'lodash';
 
-import base from '../../app/duck/config';
+import base from '../../tipos-inmuebles/duck/config';
 
 const config = { ...base };
 
@@ -11,6 +11,8 @@ config.PROMOCIONES = {
     url: `${config.API_DOMAIN}/api/promociones`,
     i18nKey: 'app.promociones.index',
     limit: config.TABLES.limit,
+    addUrl: config.PATHS.configuracion.promociones_anadir,
+    editUrl: config.PATHS.configuracion.promociones_editar,
     columns: {
       defaults: {
         src: (data, key) => data[key],

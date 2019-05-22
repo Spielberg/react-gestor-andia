@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {
+  each,
+  isUndefined,
+  isNull,
   keyBy,
 } from 'lodash';
 import config from './config';
@@ -93,6 +96,27 @@ function onMount() {
   this.fetch();
 }
 
+function urlFor(path, params) {
+  let to = path;
+  const i = to.indexOf(':');
+  if (i === -1) {
+    return to;
+  }
+
+  to = path.substr(0, i - 1);
+  each(path.substr(i + 1).split('/:'), (candidate) => {
+    const param = candidate.substr(-1) === '?' ?
+      { optional: true, value: candidate.substr(0, candidate.length - 1) } :
+      { optional: false, value: candidate };
+    if (!isUndefined(params[param.value]) && !isNull(params[param.value])) {
+      to += `/${params[param.value]}`;
+    } else if (!param.optional && config.DEBUG) {
+      console.error(`${candidate} is required for ${path}, params: ${JSON.stringify(params)}`);
+    }
+  });
+  return to;
+}
+
 export default {
   catchReturn,
   fetch,
@@ -100,4 +124,5 @@ export default {
   handleOffset,
   handleQuery,
   onMount,
+  urlFor,
 };

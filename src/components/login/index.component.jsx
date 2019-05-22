@@ -46,7 +46,7 @@ class Login extends Component {
       },
       values: {
         email: 'mail@gmail.com',
-        password: '12345678',
+        password: '123456789',
       },
     };
     each(loginSelectors, (_, k) => this[k] = loginSelectors[k].bind(this));

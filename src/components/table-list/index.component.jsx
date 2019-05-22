@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { intlShape, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Link } from 'react-router-dom';
 import {
   Badge,
   Button,
@@ -34,6 +35,8 @@ const propTypes = {
   url: PropTypes.string.isRequired,
   session: PropTypes.object.isRequired,
   columns: PropTypes.object.isRequired,
+  addUrl: PropTypes.string,
+  editUrl: PropTypes.string,
   i18nKey: PropTypes.string,
 };
 
@@ -68,7 +71,7 @@ class TableList extends Component {
   * @return {reactElement} - react element itself
   */
   render() {
-    const { intl, columns, i18nKey } = this.props;
+    const { addUrl, editUrl, intl, columns, i18nKey } = this.props;
     const { loading, offset, results, pagination, query } = this.state;
     const boolean = (obj, column) => {
       const { src, key, i18n } = column;
@@ -96,6 +99,9 @@ class TableList extends Component {
               onChange={this.handleQuery}
               onKeyPress={this.catchReturn}
             />
+            <Link to={addUrl} className="btn-add">
+              <Button color="primary">{intl.formatMessage({ id: `${i18nKey}.nuevo`, defaultMessage: `${i18nKey}.nuevo` })}</Button>
+            </Link>
           </Card.Options>
         </Card.Header>
         <Dimmer active={loading} loader className="table-container">
@@ -117,7 +123,9 @@ class TableList extends Component {
                       : column.src(obj, column.key)
                     }</Table.Col>)}
                     <Table.Col>
-                      <Button color="primary" size="sm" pill>{intl.formatMessage({ id: `${i18nComponentKey}.btn.edit`, defaultMessage: `${i18nComponentKey}.btn.edit` })}</Button>
+                      {editUrl && <Link to={this.urlFor(editUrl, { id: obj.id })} className="btn-add">
+                        <Button color="primary" size="sm" pill>{intl.formatMessage({ id: `${i18nComponentKey}.btn.edit`, defaultMessage: `${i18nComponentKey}.btn.edit` })}</Button>
+                      </Link>}
                     </Table.Col>
                   </Table.Row>))}
               </Table.Body>
