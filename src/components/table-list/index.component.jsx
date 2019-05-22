@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   Dimmer,
+  Form,
   Header,
   Table,
 } from 'tabler-react';
@@ -32,7 +33,7 @@ const propTypes = {
   intl: intlShape.isRequired,
   url: PropTypes.string.isRequired,
   session: PropTypes.object.isRequired,
-  columns: PropTypes.array.isRequired,
+  columns: PropTypes.object.isRequired,
   i18nKey: PropTypes.string,
 };
 
@@ -51,6 +52,7 @@ class TableList extends Component {
     this.state = {
       loading: true,
       offset: 0,
+      query: '',
       pagination: {},
       results: {},
     };
@@ -67,7 +69,7 @@ class TableList extends Component {
   */
   render() {
     const { intl, columns, i18nKey } = this.props;
-    const { loading, offset, results, pagination } = this.state;
+    const { loading, offset, results, pagination, query } = this.state;
     const boolean = (obj, column) => {
       const { src, key, i18n } = column;
       const value = src(obj, key);
@@ -85,12 +87,22 @@ class TableList extends Component {
       <Card>
         <Card.Header>
           <Header.H3>{intl.formatMessage({ id: `${i18nKey}.title`, defaultMessage: `${i18nKey}.title` })}</Header.H3>
+          <Card.Options>
+            <Form.Input
+              icon="search"
+              placeholder={intl.formatMessage({ id: `${i18nComponentKey}.buscar`, defaultMessage: `${i18nComponentKey}.buscar` })}
+              position="append"
+              value={query}
+              onChange={this.handleQuery}
+              onKeyPress={this.catchReturn}
+            />
+          </Card.Options>
         </Card.Header>
         <Dimmer active={loading} loader className="table-container">
           <Table>
             <Table.Header>
               {map(columns.payload, column => (
-                <Table.ColHeader key={`${i18nKey}.ColHeader.${column.id}`}>
+                <Table.ColHeader key={`${i18nKey}.col-header.${column.key}`}>
                   {intl.formatMessage({ id: `${i18nKey}.column.${column.i18n(column)}`, defaultMessage: `${i18nKey}.column.${column.i18n(column)}` })}
                 </Table.ColHeader>
               ))}
@@ -99,7 +111,7 @@ class TableList extends Component {
               <Table.Body>
                 {map(results, obj => (
                   <Table.Row key={`${i18nKey}.row.${obj.id}`}>
-                    {map(columns.payload, column => <Table.Col key={`${i18nKey}.col.${obj.id}.${column.id}`}>
+                    {map(columns.payload, column => <Table.Col key={`${i18nKey}.col.${obj.id}.${column.key}`}>
                     {column.type === 'boolean'
                       ? boolean(obj, column)
                       : column.src(obj, column.key)

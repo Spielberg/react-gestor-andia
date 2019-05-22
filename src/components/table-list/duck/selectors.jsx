@@ -4,10 +4,17 @@ import {
 } from 'lodash';
 import config from './config';
 
-const i18nComponentKey = 'app.table-list.index';
+function catchReturn({ key }) {
+  if (key === 'Enter') {
+    this.fetch();
+  }
+}
 
 function fetch(cb = () => (null)) {
-  const url = `${this.props.url}?offset=${this.state.offset}&limit=${this.props.limit}`;
+  let url = `${this.props.url}?offset=${this.state.offset}&limit=${this.props.limit}`;
+  if (this.state.query !== '') {
+    url += `&query=${this.state.query}`;
+  }
   if (config.DEBUG) console.log(url);
   return axios.get(url, {
     headers: {
@@ -74,13 +81,23 @@ function handleActive(which, cb = () => null) {
     });
 }
 
+function handleQuery(e){
+  const query = e.target.value;
+  this.setState(current => ({
+    ...current,
+    query,
+  }));
+}
+
 function onMount() {
   this.fetch();
 }
 
 export default {
+  catchReturn,
   fetch,
   handleActive,
   handleOffset,
+  handleQuery,
   onMount,
 };

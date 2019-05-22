@@ -59,7 +59,7 @@ const Pagination = ({ intl, onClick, current, delta, last, name }) => {
     <Fragment>
       <nav role="navigation" aria-label="pagination">
         <ul className="pagination">
-          <li class={`page-item ${current === 1 ? 'disabled' : ''}`}>
+          <li className={`page-item ${current === 1 ? 'disabled' : ''}`}>
             <span className="page-link pointer" onClick={() => onClick(current - 2)}>{intl.formatMessage({ id: `${i18nComponentKey}.previous`, defaultMessage: `${i18nComponentKey}.previous` })}</span>
           </li>
           {range.map((row, i) => {
@@ -88,7 +88,7 @@ const Pagination = ({ intl, onClick, current, delta, last, name }) => {
               </li>
               );
           })}
-          <li class={`page-item ${current === last ? 'disabled' : ''}`}>
+          <li className={`page-item ${current === last ? 'disabled' : ''}`}>
             <span className="page-link pointer" onClick={() => onClick(current)}>{intl.formatMessage({ id: `${i18nComponentKey}.next-page`, defaultMessage: `${i18nComponentKey}.next-page` })}</span>
           </li>
         </ul>
