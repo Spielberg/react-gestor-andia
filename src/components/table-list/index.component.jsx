@@ -26,6 +26,8 @@ import {
 
 import config from './duck/config';
 
+import TableCol from './functionals/table-col.component';
+
 import Pagination from '../../mixins/pagination.component';
 
 const i18nComponentKey = 'app.table-list.index';
@@ -73,18 +75,6 @@ class TableList extends Component {
   render() {
     const { addUrl, editUrl, intl, columns, i18nKey } = this.props;
     const { loading, offset, results, pagination, query } = this.state;
-    const boolean = (obj, column) => {
-      const { src, key, i18n } = column;
-      const value = src(obj, key);
-      return <Badge color={`${value ? 'success' : 'danger'}`} className="mr-1">
-              <span onClick={key === 'active' ? () => this.handleActive(obj) : () => null}>
-                {value
-                  ? intl.formatMessage({ id: `${i18nKey}.column.${i18n(column)}.true`, defaultMessage: `${i18nKey}.column.${i18n(column)}.true` })
-                  : intl.formatMessage({ id: `${i18nKey}.column.${i18n(column)}.false`, defaultMessage: `${i18nKey}.column.${i18n(column)}.false` })
-                }
-              </span>
-            </Badge>
-        };
 
     return (
       <Card>
@@ -118,10 +108,14 @@ class TableList extends Component {
                 {map(results, obj => (
                   <Table.Row key={`${i18nKey}.row.${obj.id}`}>
                     {map(columns.payload, column => <Table.Col key={`${i18nKey}.col.${obj.id}.${column.key}`}>
-                    {column.type === 'boolean'
-                      ? boolean(obj, column)
-                      : column.src(obj, column.key)
-                    }</Table.Col>)}
+                      <TableCol
+                        column={column}
+                        handleActive={() => this.handleActive(obj)}
+                        handleSuperuser={() => this.handleSuperuser(obj)}
+                        i18nKey={i18nKey}
+                        obj={obj}
+                      />
+                    </Table.Col>)}
                     <Table.Col>
                       {editUrl && <Link to={this.urlFor(editUrl, { id: obj.id })} className="btn-add">
                         <Button color="primary" size="sm" pill>{intl.formatMessage({ id: `${i18nComponentKey}.btn.edit`, defaultMessage: `${i18nComponentKey}.btn.edit` })}</Button>

@@ -52,10 +52,10 @@ function handleOffset(offset) {
   }), this.fetch);
 }
 
-function handleActive(which, cb = () => null) {
+function handleBoolean(which, key, cb = () => null) {
   const url = this.props.url;
   if (config.DEBUG) console.log(url);
-  return axios.put(url, { id: which.id, active: !which.active }, {
+  return axios.put(url, { id: which.id, [key]: !which[key] }, {
     headers: {
       Authorization: `Bearer ${this.props.session.authToken}`,
       'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ function handleActive(which, cb = () => null) {
           ...current.results,
           [which.id]: {
             ...current.results[which.id],
-            active: !current.results[which.id].active,
+            [key]: !current.results[which.id][key],
           },
         },
       }), () => {
@@ -82,6 +82,15 @@ function handleActive(which, cb = () => null) {
     .catch((error) => {
       return cb(error);
     });
+}
+
+function handleActive(which, cb = () => null) {
+  console.log({ which });
+  return this.handleBoolean(which, 'active', cb);
+}
+
+function handleSuperuser(which, cb = () => null) {
+  return this.handleBoolean(which, 'superuser', cb);
 }
 
 function handleQuery(e){
@@ -121,6 +130,8 @@ export default {
   catchReturn,
   fetch,
   handleActive,
+  handleSuperuser,
+  handleBoolean,
   handleOffset,
   handleQuery,
   onMount,

@@ -37,7 +37,7 @@ const i18nComponentKey = 'app.promociones.form';
 const propTypes = {};
 const defaultProps = {};
 
-class PromocionAnadir extends Component {
+class PromocionForm extends Component {
   /**
   * class constructor
   * @param {obj} props - Component properties
@@ -165,8 +165,8 @@ class PromocionAnadir extends Component {
   }
 }
 
-PromocionAnadir.propTypes = propTypes;
-PromocionAnadir.defaultProps = defaultProps;
+PromocionForm.propTypes = propTypes;
+PromocionForm.defaultProps = defaultProps;
 
 export default injectIntl(
   connect(
@@ -178,4 +178,4 @@ export default injectIntl(
     dispatch => bindActionCreators({
       //functName,
     }, dispatch),
-  )(PromocionAnadir));
+  )(PromocionForm));

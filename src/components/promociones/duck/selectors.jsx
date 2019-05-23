@@ -162,7 +162,7 @@ function submit(e, cb = () => (null)) {
             ...current,
             redirect: {
               ...current.redirect,
-              //enabled: true,
+              enabled: true,
             }
           }));
         }, this.state.redirect.timeout * 1000);

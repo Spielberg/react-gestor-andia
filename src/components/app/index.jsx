@@ -16,6 +16,7 @@ import Login from '../login/index.component';
 import Home from '../home/index.component';
 import Visitas from '../visitas/index.component';
 import Usuarios from '../usuarios/index.component';
+import UsuariosForm from '../usuarios/form.component';
 import Promociones from '../promociones/index.component';
 import PromocionesForm from '../promociones/form.component';
 import TiposInmuebles from '../tipos-inmuebles/index.component';
@@ -58,6 +59,10 @@ const App = (props) => {
         <Page.Content>
           <Switch>
             <Route path={config.PATHS.visitas} component={Visitas} />
+
+            {/* usuarios */}
+            <Route path={config.PATHS.configuracion.usuarios_anadir} component={UsuariosForm} />
+            <Route path={config.PATHS.configuracion.usuarios_editar} component={UsuariosForm} />
             <Route path={config.PATHS.configuracion.usuarios} component={Usuarios} />
 
             {/* promociones */}

@@ -11,6 +11,9 @@ config.PATHS = {
   homepage: '/',
   visitas: '/visitas',
   configuracion: {
+    // usuarios
+    usuarios_anadir: '/configuracion/usuarios/anadir',
+    usuarios_editar: '/configuracion/usuarios/:id',
     usuarios: '/configuracion/usuarios',
 
     // promociones

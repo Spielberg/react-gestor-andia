@@ -11,8 +11,8 @@ config.USUARIOS = {
     url: `${config.API_DOMAIN}/api/users`,
     i18nKey: 'app.users.index',
     limit: config.TABLES.limit,
-    addUrl: config.PATHS.configuracion.users_anadir,
-    editUrl: config.PATHS.configuracion.users_editar,
+    addUrl: config.PATHS.configuracion.usuarios_anadir,
+    editUrl: config.PATHS.configuracion.usuarios_editar,
     columns: {
       defaults: {
         src: (data, key) => data[key],
