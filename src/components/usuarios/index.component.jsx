@@ -1,27 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
-const i18nComponentKey = 'app.usuarios.index';
+import TableList from '../table-list/index.component';
+
+import config from './duck/config';
+
 const propTypes = {};
 const defaultProps = {};
 
-
-const Usuarios = (props) => (
-  <h2>Usuarios</h2>
-);
+const Usuarios = (props) => <TableList {...config.USUARIOS.tableList} />;
 
 Usuarios.propTypes = propTypes;
 Usuarios.defaultProps = defaultProps;
 
-export default injectIntl(
-  connect(
-    // mapStateToProps
-    state => ({}),
-    // mapActionsToProps
-    dispatch => bindActionCreators({
-      //functName,
-    }, dispatch),
-  )(Usuarios));
+export default Usuarios;

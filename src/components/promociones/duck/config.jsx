@@ -7,6 +7,9 @@ import base from '../../tipos-inmuebles/duck/config';
 const config = { ...base };
 
 config.PROMOCIONES = {
+  zonas: {
+    url: `${config.API_DOMAIN}/api/promociones/zonas`,
+  },
   tableList: {
     url: `${config.API_DOMAIN}/api/promociones`,
     i18nKey: 'app.promociones.index',

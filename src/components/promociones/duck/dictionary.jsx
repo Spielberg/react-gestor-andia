@@ -17,5 +17,6 @@ export default {
     'app.promociones.index.column.zona': 'Zona',
     'app.promociones.index.nuevo': 'Añadir promoción',
     'app.promociones.index.title': 'Listado de promociones',
+    'app.promociones.form.zona.pagination': 'ver más resultados',
   },
 };

@@ -1,7 +1,40 @@
-import base from '../../../site.config';
+import {
+  map,
+} from 'lodash';
 
-const config = {};
+import base from '../../app/duck/config';
 
-config.HOME = {};
+const config = { ...base };
 
-export default { ...config, ...base };
+config.USUARIOS = {
+  tableList: {
+    url: `${config.API_DOMAIN}/api/users`,
+    i18nKey: 'app.users.index',
+    limit: config.TABLES.limit,
+    addUrl: config.PATHS.configuracion.users_anadir,
+    editUrl: config.PATHS.configuracion.users_editar,
+    columns: {
+      defaults: {
+        src: (data, key) => data[key],
+        type: 'string',
+        i18n: data => data.key,
+      },
+      payload: [
+        { key: 'name' },
+        { key: 'email' },
+        { key: 'created_at', type: 'date' },
+        { key: 'last_login', type: 'date' },
+        { key: 'active', type: 'boolean' },
+        { key: 'superuser', type: 'boolean' },
+      ],
+    }
+  },
+};
+
+// assign default config values
+config.USUARIOS.tableList.columns.payload = map(config.USUARIOS.tableList.columns.payload, which => ({
+  ...config.USUARIOS.tableList.columns.defaults,
+  ...which,
+}));
+
+export default config;

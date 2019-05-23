@@ -4,6 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router';
+import { Typeahead } from 'react-bootstrap-typeahead';
 import {
   ceil,
   chunk,
@@ -22,6 +23,9 @@ import {
   Header,
   Table,
 } from 'tabler-react';
+
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import 'react-bootstrap-typeahead/css/Typeahead-bs4.css';
 
 import config from './duck/config';
 
@@ -58,6 +62,7 @@ class PromocionAnadir extends Component {
         inmuebles: []
       },
       inmuebles: [],
+      zonas: [],
       loading: false,
       redirect: {
         enabled: false,
@@ -78,7 +83,7 @@ class PromocionAnadir extends Component {
   */
   render() {
     const { intl } = this.props;
-    const { values, errors, inmuebles, alert, redirect, loading } = this.state;
+    const { values, errors, inmuebles, alert, redirect, loading, zonas } = this.state;
 
     if (redirect.enabled) {
       return <Redirect to={redirect.url} />;
@@ -106,12 +111,25 @@ class PromocionAnadir extends Component {
             />
           </Form.Group>
           <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.zona`, defaultMessage: `${i18nComponentKey}.zona` })}>
+              <Typeahead
+                id={`${i18nComponentKey}-zona-typeahead`}
+                labelKey="name"
+                options={zonas}
+                emptyLabel={''}
+                maxResults={3}
+                paginationText={intl.formatMessage({ id: `${i18nComponentKey}.zona.pagination`, defaultMessage: `${i18nComponentKey}.zona.pagination` })}
+                onInputChange={this.handleZona}
+                onChange={this.handleZona}
+                placeholder={values.zona}
+              />
+            {/*
             <Form.Input
               feedback={errors.zona}
               invalid={errors.zona !== ''}
               value={values.zona}
               onChange={e => this.handleValues(e, 'zona')}
             />
+            */}
             </Form.Group>
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.tipos-inmueble`, defaultMessage: `${i18nComponentKey}.tipos-inmueble`})}>
             <Dimmer active={isEmpty(inmuebles)} loader>
