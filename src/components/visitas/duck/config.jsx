@@ -3,8 +3,9 @@ import {
 } from 'lodash';
 
 import base from '../../app/duck/config';
+import promociones from '../../promociones/duck/config';
 
-const config = { ...base };
+const config = { ...base, ...promociones };
 
 config.VISITAS = {
   tableList: {
@@ -29,6 +30,12 @@ config.VISITAS = {
       ],
     }
   },
+  statuses: [
+    { key: 'primera' },
+    { key: 'reserva' },
+    { key: 'anulacion' },
+    { key: 'compra' },
+  ]
 };
 
 // assign default config values

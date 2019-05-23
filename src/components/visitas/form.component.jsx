@@ -10,9 +10,8 @@ import {
   chunk,
   each,
   first,
-  isEmpty,
+  range,
   map,
-  size,
 } from 'lodash';
 import {
   Alert,
@@ -22,7 +21,6 @@ import {
   Form,
   Grid,
   Header,
-  Table,
 } from 'tabler-react';
 
 import 'react-bootstrap-typeahead/css/Typeahead.css';
@@ -34,7 +32,7 @@ import {
   visitasSelectors,
 } from './duck';
 
-const i18nComponentKey = 'app.promociones.form';
+const i18nComponentKey = 'app.visitas.form';
 const propTypes = {};
 const defaultProps = {};
 
@@ -46,6 +44,7 @@ class VisitasForm extends Component {
   */
   constructor(props) {
     super(props);
+    console.log();
     this.state = {
       alert: {
         display: false,
@@ -54,27 +53,35 @@ class VisitasForm extends Component {
       },
       errors: {
         name: '',
-        zona: '',
+        email: '',
+        telefono: '',
+        promociones_id: '',
+        fecha_visita: '',
       },
       values: {
         id: parseInt(props.match.params.id, 10) || null,
-        name: '',
-        zona: '',
-        inmuebles: []
+        name: 'nombre',
+        email: 'email@email.com',
+        telefono: '789777',
+        promociones_id: 1,
+        observaciones: '',
+        fecha_visita: new Date(),
+        conociste: '',
+        status: '',
+        users_id: parseInt(props.session.profile.id, 10),
       },
-      inmuebles: [],
-      zonas: [],
       loading: false,
+      promociones: [],
       redirect: {
         enabled: false,
-        url: config.PATHS.configuracion.promociones,
+        url: config.PATHS.viaitas,
         timeout: 5,
       },
     };
     each(visitasSelectors, (_, k) => this[k] = visitasSelectors[k].bind(this));
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.didMout();
   }
 
@@ -84,7 +91,7 @@ class VisitasForm extends Component {
   */
   render() {
     const { intl } = this.props;
-    const { values, errors, inmuebles, alert, redirect, loading, zonas } = this.state;
+    const { values, errors, promociones, alert, redirect, loading } = this.state;
 
     if (redirect.enabled) {
       return <Redirect to={redirect.url} />;
@@ -94,63 +101,99 @@ class VisitasForm extends Component {
       <Card>
         <Card.Header>
           <Header.H3>{
-            !values.id 
-            ? intl.formatMessage({ id: `${i18nComponentKey}.title-anadir`, defaultMessage: `${i18nComponentKey}.title-anadir` })
-            : intl.formatMessage({ id: `${i18nComponentKey}.title-editar`, defaultMessage: `${i18nComponentKey}.title-editar` })
-            }
+            !values.id
+              ? intl.formatMessage({ id: `${i18nComponentKey}.title-anadir`, defaultMessage: `${i18nComponentKey}.title-anadir` })
+              : intl.formatMessage({ id: `${i18nComponentKey}.title-editar`, defaultMessage: `${i18nComponentKey}.title-editar` })
+          }
           </Header.H3>
         </Card.Header>
         <Card.Body>
-        {alert.display && <Alert type={alert.type} icon="alert-triangle">{alert.message}</Alert>}
-        <Dimmer active={loading} loader>
-          <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.name`, defaultMessage: `${i18nComponentKey}.name` })}>
-            <Form.Input
-              feedback={errors.name}
-              invalid={errors.name !== ''}
-              value={values.name}
-              onChange={e => this.handleValues(e, 'name')}
-            />
-          </Form.Group>
-          <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.zona`, defaultMessage: `${i18nComponentKey}.zona` })}>
-              <Typeahead
-                id={`${i18nComponentKey}-zona-typeahead`}
-                labelKey="name"
-                options={zonas}
-                emptyLabel={''}
-                maxResults={3}
-                paginationText={intl.formatMessage({ id: `${i18nComponentKey}.zona.pagination`, defaultMessage: `${i18nComponentKey}.zona.pagination` })}
-                onInputChange={this.handleZona}
-                onChange={(zonas) => this.handleZona(first(zonas))}
-                placeholder={values.zona}
+          {alert.display && <Alert type={alert.type} icon="alert-triangle">{alert.message}</Alert>}
+          <Dimmer active={loading} loader>
+            <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.name`, defaultMessage: `${i18nComponentKey}.name` })}>
+              <Form.Input
+                feedback={errors.name}
+                invalid={errors.name !== ''}
+                value={values.name}
+                onChange={e => this.handleValues(e, 'name')}
               />
-            {/*
-            <Form.Input
-              feedback={errors.zona}
-              invalid={errors.zona !== ''}
-              value={values.zona}
-              onChange={e => this.handleValues(e, 'zona')}
-            />
-            */}
             </Form.Group>
-            <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.tipos-inmueble`, defaultMessage: `${i18nComponentKey}.tipos-inmueble`})}>
-            <Dimmer active={isEmpty(inmuebles)} loader>
-              <Grid.Row>
-                {map(chunk(inmuebles, ceil(inmuebles.length / 3)), (arr, i) => (
-                  <Grid.Col key={`${i18nComponentKey}-grid-col-${i}`}>
-                    {map(arr, inmueble => (
-                      <Form.Checkbox
-                        key={`${i18nComponentKey}-checkbox-${inmueble.id}`}
-                        label={inmueble.name}
-                        name={inmueble.id}
-                        value={inmueble.id}
-                        checked={values.inmuebles.indexOf(parseInt(inmueble.id, 10)) !== -1}
-                        onChange={this.handleInmuebles}
-                      />
-                    ))}
-                  </Grid.Col>
-                ))}
-              </Grid.Row>
-            </Dimmer>
+            <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.email`, defaultMessage: `${i18nComponentKey}.email` })}>
+              <Form.Input
+                feedback={errors.email}
+                invalid={errors.email !== ''}
+                value={values.email}
+                onChange={e => this.handleValues(e, 'email')}
+              />
+            </Form.Group>
+            <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.telefono`, defaultMessage: `${i18nComponentKey}.telefono` })}>
+              <Form.Input
+                feedback={errors.telefono}
+                invalid={errors.telefono !== ''}
+                value={values.telefono}
+                onChange={e => this.handleValues(e, 'telefono')}
+              />
+            </Form.Group>
+            <Grid.Row>
+              <Grid.Col>
+                <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })}>
+                  <Form.Select
+                    feedback={errors.promociones_id}
+                    invalid={errors.promociones_id !== ''}
+                    value={values.promociones_id}
+                    onChange={e => this.handleValues(e, 'promociones_id')}
+                  >
+                    <option />
+                    {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
+                  </Form.Select>
+                </Form.Group>
+              </Grid.Col>
+              <Grid.Col>
+                <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.fecha_visita`, defaultMessage: `${i18nComponentKey}.fecha_visita` })}>
+                  <Form.DatePicker
+                    feedback={errors.fecha_visita}
+                    invalid={errors.fecha_visita !== ''}
+                    value={values.fecha_visita}
+                    onChange={this.handleFechaVisita}
+                    monthLabels={map(range(11), i => intl.formatMessage({ id: `${i18nComponentKey}.months.${i}`, defaultMessage: `${i18nComponentKey}.months.${i}` }))}
+                  />
+                </Form.Group>
+              </Grid.Col>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Col>
+                <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.status`, defaultMessage: `${i18nComponentKey}.status` })}>
+                  <Form.Select
+                    feedback={errors.status}
+                    invalid={false && errors.status !== ''}
+                    value={values.status}
+                    onChange={e => this.handleValues(e, 'status')}
+                  >
+                    <option />
+                    {map(config.VISITAS.statuses, ({ key }) => <option value={key} key={`${i18nComponentKey}-stats-${key}`}>
+                      {intl.formatMessage({ id: `${i18nComponentKey}.status.${key}`, defaultMessage: `${i18nComponentKey}.status.${key}` })}
+                    </option>)}
+                  </Form.Select>
+                </Form.Group>
+              </Grid.Col>
+              <Grid.Col>
+                <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.conociste`, defaultMessage: `${i18nComponentKey}.conociste` })}>
+                  <Form.Input
+                    feedback={errors.conociste}
+                    invalid={false && errors.conociste !== ''}
+                    value={values.conociste}
+                    onChange={e => this.handleValues(e, 'conociste')}
+                  />
+                </Form.Group>
+              </Grid.Col>
+            </Grid.Row>
+            <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.observaciones`, defaultMessage: `${i18nComponentKey}.observaciones` })}>
+              <Form.Textarea
+                feedback={errors.observaciones}
+                invalid={false && errors.observaciones !== ''}
+                value={values.observaciones}
+                onChange={e => this.handleValues(e, 'observaciones')}
+              />
             </Form.Group>
           </Dimmer>
         </Card.Body>
