@@ -1,8 +1,6 @@
 import axios from 'axios';
 import {
   first,
-  map,
-  pull,
 } from 'lodash';
 
 import config from './config';
@@ -99,7 +97,7 @@ function submit(e, cb = () => (null)) {
             ...current,
             redirect: {
               ...current.redirect,
-              //enabled: true,
+              enabled: true,
             }
           }));
         }, this.state.redirect.timeout * 1000);
@@ -144,14 +142,17 @@ function validate(cb = () => (null)) {
     current.errors.email = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.email`, defaultMessage: `${i18nComponentKey}.err.email` });
     valid = false;
   }
-  if (!values.id && values.password === '') {
-    current.errors.password = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.password`, defaultMessage: `${i18nComponentKey}.err.password` });
-    valid = false;
+  if (!values.id || values.password !== '') {
+    if (values.password === '' || values.password.length < 6) {
+      current.errors.password = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.password`, defaultMessage: `${i18nComponentKey}.err.password` });
+      valid = false;
+    }
+    if (values.password !== values.rePassword) {
+      current.errors.rePassword = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.rePassword`, defaultMessage: `${i18nComponentKey}.err.rePassword` });
+      valid = false;
+    }
   }
-  if (!values.id && (values.rePassword === '' || values.password !== values.rePassword)) {
-    current.errors.rePassword = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.rePassword`, defaultMessage: `${i18nComponentKey}.err.rePassword` });
-    valid = false;
-  }
+
   this.setState(current, () => {
     return valid
       ? cb()
@@ -168,4 +169,5 @@ export default {
   handleValues,
   submit,
   validate,
+  //validatePasswords,
 };

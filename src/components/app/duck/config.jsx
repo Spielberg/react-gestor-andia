@@ -9,7 +9,12 @@ config.I18N = {
 
 config.PATHS = {
   homepage: '/',
+
+  // visitas
+  visitas_anadir: '/visitas/anadir',
+  visitas_editar: '/visitas/:id',
   visitas: '/visitas',
+
   configuracion: {
     // usuarios
     usuarios_anadir: '/configuracion/usuarios/anadir',
@@ -26,7 +31,7 @@ config.PATHS = {
 };
 
 config.TABLES = {
-  limit: 15, 
+  limit: 10, 
 };
 
 export default config;

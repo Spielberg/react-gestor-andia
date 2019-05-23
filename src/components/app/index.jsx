@@ -11,15 +11,16 @@ import {
 import config from './duck/config';
 
 import Header from '../header/index.component';
+import Home from '../home/index.component';
 import Loading from '../loading/index.component';
 import Login from '../login/index.component';
-import Home from '../home/index.component';
-import Visitas from '../visitas/index.component';
-import Usuarios from '../usuarios/index.component';
-import UsuariosForm from '../usuarios/form.component';
 import Promociones from '../promociones/index.component';
 import PromocionesForm from '../promociones/form.component';
 import TiposInmuebles from '../tipos-inmuebles/index.component';
+import Usuarios from '../usuarios/index.component';
+import UsuariosForm from '../usuarios/form.component';
+import Visitas from '../visitas/index.component';
+import VisitasForm from '../visitas/form.component';
 
 const propTypes = {
   app: PropTypes.object.isRequired,
@@ -58,6 +59,10 @@ const App = (props) => {
         <Header />
         <Page.Content>
           <Switch>
+
+            {/* visitas */}
+            <Route path={config.PATHS.visitas_anadir} component={VisitasForm} />
+            <Route path={config.PATHS.visitas_editar} component={VisitasForm} />
             <Route path={config.PATHS.visitas} component={Visitas} />
 
             {/* usuarios */}
@@ -70,7 +75,7 @@ const App = (props) => {
             <Route path={config.PATHS.configuracion.promociones_editar} component={PromocionesForm} />
             <Route path={config.PATHS.configuracion.promociones} component={Promociones} />
             
-            
+            {/* tipos de inmuebles */}
             <Route path={config.PATHS.configuracion.tiposInmuebles} component={TiposInmuebles} />
             <Route component={Home} />
           </Switch>

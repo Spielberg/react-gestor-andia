@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { intlShape, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
 import {
+  Alert,
   Badge,
   Button,
   Card,
@@ -18,6 +19,7 @@ import {
   ceil,
   each,
   map,
+  size,
 } from 'lodash';
 
 import {
@@ -37,13 +39,21 @@ const propTypes = {
   url: PropTypes.string.isRequired,
   session: PropTypes.object.isRequired,
   columns: PropTypes.object.isRequired,
-  addUrl: PropTypes.string,
-  editUrl: PropTypes.string,
+  addUrl: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.oneOf([null]),
+  ]),
+  editUrl: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.oneOf([null]),
+  ]),
   i18nKey: PropTypes.string,
 };
 
 const defaultProps = {
   i18nKey: i18nComponentKey,
+  addUrl: null,
+  editUrl: null,
 };
 
 class TableList extends Component {
@@ -76,7 +86,7 @@ class TableList extends Component {
     const { addUrl, editUrl, intl, columns, i18nKey } = this.props;
     const { loading, offset, results, pagination, query } = this.state;
 
-    return (
+    const layout = child => (
       <Card>
         <Card.Header>
           <Header.H3>{intl.formatMessage({ id: `${i18nKey}.title`, defaultMessage: `${i18nKey}.title` })}</Header.H3>
@@ -89,48 +99,60 @@ class TableList extends Component {
               onChange={this.handleQuery}
               onKeyPress={this.catchReturn}
             />
-            <Link to={addUrl} className="btn-add">
+            {addUrl && <Link to={addUrl} className="btn-add">
               <Button color="primary">{intl.formatMessage({ id: `${i18nKey}.nuevo`, defaultMessage: `${i18nKey}.nuevo` })}</Button>
-            </Link>
+            </Link>}
           </Card.Options>
         </Card.Header>
         <Dimmer active={loading} loader className="table-container">
-          <Table>
-            <Table.Header>
-              {map(columns.payload, column => (
-                <Table.ColHeader key={`${i18nKey}.col-header.${column.key}`}>
-                  {intl.formatMessage({ id: `${i18nKey}.column.${column.i18n(column)}`, defaultMessage: `${i18nKey}.column.${column.i18n(column)}` })}
-                </Table.ColHeader>
-              ))}
-              <Table.ColHeader>{intl.formatMessage({ id: `${i18nComponentKey}.column.actions`, defaultMessage: `${i18nComponentKey}.column.actions` })}</Table.ColHeader>
-            </Table.Header>
-              <Table.Body>
-                {map(results, obj => (
-                  <Table.Row key={`${i18nKey}.row.${obj.id}`}>
-                    {map(columns.payload, column => <Table.Col key={`${i18nKey}.col.${obj.id}.${column.key}`}>
-                      <TableCol
-                        column={column}
-                        handleActive={() => this.handleActive(obj)}
-                        handleSuperuser={() => this.handleSuperuser(obj)}
-                        i18nKey={i18nKey}
-                        obj={obj}
-                      />
-                    </Table.Col>)}
-                    <Table.Col>
-                      {editUrl && <Link to={this.urlFor(editUrl, { id: obj.id })} className="btn-add">
-                        <Button color="primary" size="sm" pill>{intl.formatMessage({ id: `${i18nComponentKey}.btn.edit`, defaultMessage: `${i18nComponentKey}.btn.edit` })}</Button>
-                      </Link>}
-                    </Table.Col>
-                  </Table.Row>))}
-              </Table.Body>
-          </Table>
-          <Pagination
-            current={offset + 1}
-            last={ceil(pagination.total / pagination.limit)}
-            onClick={this.handleOffset}
-          />
+          {child}
         </Dimmer>
       </Card>
+      );
+
+      if (!loading && pagination.total === 0) {
+        return layout(
+          <Alert type="info" className="alert-no-result">{intl.formatMessage({ id: `${i18nKey}.no-results`, defaultMessage: `${i18nKey}.no-results` })}</Alert>,
+        );
+      }
+
+      return layout(
+        <Fragment>
+          <Table>
+              <Table.Header>
+                {map(columns.payload, column => (
+                  <Table.ColHeader key={`${i18nKey}.col-header.${column.key}`}>
+                    {intl.formatMessage({ id: `${i18nKey}.column.${column.i18n(column)}`, defaultMessage: `${i18nKey}.column.${column.i18n(column)}` })}
+                  </Table.ColHeader>
+                ))}
+                {editUrl && <Table.ColHeader>{intl.formatMessage({ id: `${i18nComponentKey}.column.actions`, defaultMessage: `${i18nComponentKey}.column.actions` })}</Table.ColHeader>}
+              </Table.Header>
+                <Table.Body>
+                  {map(results, obj => (
+                    <Table.Row key={`${i18nKey}.row.${obj.id}`}>
+                      {map(columns.payload, column => <Table.Col key={`${i18nKey}.col.${obj.id}.${column.key}`}>
+                        <TableCol
+                          column={column}
+                          handleActive={() => this.handleActive(obj)}
+                          handleSuperuser={() => this.handleSuperuser(obj)}
+                          i18nKey={i18nKey}
+                          obj={obj}
+                        />
+                      </Table.Col>)}
+                      <Table.Col>
+                        {editUrl && <Link to={this.urlFor(editUrl, { id: obj.id })} className="btn-add">
+                          <Button color="primary" size="sm" pill>{intl.formatMessage({ id: `${i18nComponentKey}.btn.edit`, defaultMessage: `${i18nComponentKey}.btn.edit` })}</Button>
+                        </Link>}
+                      </Table.Col>
+                    </Table.Row>))}
+                </Table.Body>
+            </Table>
+            <Pagination
+              current={offset + 1}
+              last={ceil(pagination.total / pagination.limit)}
+              onClick={this.handleOffset}
+            />
+          </Fragment>
       );
   };
 };

@@ -31,14 +31,14 @@ import 'react-bootstrap-typeahead/css/Typeahead-bs4.css';
 import config from './duck/config';
 
 import {
-  promocionesSelectors,
+  visitasSelectors,
 } from './duck';
 
 const i18nComponentKey = 'app.promociones.form';
 const propTypes = {};
 const defaultProps = {};
 
-class PromocionForm extends Component {
+class VisitasForm extends Component {
   /**
   * class constructor
   * @param {obj} props - Component properties
@@ -71,7 +71,7 @@ class PromocionForm extends Component {
         timeout: 5,
       },
     };
-    each(promocionesSelectors, (_, k) => this[k] = promocionesSelectors[k].bind(this));
+    each(visitasSelectors, (_, k) => this[k] = visitasSelectors[k].bind(this));
   }
 
   componentDidMount(){
@@ -166,8 +166,8 @@ class PromocionForm extends Component {
   }
 }
 
-PromocionForm.propTypes = propTypes;
-PromocionForm.defaultProps = defaultProps;
+VisitasForm.propTypes = propTypes;
+VisitasForm.defaultProps = defaultProps;
 
 export default injectIntl(
   connect(
@@ -179,4 +179,4 @@ export default injectIntl(
     dispatch => bindActionCreators({
       //functName,
     }, dispatch),
-  )(PromocionForm));
+  )(VisitasForm));

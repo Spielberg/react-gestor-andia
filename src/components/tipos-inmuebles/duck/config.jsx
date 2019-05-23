@@ -11,7 +11,6 @@ config.TIPOS_INMUEBLE = {
     url: `${config.API_DOMAIN}/api/tipos-inmuebles`,
     i18nKey: 'app.tipos-inmuebles.index',
     limit: config.TABLES.limit,
-    addUrl: config.PATHS.configuracion.promociones_anadir,
     columns: {
       defaults: {
         src: (data, key) => data[key],
@@ -19,9 +18,8 @@ config.TIPOS_INMUEBLE = {
         i18n: data => data.key,
       },
       payload: [
-        { key: 'id' },
         { key: 'name' },
-        { key: 'zona' },
+        { key: 'created_at' },
         { key: 'active', type: 'boolean' },
       ],
     }

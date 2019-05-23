@@ -55,7 +55,7 @@ function handleOffset(offset) {
 function handleBoolean(which, key, cb = () => null) {
   const url = this.props.url;
   if (config.DEBUG) console.log(url);
-  return axios.put(url, { id: which.id, [key]: !which[key] }, {
+  return axios.put(url, { id: which.id, [key]: !which[key] ? 1 : 0 }, {
     headers: {
       Authorization: `Bearer ${this.props.session.authToken}`,
       'Content-Type': 'application/json',
