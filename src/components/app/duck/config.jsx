@@ -34,4 +34,12 @@ config.TABLES = {
   limit: 10, 
 };
 
+config.REDIRECT = {
+  timeout: 5,
+};
+
+config.SITE = {
+  copyright: 'Construcciones Andia ©',
+};
+
 export default config;

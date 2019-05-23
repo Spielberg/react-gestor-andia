@@ -8,6 +8,41 @@ import config from './config';
 
 const i18nComponentKey = 'app.visitas.form';
 
+function catchReturn({ key }){
+  if (key === 'Enter') {
+    const url = `${config.VISITAS.tableList.url}?telefono=${this.state.values.telefono}&limit=1`;
+    if (config.DEBUG) console.log(url);
+    return axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${this.props.session.authToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        let current = {
+          ...this.state,
+          search: true,
+        };
+        if (response.data.data.results.length > 0) {
+          const candidate = first(response.data.data.results);
+          current = {
+            ...current,
+            values: {
+              ...current.values,
+              name: candidate.name,
+              email: candidate.email,
+              telefono: candidate.telefono,
+            },
+          };
+        }
+        this.setState({ ...current });
+      })
+      .catch((error) => {
+        this.setState({ search: true });
+      });
+  }
+}
+
 function displayAlert(message, type) {
   this.setState(current => ({
     ...current,
@@ -206,6 +241,7 @@ function validate(cb = () => (null)) {
 }
 
 export default {
+  catchReturn,
   didMout,
   displayAlert,
   displayError,

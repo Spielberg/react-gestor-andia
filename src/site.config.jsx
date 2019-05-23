@@ -9,6 +9,7 @@ config.VERSION = '20190513-1';
 config.PROJECT = process.env.REACT_APP_PROJECT || 'react-gestor-andia';
 
 config.API_DOMAIN = process.env.REACT_APP_API_DOMAIN || 'http://localhost:8080';
+//config.API_DOMAIN = process.env.REACT_APP_API_DOMAIN || 'http://www.gestor.construccionesandia.com.mialias.net';
 
 config.STATIC_CONTENT_URL = process.env.REACT_APP_STATIC_CONTENT_URL || '//s3.us-east-2.amazonaws.com/artworks-s3/construcciones-andia';
 

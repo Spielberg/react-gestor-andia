@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import es from 'react-intl/locale-data/es';
 import {
   Page,
+  Site,
 } from 'tabler-react';
 
 import config from './duck/config';
@@ -80,6 +81,8 @@ const App = (props) => {
             <Route component={Home} />
           </Switch>
         </Page.Content>
+        <Site.Footer copyright={config.SITE.copyright} />
+
       </Fragment>,
     )
   );

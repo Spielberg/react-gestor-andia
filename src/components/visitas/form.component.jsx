@@ -60,22 +60,23 @@ class VisitasForm extends Component {
       },
       values: {
         id: parseInt(props.match.params.id, 10) || null,
-        name: 'nombre',
-        email: 'email@email.com',
-        telefono: '789777',
-        promociones_id: 1,
+        name: '',
+        email: '',
+        telefono: '',
+        promociones_id: '',
         observaciones: '',
         fecha_visita: new Date(),
         conociste: '',
         status: '',
         users_id: parseInt(props.session.profile.id, 10),
       },
+      search: false,
       loading: false,
       promociones: [],
       redirect: {
         enabled: false,
-        url: config.PATHS.viaitas,
-        timeout: 5,
+        url: config.PATHS.visitas,
+        timeout: config.REDIRECT.timeout,
       },
     };
     each(visitasSelectors, (_, k) => this[k] = visitasSelectors[k].bind(this));
@@ -91,7 +92,7 @@ class VisitasForm extends Component {
   */
   render() {
     const { intl } = this.props;
-    const { values, errors, promociones, alert, redirect, loading } = this.state;
+    const { values, errors, promociones, alert, redirect, loading, search } = this.state;
 
     if (redirect.enabled) {
       return <Redirect to={redirect.url} />;
@@ -110,12 +111,22 @@ class VisitasForm extends Component {
         <Card.Body>
           {alert.display && <Alert type={alert.type} icon="alert-triangle">{alert.message}</Alert>}
           <Dimmer active={loading} loader>
+          <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.telefono`, defaultMessage: `${i18nComponentKey}.telefono` })}>
+              <Form.Input
+                feedback={errors.telefono}
+                invalid={errors.telefono !== ''}
+                value={values.telefono}
+                onChange={e => this.handleValues(e, 'telefono')}
+                onKeyPress={this.catchReturn}
+              />
+            </Form.Group>
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.name`, defaultMessage: `${i18nComponentKey}.name` })}>
               <Form.Input
                 feedback={errors.name}
                 invalid={errors.name !== ''}
                 value={values.name}
                 onChange={e => this.handleValues(e, 'name')}
+                disabled={!search}
               />
             </Form.Group>
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.email`, defaultMessage: `${i18nComponentKey}.email` })}>
@@ -124,14 +135,7 @@ class VisitasForm extends Component {
                 invalid={errors.email !== ''}
                 value={values.email}
                 onChange={e => this.handleValues(e, 'email')}
-              />
-            </Form.Group>
-            <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.telefono`, defaultMessage: `${i18nComponentKey}.telefono` })}>
-              <Form.Input
-                feedback={errors.telefono}
-                invalid={errors.telefono !== ''}
-                value={values.telefono}
-                onChange={e => this.handleValues(e, 'telefono')}
+                disabled={!search}
               />
             </Form.Group>
             <Grid.Row>
