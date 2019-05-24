@@ -6,17 +6,18 @@ import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
 import {
   Alert,
-  Badge,
   Button,
   Card,
   Dimmer,
   Form,
   Header,
+  Icon,
   Table,
 } from 'tabler-react';
 
 import {
   ceil,
+  reduce,
   each,
   map,
   size,
@@ -39,6 +40,7 @@ const propTypes = {
   url: PropTypes.string.isRequired,
   session: PropTypes.object.isRequired,
   columns: PropTypes.object.isRequired,
+  selected: PropTypes.bool,
   addUrl: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.oneOf([null]),
@@ -51,6 +53,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  selected: false,
   i18nKey: i18nComponentKey,
   addUrl: null,
   editUrl: null,
@@ -83,8 +86,9 @@ class TableList extends Component {
   * @return {reactElement} - react element itself
   */
   render() {
-    const { addUrl, editUrl, intl, columns, i18nKey } = this.props;
+    const { addUrl, editUrl, intl, columns, i18nKey, selected } = this.props;
     const { loading, offset, results, pagination, query } = this.state;
+    const selectedCount = reduce(results, (result, obj) => result + (obj.selected ? 1 : 0), 0);
 
     const layout = child => (
       <Card>
@@ -99,9 +103,16 @@ class TableList extends Component {
               onChange={this.handleQuery}
               onKeyPress={this.catchReturn}
             />
-            {addUrl && <Link to={addUrl} className="btn-add">
-              <Button color="primary">{intl.formatMessage({ id: `${i18nKey}.nuevo`, defaultMessage: `${i18nKey}.nuevo` })}</Button>
-            </Link>}
+            <Button.List>
+              {addUrl && <Link to={addUrl} className="btn-add">
+                <Button color="primary">{intl.formatMessage({ id: `${i18nKey}.nuevo`, defaultMessage: `${i18nKey}.nuevo` })}</Button>
+              </Link>}
+              {selectedCount && <Link to={addUrl} className="btn-add">
+                <Button color="secundary" icon="mail">
+                  {intl.formatMessage({ id: `${i18nKey}.send`, defaultMessage: `${i18nKey}.send` })}
+                </Button>
+              </Link>}
+            </Button.List>
           </Card.Options>
         </Card.Header>
         <Dimmer active={loading} loader className="table-container">
@@ -120,6 +131,7 @@ class TableList extends Component {
         <Fragment>
           <Table>
               <Table.Header>
+                {selected && <Table.ColHeader />}
                 {map(columns.payload, column => (
                   <Table.ColHeader key={`${i18nKey}.col-header.${column.key}`}>
                     {intl.formatMessage({ id: `${i18nKey}.column.${column.i18n(column)}`, defaultMessage: `${i18nKey}.column.${column.i18n(column)}` })}
@@ -130,6 +142,15 @@ class TableList extends Component {
                 <Table.Body>
                   {map(results, obj => (
                     <Table.Row key={`${i18nKey}.row.${obj.id}`}>
+                      {selected && 
+                        <Table.Col>
+                          <Icon
+                            className="select-icon"
+                            key={`${i18nKey}.selected.${obj.id}`}
+                            onClick={() => this.handleSelect(obj)}
+                            name={obj.selected ? 'check-circle' : 'circle'}
+                          />
+                      </Table.Col>}
                       {map(columns.payload, column => <Table.Col key={`${i18nKey}.col.${obj.id}.${column.key}`}>
                         <TableCol
                           column={column}

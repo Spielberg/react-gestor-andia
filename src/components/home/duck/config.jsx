@@ -1,7 +1,11 @@
 import base from '../../../site.config';
 
-const config = {};
+const config = { ...base };
 
-config.HOME = {};
+config.HOME = {
+  stats: {
+    url: `${config.API_DOMAIN}/api/home`,
+  },
+};
 
-export default { ...config, ...base };
+export default config;

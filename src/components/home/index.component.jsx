@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
@@ -9,45 +9,73 @@ import {
   Grid,
   Header,
 } from 'tabler-react';
+import {
+  each,
+} from 'lodash';
 
 import 'c3/c3.css';
 
 import config from './duck/config';
 
+import {
+  homeSelectors,
+} from './duck';
+
 const i18nComponentKey = 'app.home.index';
 const propTypes = {};
 const defaultProps = {};
 
-const data = {
-  columns: [
-    ['data1', 30, 200, 100, 400, 150, 250],
-    ['data2', 50, 20, 10, 40, 15, 25]
-  ]
-};
+class Home extends Component {
+  /**
+  * class constructor
+  * @param {obj} props - Component properties
+  * @return {void}
+  */
+  constructor(props) {
+    super(props);
+    this.state = {
+      stats: {
+        comerciales: [],
+        promociones: [],
+      }
+    };
+    each(homeSelectors, (_, k) => this[k] = homeSelectors[k].bind(this));
+  }
 
-const Home = (props) => (
-  <Card>
-    <Card.Header>
-      <Header.H3>{props.intl.formatMessage({ id: `${i18nComponentKey}.title`, defaultMessage: `${i18nComponentKey}.title` })}</Header.H3>
-    </Card.Header>
-    <Card.Body>
-      <Grid.Row cards deck>
-        <Grid.Col md={4}>
-          <Card body={<C3Chart data={{ columns: [ ['data1', 75], ['data2', 42] ], type: 'pie' }} element="testchart" />} />
-        </Grid.Col>
-        <Grid.Col md={4}>
-          <Card
-            body={`Extra long content of card. Lorem ipsum dolor sit amet,
-        consetetur sadipscing elitr`}
-          />
-        </Grid.Col>
-        <Grid.Col md={4}>
-          <Card body="Short content" />
-        </Grid.Col>
-      </Grid.Row>
-    </Card.Body>
-  </Card>
-);
+  componentDidMount() {
+    this.didMount();
+  }
+
+  render() {
+    return (
+      <Card>
+        <Card.Header>
+          <Header.H3>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.title`, defaultMessage: `${i18nComponentKey}.title` })}</Header.H3>
+        </Card.Header>
+        <Card.Body>
+          <Grid.Row cards deck>
+            <Grid.Col md={4}>
+              <Card>
+                <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.promociones`, defaultMessage: `${i18nComponentKey}.header.stats.promociones` })}</Card.Header>
+                <C3Chart data={{ columns: this.state.stats.promociones, type: 'pie' }} element="testchart" />
+              </Card>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <Card
+                body={`Extra long content of card. Lorem ipsum dolor sit amet,
+          consetetur sadipscing elitr`}
+              />
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.comerciales`, defaultMessage: `${i18nComponentKey}.header.stats.comerciales` })}</Card.Header>
+              <C3Chart data={{ columns: this.state.stats.comerciales, type: 'pie' }} element="testchart" />
+            </Grid.Col>
+          </Grid.Row>
+        </Card.Body>
+      </Card>
+    );
+  }
+}
 
 Home.propTypes = propTypes;
 Home.defaultProps = defaultProps;

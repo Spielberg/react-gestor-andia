@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  chain,
   each,
   isUndefined,
   isNull,
@@ -32,7 +33,13 @@ function fetch(cb = () => (null)) {
       this.setState(current => ({
         ...current,
         loading: false,
-        results: keyBy(response.data.data.results, 'id'),
+        results: chain(response.data.data.results)
+          .map(row => ({
+            ...row,
+            selected: false,
+          }))
+          .keyBy('id')
+          .value(),
         pagination: response.data.data.pagination,
       }), () => {
         return cb(null, response.data);
@@ -50,6 +57,19 @@ function handleOffset(offset) {
     results: {},
     offset,
   }), this.fetch);
+}
+
+function handleSelect(which) {
+  this.setState(current => ({
+    ...current,
+    results: {
+      ...current.results,
+      [which.id]: {
+        ...current.results[which.id],
+        selected: !current.results[which.id].selected,
+      }
+    },
+  }));
 }
 
 function handleBoolean(which, key, cb = () => null) {
@@ -85,7 +105,6 @@ function handleBoolean(which, key, cb = () => null) {
 }
 
 function handleActive(which, cb = () => null) {
-  console.log({ which });
   return this.handleBoolean(which, 'active', cb);
 }
 
@@ -130,6 +149,7 @@ export default {
   catchReturn,
   fetch,
   handleActive,
+  handleSelect,
   handleSuperuser,
   handleBoolean,
   handleOffset,

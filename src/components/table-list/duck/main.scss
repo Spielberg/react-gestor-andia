@@ -5,9 +5,14 @@
 .table th,
 .text-wrap table th,
 table.table td {
-    padding: 0.25rem;
+    padding: 0.35rem 0.25rem;
 }
 
 .alert.alert-info.alert-no-result {
     margin-top: 1em;
+}
+
+i.select-icon {
+  font-size: 1.5em;
+  vertical-align: middle;
 }
