@@ -1,3 +1,5 @@
 export default {
-  es: {},
+  es: {
+    "app.home.index.logout": "salir",
+  },
 };

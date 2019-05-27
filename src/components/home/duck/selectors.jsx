@@ -1,4 +1,8 @@
 import axios from 'axios';
+import {
+  map,
+} from 'lodash';
+import moment from 'moment';
 
 import config from './config';
 
@@ -9,7 +13,13 @@ function didMount(){
 } 
 
 function fetchHomeStats(cb = () => (null)) {
-  const url = config.HOME.stats.url;
+  let url = config.HOME.stats.url;
+  if (this.state.since !== '' && config.HOME.stats.since[this.state.since]) {
+    const since = moment()
+      .subtract(config.HOME.stats.since[this.state.since][0], config.HOME.stats.since[this.state.since][1])
+      .format('YYYY-MM-DD');
+    url = `${url}?since=${since}`; 
+  }
   if (config.DEBUG) console.log(url);
   return axios.get(url, {
     headers: {
@@ -23,7 +33,13 @@ function fetchHomeStats(cb = () => (null)) {
       }
       this.setState(current => ({
         ...current,
-        stats: response.data.data,
+        stats: {
+          ...response.data.data,
+          conociste: map(response.data.data.conociste, arr => ([
+            this.props.intl.formatMessage({ id: `${i18nComponentKey}.conociste.${arr[0]}`, defaultMessage: `${i18nComponentKey}.conociste.${arr[0]}`}),
+            arr[1],
+          ])),
+        },
       }), () => {
         return cb(null, response.data.data);
       });
@@ -33,9 +49,21 @@ function fetchHomeStats(cb = () => (null)) {
     });
 }
 
-
+function handleSince(e) {
+  e.preventDefault();
+  const value = e.target.value;
+  const { stats: { since } } = config.HOME;
+  if (!since[value]) {
+    return;
+  }
+  this.setState(current => ({
+    ...current,
+    since: value,
+  }), this.fetchHomeStats);
+}
 
 export default {
   didMount,
   fetchHomeStats,
+  handleSince,
 };

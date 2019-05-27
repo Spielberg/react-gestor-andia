@@ -46,7 +46,7 @@ const Header = (props) => {
           />
         </Link>      
         <Card.Options>
-          <Button color="gray" size="sm" onClick={props.requestLogout}>logout</Button>
+          <Button color="gray" size="sm" onClick={props.requestLogout}>{intl.formatMessage({ id: `${i18nComponentKey}.logout`, defaultMessage: `${i18nComponentKey}.logout` })}</Button>
         </Card.Options>
       </Site.Header>
       <Site.Nav>

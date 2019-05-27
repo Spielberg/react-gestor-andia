@@ -2,6 +2,7 @@ import config from './config';
 import types from './types';
 
 import dictionary from './dictionary';
+import headerDiccionary from '../../header/duck/dictionary';
 import homeDictionary from '../../home/duck/dictionary';
 import loginDiccionary from '../../login/duck/dictionary';
 import promocionesDictionary from '../../promociones/duck/dictionary';
@@ -16,6 +17,7 @@ const defaultState = {
     messages: { 
       es: {
         ...dictionary.es,
+        ...headerDiccionary.es,
         ...homeDictionary.es,
         ...loginDiccionary.es,
         ...promocionesDictionary.es,
