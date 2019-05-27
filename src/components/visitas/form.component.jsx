@@ -152,14 +152,16 @@ class VisitasForm extends Component {
                 </Form.Group>
               </Grid.Col>
               <Grid.Col>
-                <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.fecha_visita`, defaultMessage: `${i18nComponentKey}.fecha_visita` })}>
-                  <Form.DatePicker
-                    feedback={errors.fecha_visita}
-                    invalid={errors.fecha_visita !== ''}
-                    value={values.fecha_visita}
-                    onChange={this.handleFechaVisita}
-                    monthLabels={map(range(11), i => intl.formatMessage({ id: `${i18nComponentKey}.months.${i}`, defaultMessage: `${i18nComponentKey}.months.${i}` }))}
-                  />
+                <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })}>
+                  <Form.Select
+                    feedback={errors.promociones_id}
+                    invalid={errors.promociones_id !== ''}
+                    value={values.promociones_id}
+                    onChange={e => this.handleValues(e, 'promociones_id')}
+                  >
+                    <option />
+                    {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
+                  </Form.Select>
                 </Form.Group>
               </Grid.Col>
             </Grid.Row>
@@ -181,13 +183,34 @@ class VisitasForm extends Component {
               </Grid.Col>
               <Grid.Col>
                 <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.conociste`, defaultMessage: `${i18nComponentKey}.conociste` })}>
-                  <Form.Input
+                <Form.Select
                     feedback={errors.conociste}
                     invalid={false && errors.conociste !== ''}
                     value={values.conociste}
                     onChange={e => this.handleValues(e, 'conociste')}
+                  >
+                    <option />
+                    {map(config.VISITAS.conociste, (key) => <option value={key} key={`${i18nComponentKey}-conociste-${key}`}>
+                      {intl.formatMessage({ id: `app.conociste.${key}`, defaultMessage: `app.conociste.${key}` })}
+                    </option>)}
+                  </Form.Select>
+                </Form.Group>
+              </Grid.Col>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Col>
+              <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.fecha_visita`, defaultMessage: `${i18nComponentKey}.fecha_visita` })}>
+                  <Form.DatePicker
+                    feedback={errors.fecha_visita}
+                    invalid={errors.fecha_visita !== ''}
+                    value={values.fecha_visita}
+                    onChange={this.handleFechaVisita}
+                    monthLabels={map(range(11), i => intl.formatMessage({ id: `${i18nComponentKey}.months.${i}`, defaultMessage: `${i18nComponentKey}.months.${i}` }))}
                   />
                 </Form.Group>
+              </Grid.Col>
+              <Grid.Col>
+                publicidad
               </Grid.Col>
             </Grid.Row>
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.observaciones`, defaultMessage: `${i18nComponentKey}.observaciones` })}>

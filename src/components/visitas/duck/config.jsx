@@ -22,7 +22,16 @@ config.VISITAS = {
         i18n: data => data.key,
       },
       payload: [
-        { key: 'promocion' },
+        { key: 'promocion', src: (data) => {
+          const arr = [];
+          if (data.promo1 !== '') {
+            arr.push(data.promo1);
+          } 
+          if (data.promo2 !== '') {
+            arr.push(data.promo2);
+          }
+          return arr.join(', ');
+        }},
         { key: 'name' },
         { key: 'email' },
         { key: 'telefono' },
@@ -36,6 +45,17 @@ config.VISITAS = {
     { key: 'reserva' },
     { key: 'anulacion' },
     { key: 'compra' },
+  ],
+  conociste: [
+    'web',
+    'ddnavc',
+    'ddnava',
+    'cono',
+    'ddnot',
+    'valla',
+    'ideal',
+    'pisos',
+    'fotoc',
   ]
 };
 

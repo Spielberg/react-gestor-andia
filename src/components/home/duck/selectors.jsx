@@ -36,7 +36,7 @@ function fetchHomeStats(cb = () => (null)) {
         stats: {
           ...response.data.data,
           conociste: map(response.data.data.conociste, arr => ([
-            this.props.intl.formatMessage({ id: `${i18nComponentKey}.conociste.${arr[0]}`, defaultMessage: `${i18nComponentKey}.conociste.${arr[0]}`}),
+            this.props.intl.formatMessage({ id: `app.conociste.${arr[0]}`, defaultMessage: `app.conociste.${arr[0]}`}),
             arr[1],
           ])),
         },
