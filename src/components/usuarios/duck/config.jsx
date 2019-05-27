@@ -1,6 +1,7 @@
 import {
   map,
 } from 'lodash';
+import moment from 'moment';
 
 import base from '../../app/duck/config';
 
@@ -10,7 +11,7 @@ config.USUARIOS = {
   tableList: {
     url: `${config.API_DOMAIN}/api/users`,
     i18nKey: 'app.users.index',
-    limit: config.TABLES.limit,
+    limit: config.DEFAULT.TABLE_LIMIT,
     addUrl: config.PATHS.configuracion.usuarios_anadir,
     editUrl: config.PATHS.configuracion.usuarios_editar,
     columns: {
@@ -22,8 +23,8 @@ config.USUARIOS = {
       payload: [
         { key: 'name' },
         { key: 'email' },
-        { key: 'created_at', type: 'date' },
-        { key: 'last_login', type: 'date' },
+        { key: 'created_at', type: 'date', src: (data, key) => moment(data[key]).format(config.DEFAULT.DATE_TIME_FORMAT) },
+        { key: 'last_login', type: 'date', src: (data, key) => moment(data[key]).format(config.DEFAULT.DATE_TIME_FORMAT) },
         { key: 'active', type: 'boolean' },
         { key: 'superuser', type: 'boolean' },
       ],

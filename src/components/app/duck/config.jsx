@@ -30,16 +30,18 @@ config.PATHS = {
   }
 };
 
-config.TABLES = {
-  limit: 10, 
-};
-
 config.REDIRECT = {
   timeout: 5,
 };
 
 config.SITE = {
   copyright: 'Construcciones Andia ©',
+};
+
+config.DEFAULT = {
+  DATE_TIME_FORMAT: 'DD-MM-YYYY HH:mm',
+  DATE_FORMAT: 'DD-MM-YYYY',
+  TABLE_LIMIT: 10,
 };
 
 export default config;

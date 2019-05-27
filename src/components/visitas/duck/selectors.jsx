@@ -2,6 +2,7 @@ import axios from 'axios';
 import moment from 'moment';
 import {
   first,
+  orderBy,
 } from 'lodash';
 
 import config from './config';
@@ -81,7 +82,7 @@ function fetchPromociones(cb = () => (null)) {
       }
       this.setState(current => ({
         ...current,
-        promociones: response.data.data.results,
+        promociones: orderBy(response.data.data.results, 'name', 'desc')
       }), () => {
         return cb(null, response.data.data);
       });

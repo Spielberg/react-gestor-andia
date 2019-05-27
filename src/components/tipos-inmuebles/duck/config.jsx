@@ -1,6 +1,7 @@
 import {
   map,
 } from 'lodash';
+import moment from 'moment';
 
 import base from '../../app/duck/config';
 
@@ -10,7 +11,7 @@ config.TIPOS_INMUEBLE = {
   tableList: {
     url: `${config.API_DOMAIN}/api/tipos-inmuebles`,
     i18nKey: 'app.tipos-inmuebles.index',
-    limit: config.TABLES.limit,
+    limit: config.DEFAULT.TABLE_LIMIT,
     columns: {
       defaults: {
         src: (data, key) => data[key],
@@ -19,7 +20,7 @@ config.TIPOS_INMUEBLE = {
       },
       payload: [
         { key: 'name' },
-        { key: 'created_at' },
+        { key: 'created_at', type: 'date', src: (data, key) => moment(data[key]).format(config.DEFAULT.DATE_FORMAT) },
         { key: 'active', type: 'boolean' },
       ],
     }

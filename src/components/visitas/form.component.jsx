@@ -1,6 +1,5 @@
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import React, { Component } from 'react';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router';

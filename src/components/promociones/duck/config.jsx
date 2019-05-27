@@ -13,7 +13,7 @@ config.PROMOCIONES = {
   tableList: {
     url: `${config.API_DOMAIN}/api/promociones`,
     i18nKey: 'app.promociones.index',
-    limit: config.TABLES.limit,
+    limit: config.DEFAULT.TABLE_LIMIT,
     addUrl: config.PATHS.configuracion.promociones_anadir,
     editUrl: config.PATHS.configuracion.promociones_editar,
     columns: {

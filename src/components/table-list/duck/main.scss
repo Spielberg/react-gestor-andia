@@ -13,6 +13,10 @@ table.table td {
 }
 
 i.select-icon {
-  font-size: 1.5em;
-  vertical-align: middle;
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
+.form-control.custom-select.input-options {
+    margin-right: 1em;
 }

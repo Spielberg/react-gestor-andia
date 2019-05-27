@@ -27,6 +27,10 @@ import {
   tableListSelectors,
 } from './duck';
 
+import {
+  visitasSelectors,
+} from '../visitas/duck';
+
 import config from './duck/config';
 
 import TableCol from './functionals/table-col.component';
@@ -49,14 +53,16 @@ const propTypes = {
     PropTypes.string,
     PropTypes.oneOf([null]),
   ]),
+  filterByPromocion: PropTypes.bool,
   i18nKey: PropTypes.string,
 };
 
 const defaultProps = {
-  selected: false,
-  i18nKey: i18nComponentKey,
   addUrl: null,
   editUrl: null,
+  filterByPromocion: false,
+  i18nKey: i18nComponentKey,
+  selected: false,
 };
 
 class TableList extends Component {
@@ -69,12 +75,15 @@ class TableList extends Component {
     super(props);
     this.state = {
       loading: true,
+      promocion_id: '',
+      promociones: [],
       offset: 0,
       query: '',
       pagination: {},
       results: {},
     };
     each(tableListSelectors, (_, k) => this[k] = tableListSelectors[k].bind(this));
+    this.fetchPromociones = visitasSelectors.fetchPromociones.bind(this);
   }
 
   componentDidMount(){
@@ -86,8 +95,8 @@ class TableList extends Component {
   * @return {reactElement} - react element itself
   */
   render() {
-    const { addUrl, editUrl, intl, columns, i18nKey, selected } = this.props;
-    const { loading, offset, results, pagination, query } = this.state;
+    const { addUrl, filterByPromocion, editUrl, intl, columns, i18nKey, selected } = this.props;
+    const { loading, offset, results, pagination, promocion_id, promociones, query } = this.state;
     const selectedCount = reduce(results, (result, obj) => result + (obj.selected ? 1 : 0), 0);
 
     const layout = child => (
@@ -95,14 +104,22 @@ class TableList extends Component {
         <Card.Header>
           <Header.H3>{intl.formatMessage({ id: `${i18nKey}.title`, defaultMessage: `${i18nKey}.title` })}</Header.H3>
           <Card.Options>
-            <Form.Input
-              icon="search"
-              placeholder={intl.formatMessage({ id: `${i18nComponentKey}.buscar`, defaultMessage: `${i18nComponentKey}.buscar` })}
-              position="append"
-              value={query}
-              onChange={this.handleQuery}
-              onKeyPress={this.catchReturn}
-            />
+            {filterByPromocion && (
+              <Form.Select
+                className="input-options"
+                value={promocion_id}
+                onChange={e => this.setState({ promocion_id: e.target.value }, this.fetch)}>
+                <option />
+                {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
+              </Form.Select>)}
+              <Form.Input
+                icon="search"
+                placeholder={intl.formatMessage({ id: `${i18nComponentKey}.buscar`, defaultMessage: `${i18nComponentKey}.buscar` })}
+                position="append"
+                value={query}
+                onChange={this.handleQuery}
+                onKeyPress={this.catchReturn}
+              />
             <Button.List>
               {addUrl && <Link to={addUrl} className="btn-add">
                 <Button color="primary">{intl.formatMessage({ id: `${i18nKey}.nuevo`, defaultMessage: `${i18nKey}.nuevo` })}</Button>

@@ -19,6 +19,9 @@ function fetch(cb = () => (null)) {
   if (this.state.query !== '') {
     url += `&query=${this.state.query}`;
   }
+  if (this.props.filterByPromocion && this.state.promocion_id !== '') {
+    url += `&promocion=${this.state.promocion_id}`;
+  }
   if (config.DEBUG) console.log(url);
   return axios.get(url, {
     headers: {
@@ -122,6 +125,9 @@ function handleQuery(e){
 
 function onMount() {
   this.fetch();
+  if (this.props.filterByPromocion) {
+    this.fetchPromociones();
+  }
 }
 
 function urlFor(path, params) {

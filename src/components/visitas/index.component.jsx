@@ -7,7 +7,7 @@ import config from './duck/config';
 const propTypes = {};
 const defaultProps = {};
 
-const Visitas = (props) => <TableList selected {...config.VISITAS.tableList} />;
+const Visitas = (props) => <TableList selected filterByPromocion {...config.VISITAS.tableList}  />;
 
 Visitas.propTypes = propTypes;
 Visitas.defaultProps = defaultProps;

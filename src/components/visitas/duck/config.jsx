@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
   map,
 } from 'lodash';
@@ -11,7 +12,7 @@ config.VISITAS = {
   tableList: {
     url: `${config.API_DOMAIN}/api/visitas`,
     i18nKey: 'app.visitas.index',
-    limit: config.TABLES.limit,
+    limit: config.DEFAULT.TABLE_LIMIT,
     addUrl: config.PATHS.visitas_anadir,
     editUrl: config.PATHS.visitas_editar,
     columns: {
@@ -21,12 +22,12 @@ config.VISITAS = {
         i18n: data => data.key,
       },
       payload: [
+        { key: 'promocion' },
         { key: 'name' },
         { key: 'email' },
         { key: 'telefono' },
         { key: 'comercial' },
-        { key: 'promocion' },
-        { key: 'fecha_visita' },
+        { key: 'fecha_visita', src: (data, key) => moment(data[key]).format(config.DEFAULT.DATE_FORMAT) },
       ],
     }
   },
