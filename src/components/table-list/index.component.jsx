@@ -20,7 +20,7 @@ import {
   reduce,
   each,
   map,
-  size,
+  orderBy,
 } from 'lodash';
 
 import {
@@ -157,7 +157,7 @@ class TableList extends Component {
                 {editUrl && <Table.ColHeader>{intl.formatMessage({ id: `${i18nComponentKey}.column.actions`, defaultMessage: `${i18nComponentKey}.column.actions` })}</Table.ColHeader>}
               </Table.Header>
                 <Table.Body>
-                  {map(results, obj => (
+                  {map(orderBy(results, 'created_at', 'desc'), obj => (
                     <Table.Row key={`${i18nKey}.row.${obj.id}`}>
                       {selected && 
                         <Table.Col>
