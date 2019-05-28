@@ -93,7 +93,7 @@ function fetchPromociones(cb = () => (null)) {
 }
 
 function fetchVisita(id, cb = () => (null)) {
-  const url = `${config.VISITAS.tableList.url}?id=${id}`;
+  const url = `${config.VISITAS.tableList.url}/${id}`;
   if (config.DEBUG) console.log(url);
   return axios.get(url, {
     headers: {
@@ -105,7 +105,7 @@ function fetchVisita(id, cb = () => (null)) {
       if (response.status !== 200 && response.status !== 204) {
         return cb(new Error(`Status erros in fetchStats expected 200 or 204 received ${response.status}`));
       }
-      const values = first(response.data.data.results);
+      const values = response.data.data;
       this.setState(current => ({
         ...current,
         values: {
@@ -113,7 +113,8 @@ function fetchVisita(id, cb = () => (null)) {
           name: values.name,
           email: values.email,
           telefono: values.telefono,
-          promociones_id: values.promociones_id,
+          promociones_id_1: values.promociones_id_1,
+          promociones_id_2: values.promociones_id_2,
           observaciones: values.observaciones,
           fecha_visita: values.fecha_visita,
           conociste: values.conociste,
@@ -165,7 +166,7 @@ function submit(e, cb = () => (null)) {
             ...current,
             redirect: {
               ...current.redirect,
-              enabled: true,
+              //enabled: true,
             }
           }));
         }, this.state.redirect.timeout * 1000);
@@ -178,21 +179,15 @@ function submit(e, cb = () => (null)) {
 
 function handleValues(e, which) {
   const value = e.target.value;
+  this.setValue(which, value);
+}
+
+function setValue(which, value) {
   this.setState(current => ({
     ...current,
     values: {
       ...current.values,
       [which]: value,
-    }
-  }));
-}
-
-function handleFechaVisita(fecha_visita) {
-  this.setState(current => ({
-    ...current,
-    values: {
-      ...current.values,
-      fecha_visita,
     }
   }));
 }
@@ -205,7 +200,7 @@ function validate(cb = () => (null)) {
       name: '',
       email: '',
       telefono: '',
-      promociones_id: '',
+      promociones_id_1: '',
       fecha_visita: '',
     },
   };
@@ -225,8 +220,8 @@ function validate(cb = () => (null)) {
     current.errors.telefono = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.telefono`, defaultMessage: `${i18nComponentKey}.err.telefono` });
     valid = false;
   }
-  if (values.promociones_id === '') {
-    current.errors.promociones_id = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.promociones_id`, defaultMessage: `${i18nComponentKey}.err.promociones_id` });
+  if (values.promociones_id_1 === '') {
+    current.errors.promociones_id_1 = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.promociones_id`, defaultMessage: `${i18nComponentKey}.err.promociones_id` });
     valid = false;
   }
   if (values.fecha_visita === '') {
@@ -249,8 +244,8 @@ export default {
   displaySuccess,
   fetchPromociones,
   fetchVisita,
-  handleFechaVisita,
   handleValues,
+  setValue,
   submit,
   validate,
 };

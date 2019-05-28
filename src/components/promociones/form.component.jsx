@@ -123,14 +123,6 @@ class PromocionForm extends Component {
                 onChange={(zonas) => this.handleZona(first(zonas))}
                 placeholder={values.zona}
               />
-            {/*
-            <Form.Input
-              feedback={errors.zona}
-              invalid={errors.zona !== ''}
-              value={values.zona}
-              onChange={e => this.handleValues(e, 'zona')}
-            />
-            */}
             </Form.Group>
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.tipos-inmueble`, defaultMessage: `${i18nComponentKey}.tipos-inmueble`})}>
             <Dimmer active={isEmpty(inmuebles)} loader>

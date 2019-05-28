@@ -36,9 +36,19 @@ const CustomItem = (props) => {
 
 const Header = (props) => {
   const { intl } = props;
+  const NavItems = () => (
+    <Nav>
+      <CustomItem to={config.PATHS.visitas} icon="book" value="Visitas" activeClassName="active" />
+        <Nav.Item hasSubNav value="Configuración" icon="settings">
+          <CustomItem to={config.PATHS.configuracion.usuarios} value="Usuarios" icon="user" className="dropdown-item" />
+          <CustomItem to={config.PATHS.configuracion.promociones} value="Promociones" icon="home" className="dropdown-item" />
+          <CustomItem to={config.PATHS.configuracion.tiposInmuebles} value="Tipos de inmuebles" icon="settings" className="dropdown-item" />
+        </Nav.Item>
+    </Nav>
+  );
   return (
     <Fragment>
-      <Site.Header>
+      <Site.Header onMenuToggleClick={<NavItems />}>
         <Link to={config.PATHS.homepage} className="header-brand">
           <img
             alt={intl.formatMessage({ id: `${i18nComponentKey}.logotipo`, defaultMessage: `${i18nComponentKey}.logotipo` })}
@@ -50,14 +60,7 @@ const Header = (props) => {
         </Card.Options>
       </Site.Header>
       <Site.Nav>
-        <Nav>
-          <CustomItem to={config.PATHS.visitas} icon="book" value="Visitas" activeClassName="active" />
-          <Nav.Item hasSubNav value="Configuración" icon="settings">
-            <CustomItem to={config.PATHS.configuracion.usuarios} value="Usuarios" icon="user" className="dropdown-item" />
-            <CustomItem to={config.PATHS.configuracion.promociones} value="Promociones" icon="home" className="dropdown-item" />
-            <CustomItem to={config.PATHS.configuracion.tiposInmuebles} value="Tipos de inmuebles" icon="settings" className="dropdown-item" />
-          </Nav.Item>
-        </Nav>
+        <NavItems />
       </Site.Nav>
     </Fragment>
   );

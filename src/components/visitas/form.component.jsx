@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import moment from 'moment';
 import {
   ceil,
   chunk,
@@ -20,6 +21,7 @@ import {
   Form,
   Grid,
   Header,
+  Notification,
 } from 'tabler-react';
 
 import 'react-bootstrap-typeahead/css/Typeahead.css';
@@ -54,7 +56,8 @@ class VisitasForm extends Component {
         name: '',
         email: '',
         telefono: '',
-        promociones_id: '',
+        promociones_id_1: '',
+        promociones_id_2: '',
         fecha_visita: '',
       },
       values: {
@@ -62,11 +65,14 @@ class VisitasForm extends Component {
         name: '',
         email: '',
         telefono: '',
-        promociones_id: '',
-        observaciones: '',
+        promociones_id_1: '',
+        promociones_id_2: '',
+        publicidad: true,
+        observacion: '',
+        observaciones: [],
         fecha_visita: new Date(),
         conociste: '',
-        status: '',
+        status: 'primera',
         users_id: parseInt(props.session.profile.id, 10),
       },
       search: false,
@@ -141,10 +147,10 @@ class VisitasForm extends Component {
               <Grid.Col>
                 <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })}>
                   <Form.Select
-                    feedback={errors.promociones_id}
-                    invalid={errors.promociones_id !== ''}
-                    value={values.promociones_id}
-                    onChange={e => this.handleValues(e, 'promociones_id')}
+                    feedback={errors.promociones_id_1}
+                    invalid={errors.promociones_id_1 !== ''}
+                    value={values.promociones_id_1}
+                    onChange={e => this.handleValues(e, 'promociones_id_1')}
                   >
                     <option />
                     {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
@@ -154,10 +160,10 @@ class VisitasForm extends Component {
               <Grid.Col>
                 <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })}>
                   <Form.Select
-                    feedback={errors.promociones_id}
-                    invalid={errors.promociones_id !== ''}
-                    value={values.promociones_id}
-                    onChange={e => this.handleValues(e, 'promociones_id')}
+                    feedback={false}
+                    invalid={false}
+                    value={values.promociones_id_2}
+                    onChange={e => this.handleValues(e, 'promociones_id_2')}
                   >
                     <option />
                     {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
@@ -204,23 +210,40 @@ class VisitasForm extends Component {
                     feedback={errors.fecha_visita}
                     invalid={errors.fecha_visita !== ''}
                     value={values.fecha_visita}
-                    onChange={this.handleFechaVisita}
+                    onChange={fecha => this.setValue('fecha_visita', fecha)}
                     monthLabels={map(range(11), i => intl.formatMessage({ id: `${i18nComponentKey}.months.${i}`, defaultMessage: `${i18nComponentKey}.months.${i}` }))}
                   />
                 </Form.Group>
               </Grid.Col>
               <Grid.Col>
-                publicidad
+                <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.publicidad`, defaultMessage: `${i18nComponentKey}.publicidad` })}>
+                  <Form.Checkbox
+                    label={intl.formatMessage({ id: `${i18nComponentKey}.si`, defaultMessage: `${i18nComponentKey}.si` })}
+                    onChange={() => this.setValue('publicidad', !values.publicidad)}
+                    name="publicidad"
+                    checked={values.publicidad}
+                    value={values.publicidad}
+                  />
+                </Form.Group>
               </Grid.Col>
             </Grid.Row>
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.observaciones`, defaultMessage: `${i18nComponentKey}.observaciones` })}>
               <Form.Textarea
-                feedback={errors.observaciones}
-                invalid={false && errors.observaciones !== ''}
-                value={values.observaciones}
-                onChange={e => this.handleValues(e, 'observaciones')}
+                feedback={errors.observacion}
+                invalid={false && errors.observacion !== ''}
+                value={values.observacion}
+                onChange={e => this.handleValues(e, 'observacion')}
               />
             </Form.Group>
+            {values.observaciones && 
+            map(values.observaciones, ({ created_at, text }) => (
+              <div className="d-flex alert alert-secondary notificacion-observaciones" key={`${i18nComponentKey}-${created_at}`}>
+                <Notification
+                  message={text}
+                  time={moment(created_at).format(config.DEFAULT.DATE_TIME_FORMAT)}
+                />
+              </div>
+            ))}
           </Dimmer>
         </Card.Body>
         <Card.Footer>
