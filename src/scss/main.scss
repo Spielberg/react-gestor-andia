@@ -1,3 +1,4 @@
+@import 'variables';
 .header {
     .header-brand {
         img {
@@ -12,12 +13,56 @@
 }
 
 i.fe.fe-award {
-  font-size: 1.5em;
-  font-weight: bold;
-  &.success {
-    color: #5eba00;
-  }
-  &.danger {
-    color: #cd201f;
-  }
+    font-size: 1.5em;
+    font-weight: bold;
+    &.success {
+        color: #5eba00;
+    }
+    &.danger {
+        color: #cd201f;
+    }
+}
+
+i.open-menu {
+    display: none;
+    font-size: 2.5em;
+}
+
+.nav-item.logout {
+    display: none;
+}
+
+@media only screen and (max-width: $screen-lg-min) {
+    i.open-menu {
+        //display: none;
+    }
+}
+
+@media only screen and (max-width: $screen-md-min) {
+    i.open-menu {
+        //display: none;
+    }
+}
+
+// solo para dispositivos moviles
+@media only screen and (max-width: $screen-sm-min) {
+    ul.nav {
+        li.nav-item {
+            display: grid;
+            font-size: 1.3em;
+            width: 100%;
+            &.logout {
+                display: block;
+            }
+        }
+    }
+    .header.collapse {
+        display: none;
+    }
+    i.open-menu {
+        display: block;
+    }
+    .logout-btn {
+        display: none;
+    }
 }

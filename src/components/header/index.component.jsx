@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import { NavLink, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import {
   Card,
   Button,
+  Icon,
   Nav,
   Site,
 } from 'tabler-react';
@@ -36,19 +37,33 @@ const CustomItem = (props) => {
 
 const Header = (props) => {
   const { intl } = props;
-  const NavItems = () => (
-    <Nav>
-      <CustomItem to={config.PATHS.visitas} icon="book" value="Visitas" activeClassName="active" />
-        <Nav.Item hasSubNav value="Configuración" icon="settings">
-          <CustomItem to={config.PATHS.configuracion.usuarios} value="Usuarios" icon="user" className="dropdown-item" />
-          <CustomItem to={config.PATHS.configuracion.promociones} value="Promociones" icon="home" className="dropdown-item" />
-          <CustomItem to={config.PATHS.configuracion.tiposInmuebles} value="Tipos de inmuebles" icon="settings" className="dropdown-item" />
-        </Nav.Item>
-    </Nav>
+  const [visible, setVisible] = useState(false);
+  const CollapseNav = () => (
+    <div className={`header d-lg-flex p-0 ${visible ? '' : 'collapse'}`}>
+      <div className="container">
+        <div className="row row align-items-center">
+          <div className="col-lg-1 ml-auto" />
+          <div className="col col-lg order-lg-first">
+          <Nav>
+            <CustomItem to={config.PATHS.visitas} value={intl.formatMessage({ id: `${i18nComponentKey}.visitas`, defaultMessage: `${i18nComponentKey}.visitas` })} icon="book" activeClassName="active" />
+            <CustomItem to={config.PATHS.configuracion.usuarios} value={intl.formatMessage({ id: `${i18nComponentKey}.usuarios`, defaultMessage: `${i18nComponentKey}.usuarios` })} icon="user" />
+            <CustomItem to={config.PATHS.configuracion.promociones} value={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })} icon="home" />
+            <CustomItem to={config.PATHS.configuracion.tiposInmuebles} value={intl.formatMessage({ id: `${i18nComponentKey}.tipos-inmuebles`, defaultMessage: `${i18nComponentKey}.tipos-inmuebles` })} icon="settings" />
+            <li className="nav-item logout">
+              <a className="nav-link" onClick={props.requestLogout}>
+                <i className="fe fe-external-link" />{intl.formatMessage({ id: `${i18nComponentKey}.salir`, defaultMessage: `${i18nComponentKey}.salir` })}
+              </a>
+            </li>
+          </Nav>
+          </div>
+        </div>
+      </div>
+    </div>
   );
+
   return (
     <Fragment>
-      <Site.Header onMenuToggleClick={<NavItems />}>
+      <Site.Header>
         <Link to={config.PATHS.homepage} className="header-brand">
           <img
             alt={intl.formatMessage({ id: `${i18nComponentKey}.logotipo`, defaultMessage: `${i18nComponentKey}.logotipo` })}
@@ -56,12 +71,11 @@ const Header = (props) => {
           />
         </Link>      
         <Card.Options>
-          <Button color="gray" size="sm" onClick={props.requestLogout}>{intl.formatMessage({ id: `${i18nComponentKey}.logout`, defaultMessage: `${i18nComponentKey}.logout` })}</Button>
+          <Button color="gray" className="logout-btn" size="sm" onClick={props.requestLogout}>{intl.formatMessage({ id: `${i18nComponentKey}.logout`, defaultMessage: `${i18nComponentKey}.logout` })}</Button>
+          <Icon name="menu" className="open-menu" onClick={() => setVisible(!visible)} />
         </Card.Options>
       </Site.Header>
-      <Site.Nav>
-        <NavItems />
-      </Site.Nav>
+      <CollapseNav />
     </Fragment>
   );
 }

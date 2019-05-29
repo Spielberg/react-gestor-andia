@@ -1,0 +1,13 @@
+// Font family
+$fontbase: gotham_prolight,
+sans-serif,
+Raleway;
+$fondbold: gotham_probold;
+$fondsemibold: gotham_promedium;
+// Defining media query values
+$screen-sm-min: 768px;
+$screen-xs-max: ($screen-sm-min - 1);
+$screen-md-min: 992px;
+$screen-sm-max: ($screen-md-min - 1);
+$screen-lg-min: 1200px;
+$screen-md-max: ($screen-lg-min - 1);
