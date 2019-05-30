@@ -9,6 +9,9 @@ import promociones from '../../promociones/duck/config';
 const config = { ...base, ...promociones };
 
 config.VISITAS = {
+  tiposInmuebles: {
+    url: `${config.API_DOMAIN}/api/promociones/<%= id %>`,
+  },
   tableList: {
     url: `${config.API_DOMAIN}/api/visitas`,
     i18nKey: 'app.visitas.index',

@@ -1,8 +1,10 @@
 import axios from 'axios';
 import moment from 'moment';
 import {
+  chain,
   first,
-  orderBy,
+  remove,
+  template,
 } from 'lodash';
 
 import config from './config';
@@ -82,7 +84,45 @@ function fetchPromociones(cb = () => (null)) {
       }
       this.setState(current => ({
         ...current,
-        promociones: orderBy(response.data.data.results, 'name', 'desc')
+        promociones: chain(response.data.data.results)
+                      .map(promocion => ({
+                        ...promocion,
+                        inmuebles: [],
+                      }))
+                      .orderBy('name', 'desc')
+                      .keyBy('id')
+                      .value(),
+      }), () => {
+        return cb(null, response.data.data);
+      });
+    })
+    .catch((error) => {
+      return cb(error);
+    });
+}
+
+function fetchTiposInmuebles(id, cb = () => (null)) {
+  const url = template(config.VISITAS.tiposInmuebles.url)({ id });
+  if (config.DEBUG) console.log(url);
+  return axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${this.props.session.authToken}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => {
+      if (response.status !== 200 && response.status !== 204) {
+        return cb(new Error(`Status erros in fetchStats expected 200 or 204 received ${response.status}`));
+      }
+      this.setState(current => ({
+        ...current,
+        promociones: {
+          ...current.promociones,
+          [id]: {
+            ...current.promociones[id],
+            inmuebles: response.data.data.inmuebles || [],
+          },
+        }
       }), () => {
         return cb(null, response.data.data);
       });
@@ -115,6 +155,8 @@ function fetchVisita(id, cb = () => (null)) {
           telefono: values.telefono,
           promociones_id_1: values.promociones_id_1,
           promociones_id_2: values.promociones_id_2,
+          tipos_inmuebles_1: values.tipos_inmuebles_1,
+          tipos_inmuebles_2: values.tipos_inmuebles_2,
           observaciones: values.observaciones,
           fecha_visita: values.fecha_visita,
           conociste: values.conociste,
@@ -124,10 +166,26 @@ function fetchVisita(id, cb = () => (null)) {
       }), () => {
         return cb(null, response.data);
       });
+      if (values.promociones_id_1) {
+        this.fetchTiposInmuebles(values.promociones_id_1);
+      }
+      if (values.promociones_id_2) {
+        this.fetchTiposInmuebles(values.promociones_id_2);
+      }
     })
     .catch((error) => {
       return cb(error);
     });
+}
+
+function handleInmuebles(id, which) {
+  let arr = this.state.values[which];
+  if (arr.indexOf(id) === -1) {
+    arr.push(id);
+  } else {
+    arr = remove(arr, id);
+  }
+  this.setValue(which, arr);
 }
 
 function displayError(message) {
@@ -177,19 +235,26 @@ function submit(e, cb = () => (null)) {
   });
 }
 
-function handleValues(e, which) {
-  const value = e.target.value;
-  this.setValue(which, value);
+function handlePromocion(e, which) {
+  const id = e.target.value;
+  this.fetchTiposInmuebles(id);
+  this.setValue(which, id);
+  this.setValue(which === 'promociones_id_1' ? 'tipos_inmuebles_1' : 'tipos_inmuebles_2', []);
 }
 
-function setValue(which, value) {
+function handleValues(e, which, cb = () => null) {
+  const value = e.target.value;
+  this.setValue(which, value, cb);
+}
+
+function setValue(which, value, cb = () => null) {
   this.setState(current => ({
     ...current,
     values: {
       ...current.values,
       [which]: value,
     }
-  }));
+  }), cb);
 }
 
 function validate(cb = () => (null)) {
@@ -243,7 +308,10 @@ export default {
   displayError,
   displaySuccess,
   fetchPromociones,
+  fetchTiposInmuebles,
   fetchVisita,
+  handleInmuebles,
+  handlePromocion,
   handleValues,
   setValue,
   submit,

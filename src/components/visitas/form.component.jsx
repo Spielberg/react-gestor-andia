@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,7 +9,7 @@ import {
   ceil,
   chunk,
   each,
-  first,
+  isEmpty,
   range,
   map,
 } from 'lodash';
@@ -45,7 +45,6 @@ class VisitasForm extends Component {
   */
   constructor(props) {
     super(props);
-    console.log();
     this.state = {
       alert: {
         display: false,
@@ -67,6 +66,8 @@ class VisitasForm extends Component {
         telefono: '',
         promociones_id_1: '',
         promociones_id_2: '',
+        tipos_inmuebles_1: [],
+        tipos_inmuebles_2: [],
         publicidad: true,
         observacion: '',
         observaciones: [],
@@ -77,7 +78,7 @@ class VisitasForm extends Component {
       },
       search: false,
       loading: false,
-      promociones: [],
+      promociones: {},
       redirect: {
         enabled: false,
         url: config.PATHS.visitas,
@@ -98,6 +99,13 @@ class VisitasForm extends Component {
   render() {
     const { intl } = this.props;
     const { values, errors, promociones, alert, redirect, loading, search } = this.state;
+
+    if (isEmpty(promociones)) {
+      return <Fragment />;
+    }
+
+    const inmuebles_promocion_1 = !values.promociones_id_1 ? [] : promociones[values.promociones_id_1].inmuebles;
+    const inmuebles_promocion_2 = !values.promociones_id_2 ? [] : promociones[values.promociones_id_2].inmuebles;
 
     if (redirect.enabled) {
       return <Redirect to={redirect.url} />;
@@ -150,7 +158,7 @@ class VisitasForm extends Component {
                     feedback={errors.promociones_id_1}
                     invalid={errors.promociones_id_1 !== ''}
                     value={values.promociones_id_1}
-                    onChange={e => this.handleValues(e, 'promociones_id_1')}
+                    onChange={e => this.handlePromocion(e, 'promociones_id_1')}
                   >
                     <option />
                     {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
@@ -163,7 +171,7 @@ class VisitasForm extends Component {
                     feedback={false}
                     invalid={false}
                     value={values.promociones_id_2}
-                    onChange={e => this.handleValues(e, 'promociones_id_2')}
+                    onChange={e => this.handlePromocion(e, 'promociones_id_2')}
                   >
                     <option />
                     {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
@@ -172,6 +180,32 @@ class VisitasForm extends Component {
               </Grid.Col>
             </Grid.Row>
             <Grid.Row>
+              <Grid.Col>
+                {map(inmuebles_promocion_1, inmueble => (
+                  <Form.Checkbox
+                    key={`${i18nComponentKey}-checkbox-${inmueble.id}`}
+                    label={inmueble.name}
+                    name={inmueble.id}
+                    value={inmueble.id}
+                    checked={values.tipos_inmuebles_1.indexOf(parseInt(inmueble.id, 10)) !== -1}
+                    onChange={e => this.handleInmuebles(inmueble.id, 'tipos_inmuebles_1')}
+                  />
+                ))}
+                </Grid.Col>
+                <Grid.Col>
+                  {map(inmuebles_promocion_2, inmueble => (
+                    <Form.Checkbox
+                      key={`${i18nComponentKey}-checkbox-${inmueble.id}`}
+                      label={inmueble.name}
+                      name={inmueble.id}
+                      value={inmueble.id}
+                      checked={values.tipos_inmuebles_2.indexOf(parseInt(inmueble.id, 10)) !== -1}
+                      onChange={e => this.handleInmuebles(inmueble.id, 'tipos_inmuebles_2')}
+                    />
+                  ))}
+                </Grid.Col>
+              </Grid.Row>
+              <Grid.Row>
               <Grid.Col>
                 <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.status`, defaultMessage: `${i18nComponentKey}.status` })}>
                   <Form.Select
