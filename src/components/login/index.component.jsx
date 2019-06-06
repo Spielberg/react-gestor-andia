@@ -21,6 +21,8 @@ import {
   loginSelectors,
 } from './duck';
 
+import config from './duck/config';
+
 const i18nComponentKey = 'app.login.index';
 const propTypes = {
   
@@ -45,8 +47,8 @@ class Login extends Component {
         password: '',
       },
       values: {
-        email: 'mail@gmail.com',
-        password: '123456789',
+        email: '',
+        password: '',
       },
     };
     each(loginSelectors, (_, k) => this[k] = loginSelectors[k].bind(this));
@@ -66,7 +68,7 @@ class Login extends Component {
             buttonText={this.props.intl.formatMessage({ id: `${i18nComponentKey}.btn.submit`, defaultMessage: `${i18nComponentKey}.btn.submit` })}
             title={this.props.intl.formatMessage({ id: `${i18nComponentKey}.title`, defaultMessage: `${i18nComponentKey}.title` })}
             onSubmit={this.onSubmit}
-            action={console.log}
+            //action={console.log}
             method="post"
           >
             {alert.display && <Alert type="danger" icon="alert-triangle">{alert.message}</Alert>}
