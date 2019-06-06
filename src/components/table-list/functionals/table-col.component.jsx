@@ -30,6 +30,13 @@ const TableCol = (props) => {
         </span>
       );  
     }
+    if (key === 'deleted') {
+      return (
+        <span>
+          <Icon name="trash" onClick={props.showModal} />
+        </span>
+      );  
+    }
     return coverage(
           value
             ? intl.formatMessage({ id: `${i18nKey}.column.${i18n(column)}.true`, defaultMessage: `${i18nKey}.column.${i18n(column)}.true` })

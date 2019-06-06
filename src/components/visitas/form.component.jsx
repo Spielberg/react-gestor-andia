@@ -10,6 +10,7 @@ import {
   chunk,
   each,
   isEmpty,
+  isNull,
   range,
   map,
 } from 'lodash';
@@ -45,6 +46,7 @@ class VisitasForm extends Component {
   */
   constructor(props) {
     super(props);
+    const id = parseInt(props.match.params.id, 10) || null;
     this.state = {
       alert: {
         display: false,
@@ -52,7 +54,7 @@ class VisitasForm extends Component {
         message: '',
       },
       errors: {
-        name: '',
+        apellido_1: '',
         email: '',
         telefono: '',
         promociones_id_1: '',
@@ -60,8 +62,10 @@ class VisitasForm extends Component {
         fecha_visita: '',
       },
       values: {
-        id: parseInt(props.match.params.id, 10) || null,
+        id,
         name: '',
+        apellido_1: '',
+        apellido_2: '',
         email: '',
         telefono: '',
         promociones_id_1: '',
@@ -76,7 +80,7 @@ class VisitasForm extends Component {
         status: 'primera',
         users_id: parseInt(props.session.profile.id, 10),
       },
-      search: false,
+      search: !isNull(id),
       loading: false,
       promociones: {},
       redirect: {
@@ -135,13 +139,40 @@ class VisitasForm extends Component {
             </Form.Group>
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.name`, defaultMessage: `${i18nComponentKey}.name` })}>
               <Form.Input
-                feedback={errors.name}
-                invalid={errors.name !== ''}
+                feedback={errors.name && false}
+                invalid={errors.name !== '' && false}
                 value={values.name}
                 onChange={e => this.handleValues(e, 'name')}
                 disabled={!search}
               />
             </Form.Group>
+
+            <Grid.Row>
+              <Grid.Col>
+              <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.apellido_1`, defaultMessage: `${i18nComponentKey}.apellido_1` })}>
+                <Form.Input
+                  feedback={errors.apellido_1}
+                  invalid={errors.apellido_1 !== ''}
+                  value={values.apellido_1}
+                  onChange={e => this.handleValues(e, 'apellido_1')}
+                  disabled={!search}
+                />
+              </Form.Group>
+              </Grid.Col>
+              <Grid.Col>
+              <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.apellido_2`, defaultMessage: `${i18nComponentKey}.apellido_2` })}>
+                <Form.Input
+                  feedback={errors.apellido_2 && false}
+                  invalid={errors.apellido_2 !== '' && false}
+                  value={values.apellido_2}
+                  onChange={e => this.handleValues(e, 'apellido_2')}
+                  disabled={!search}
+                />
+              </Form.Group>
+              </Grid.Col>
+            </Grid.Row>
+
+
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.email`, defaultMessage: `${i18nComponentKey}.email` })}>
               <Form.Input
                 feedback={errors.email}

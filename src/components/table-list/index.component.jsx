@@ -81,6 +81,10 @@ class TableList extends Component {
       query: '',
       pagination: {},
       results: {},
+      modal: {
+        candidate: null,
+        display: false,
+      },
     };
     each(tableListSelectors, (_, k) => this[k] = tableListSelectors[k].bind(this));
     this.fetchPromociones = visitasSelectors.fetchPromociones.bind(this);
@@ -96,7 +100,7 @@ class TableList extends Component {
   */
   render() {
     const { addUrl, filterByPromocion, editUrl, intl, columns, i18nKey, selected } = this.props;
-    const { loading, offset, results, pagination, promocion_id, promociones, query } = this.state;
+    const { loading, offset, modal, results, pagination, promocion_id, promociones, query } = this.state;
     const selectedCount = reduce(results, (result, obj) => result + (obj.selected ? 1 : 0), 0);
 
     const layout = child => (
@@ -173,6 +177,7 @@ class TableList extends Component {
                           column={column}
                           handleActive={() => this.handleActive(obj)}
                           handleSuperuser={() => this.handleSuperuser(obj)}
+                          showModal={() => this.showModal(obj)}
                           i18nKey={i18nKey}
                           obj={obj}
                         />
@@ -190,6 +195,28 @@ class TableList extends Component {
               last={ceil(pagination.total / pagination.limit)}
               onClick={this.handleOffset}
             />
+            {modal.display && <Fragment>
+              <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
+                <div className="modal-dialog" role="document">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">{intl.formatMessage({ id: `${i18nKey}.modal.title`, defaultMessage: `${i18nKey}.modal.title` })}</h5>
+                      <button type="button" onClick={this.hideModal} className="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" />
+                      </button>
+                    </div>
+                    <div className="modal-body">
+                      <p>{intl.formatMessage({ id: `${i18nKey}.modal.body`, defaultMessage: `${i18nKey}.modal.body` })}</p>
+                    </div>
+                    <div className="modal-footer">
+                      <button type="button" onClick={this.handleDelete} className="btn btn-primary">{intl.formatMessage({ id: `${i18nKey}.modal.delete`, defaultMessage: `${i18nKey}.modal.delete` })}</button>
+                      <button type="button" onClick={this.hideModal} className="btn btn-secondary" data-dismiss="modal">{intl.formatMessage({ id: `${i18nKey}.modal.close`, defaultMessage: `${i18nKey}.modal.close` })}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-backdrop fade show" />
+            </Fragment>}
           </Fragment>
       );
   };

@@ -4,7 +4,6 @@ import {
   each,
   isUndefined,
   isNull,
-  keyBy,
 } from 'lodash';
 import config from './config';
 
@@ -111,6 +110,48 @@ function handleActive(which, cb = () => null) {
   return this.handleBoolean(which, 'active', cb);
 }
 
+function hideModal() {
+  this.setState(current => ({
+    ...current,
+    modal: {
+      ...current.modal,
+      display: false,
+      candidate: null,
+    }
+  }));
+}
+
+function showModal(candidate) {
+  this.setState(current => ({
+    ...current,
+    modal: {
+      ...current.modal,
+      display: true,
+      candidate,
+    }
+  }));
+}
+
+function handleDelete(){
+  if (isNull(this.state.modal.candidate) || !this.state.modal.candidate.id) {
+    return;
+  }
+  const url = `${this.props.url}/${this.state.modal.candidate.id}`;
+  if (config.DEBUG) console.log(url);
+  return axios.delete(url, {
+    headers: {
+      Authorization: `Bearer ${this.props.session.authToken}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => {
+      this.fetch(this.hideModal);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
 function handleSuperuser(which, cb = () => null) {
   return this.handleBoolean(which, 'superuser', cb);
 }
@@ -155,11 +196,14 @@ export default {
   catchReturn,
   fetch,
   handleActive,
+  handleDelete,
   handleSelect,
   handleSuperuser,
   handleBoolean,
   handleOffset,
   handleQuery,
+  hideModal,
   onMount,
+  showModal,
   urlFor,
 };

@@ -26,19 +26,23 @@ config.VISITAS = {
       },
       payload: [
         { key: 'promocion', src: (data) => {
-          const arr = [];
-          if (data.promo1 !== '') {
-            arr.push(data.promo1);
-          } 
-          if (data.promo2 !== '') {
-            arr.push(data.promo2);
+          if (data.promo1 !== '' && data.promo2 !== '' && data.promo2 !== null) {
+            return `${data.promo1}, ${data.promo2}`;
           }
-          return arr.join(', ');
+          return data.promo1;
         }},
-        { key: 'name' },
+        { key: 'name', src: (data) => {
+          if (data.name !== '' && data.apellido_1 !== '') {
+            return `${data.apellido_1}, ${data.name}`;
+          } else if (data.name !== '') {
+            return data.name;
+          }
+          return data.apellido_1;
+        }},
         { key: 'email' },
         { key: 'telefono' },
         { key: 'comercial' },
+        { key: 'deleted', type: 'boolean' },
         { key: 'fecha_visita', src: (data, key) => moment(data[key]).format(config.DEFAULT.DATE_FORMAT) },
       ],
     }
@@ -50,15 +54,16 @@ config.VISITAS = {
     { key: 'compra' },
   ],
   conociste: [
-    'web',
-    'ddnavc',
-    'ddnava',
     'cono',
+    'ddnava',
+    'ddnavc',
     'ddnot',
-    'valla',
-    'ideal',
-    'pisos',
     'fotoc',
+    'ideal',
+    'lista',
+    'pisos',
+    'valla',
+    'web',
   ]
 };
 

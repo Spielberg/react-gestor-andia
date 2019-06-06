@@ -4,7 +4,7 @@ config.DEBUG = process.env.REACT_APP_DEBUG || true;
 
 config.COMPANY = 'javier.sanchezostiz@gmail.com';
 
-config.VERSION = '20190513-1';
+config.VERSION = '20190606-1';
 
 config.PROJECT = process.env.REACT_APP_PROJECT || 'react-gestor-andia';
 

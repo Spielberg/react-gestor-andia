@@ -31,7 +31,7 @@ config.PATHS = {
 };
 
 config.REDIRECT = {
-  timeout: 5,
+  timeout: 3,
 };
 
 config.SITE = {

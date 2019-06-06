@@ -151,6 +151,8 @@ function fetchVisita(id, cb = () => (null)) {
         values: {
           ...current.values,
           name: values.name,
+          apellido_1: values.apellido_1,
+          apellido_2: values.apellido_2,
           email: values.email,
           telefono: values.telefono,
           promociones_id_1: values.promociones_id_1,
@@ -219,12 +221,13 @@ function submit(e, cb = () => (null)) {
           return this.displayError(response.data.message);
         }
         this.displaySuccess(this.props.intl.formatMessage({ id: `${i18nComponentKey}.submit.success`, defaultMessage: `${i18nComponentKey}.submit.success` }, { timeout: this.state.redirect.timeout }));
+        window.scrollTo(0,0);
         setTimeout(() => {
           this.setState(current => ({
             ...current,
             redirect: {
               ...current.redirect,
-              //enabled: true,
+              enabled: true,
             }
           }));
         }, this.state.redirect.timeout * 1000);
@@ -262,7 +265,7 @@ function validate(cb = () => (null)) {
   const current = {
     ...this.state,
     errors: {
-      name: '',
+      apellido_1: '',
       email: '',
       telefono: '',
       promociones_id_1: '',
@@ -270,8 +273,8 @@ function validate(cb = () => (null)) {
     },
   };
   let valid = true;
-  if (values.name === '') {
-    current.errors.name = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.name`, defaultMessage: `${i18nComponentKey}.err.name` });
+  if (values.apellido_1 === '') {
+    current.errors.apellido_1 = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.apellido_1`, defaultMessage: `${i18nComponentKey}.err.apellido_1` });
     valid = false;
   }
   if (
