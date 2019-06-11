@@ -60,7 +60,7 @@ class PromocionForm extends Component {
         id: parseInt(props.match.params.id, 10) || null,
         name: '',
         zona: '',
-        inmuebles: []
+        inmuebles: {}
       },
       inmuebles: [],
       zonas: [],
@@ -127,17 +127,22 @@ class PromocionForm extends Component {
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.tipos-inmueble`, defaultMessage: `${i18nComponentKey}.tipos-inmueble`})}>
             <Dimmer active={isEmpty(inmuebles)} loader>
               <Grid.Row>
-                {map(chunk(inmuebles, ceil(inmuebles.length / 3)), (arr, i) => (
-                  <Grid.Col key={`${i18nComponentKey}-grid-col-${i}`}>
+                {map(chunk(inmuebles, ceil(inmuebles.length / 2)), (arr, i) => (
+                  <Grid.Col key={`${i18nComponentKey}-grid-col-input-${i}`}>
                     {map(arr, inmueble => (
-                      <Form.Checkbox
-                        key={`${i18nComponentKey}-checkbox-${inmueble.id}`}
-                        label={inmueble.name}
-                        name={inmueble.id}
-                        value={inmueble.id}
-                        checked={values.inmuebles.indexOf(parseInt(inmueble.id, 10)) !== -1}
-                        onChange={this.handleInmuebles}
-                      />
+                      <Fragment key={`${i18nComponentKey}-input-${inmueble.id}`}>
+                        <div className="input-icon tipos-inmuebles">
+                          <span className="input-icon-addon">{inmueble.name}</span>
+                          <Form.Input
+                            className="cantidad-tipo-inmueble"
+                            name={inmueble.id}
+                            value={values.inmuebles[inmueble.id] || ''}
+                            onChange={e => this.handleInmuebles(e, inmueble.id)}
+                            placeholder={intl.formatMessage({ id: `${i18nComponentKey}.cantidad`, defaultMessage: `${i18nComponentKey}.cantidad` }, { ...inmueble })}
+                            type="number"
+                          />
+                        </div>
+                      </Fragment>
                     ))}
                   </Grid.Col>
                 ))}

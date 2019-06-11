@@ -15,6 +15,10 @@ config.PATHS = {
   visitas_editar: '/visitas/:id',
   visitas: '/visitas',
 
+  // ventas
+  ventas_anadir: '/ventas/anadir',
+  ventas: '/ventas',
+
   configuracion: {
     // usuarios
     usuarios_anadir: '/configuracion/usuarios/anadir',

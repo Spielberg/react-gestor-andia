@@ -10,6 +10,7 @@ import tableListDictionary from '../../table-list/duck/dictionary';
 import tiposInmueblesDiccionary from '../../tipos-inmuebles/duck/dictionary';
 import usuariosDictionary from '../../usuarios/duck/dictionary';
 import visitasDiccionary from '../../visitas/duck/dictionary';
+import ventasDiccionary from '../../ventas/duck/dictionary';
 
 const defaultState = {
   i18n: {
@@ -25,6 +26,7 @@ const defaultState = {
         ...tiposInmueblesDiccionary.es,
         ...usuariosDictionary.es,
         ...visitasDiccionary.es,
+        ...ventasDiccionary.es,
       },
     },
   },

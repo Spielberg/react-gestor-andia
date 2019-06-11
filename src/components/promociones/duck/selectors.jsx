@@ -1,8 +1,9 @@
 import axios from 'axios';
 import {
   first,
-  map,
-  pull,
+  chain,
+  isNaN,
+  omitBy,
 } from 'lodash';
 
 import config from './config';
@@ -78,7 +79,10 @@ function fetchPromocion(id, cb = () => (null)) {
           ...current.values,
           name: promocion.name,
           zona: promocion.zona,
-          inmuebles: map(promocion.inmuebles, 'id'),
+          inmuebles: chain(promocion.inmuebles)
+                      .keyBy('id')
+                      .mapValues('cantidad')
+                      .value(),
         },
       }), () => {
         return cb(null, response.data);
@@ -114,19 +118,16 @@ function fetchZonas(cb = () => (null)) {
     });
 }
 
-function handleInmuebles (e) {
+function handleInmuebles (e, which) {
   const value = parseInt(e.target.value, 10);
-  let inmuebles = this.state.values.inmuebles;
-  if (inmuebles.indexOf(value) === -1) {
-    inmuebles.push(value);
-  } else {
-    inmuebles = pull(inmuebles, value);
-  }
   this.setState(current => ({
     ...current,
     values: {
       ...current.values,
-      inmuebles,
+      inmuebles: {
+        ...current.values.inmuebles,
+        [which]: value,
+      },
     }
   }));
 }
@@ -141,10 +142,14 @@ function displaySuccess (message) {
 
 function submit(e, cb = () => (null)) {
   e.preventDefault();
+  const body = {
+    ...this.state.values,
+    inmuebles: omitBy(this.state.values.inmuebles, (val, key) => val === 0 || isNaN(val)),
+  };
   this.validate(() => {
     let url = config.PROMOCIONES.tableList.url;
     if (config.DEBUG) console.log(url);
-    return axios({ method: this.state.values.id ? 'put' : 'post', url, data: this.state.values, headers: {
+    return axios({ method: this.state.values.id ? 'put' : 'post', url, data: body, headers: {
         Authorization: `Bearer ${this.props.session.authToken}`,
         'Content-Type': 'application/json',
       },

@@ -22,6 +22,8 @@ import Usuarios from '../usuarios/index.component';
 import UsuariosForm from '../usuarios/form.component';
 import Visitas from '../visitas/index.component';
 import VisitasForm from '../visitas/form.component';
+import Ventas from '../ventas/index.component';
+import VentasForm from '../ventas/form.component';
 
 const propTypes = {
   app: PropTypes.object.isRequired,
@@ -65,6 +67,10 @@ const App = (props) => {
             <Route path={config.PATHS.visitas_anadir} component={VisitasForm} />
             <Route path={config.PATHS.visitas_editar} component={VisitasForm} />
             <Route path={config.PATHS.visitas} component={Visitas} />
+
+            {/* ventas */}
+            <Route path={config.PATHS.ventas_anadir} component={VentasForm} />
+            <Route path={config.PATHS.ventas} component={Ventas} />
 
             {/* usuarios */}
             <Route path={config.PATHS.configuracion.usuarios_anadir} component={UsuariosForm} />

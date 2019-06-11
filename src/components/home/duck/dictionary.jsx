@@ -5,6 +5,7 @@ export default {
     'app.home.index.header.stats.promociones': 'Visitas por promoción',
     'app.home.index.header.stats.comerciales': 'Visitas por comercial',
     'app.home.index.header.stats.conociste': 'Cómo nos han conocido',
+    'app.home.index.ventas': 'Ventas',
     'app.home.index.select.since': 'Rango temporal:',
     'app.home.index.select.week': 'Última semana',
     'app.home.index.select.month': 'Último mes',
