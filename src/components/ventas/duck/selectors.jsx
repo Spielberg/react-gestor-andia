@@ -142,12 +142,13 @@ function displaySuccess(message) {
 function submit(e, cb = () => (null)) {
   e.preventDefault();
   this.validate(() => {
+    console.log(this.state.values);
     const data = {
-      ...this.state.values,
-      fecha_visita: moment(this.state.values.fecha_visita).format('YYYY-MM-DD'),
+      promociones_tipos_inmuebles: this.state.values.promociones_tipos_inmuebles,
+      visitas_id: this.state.values.visita.id,
     };
-    let url = config.VISITAS.tableList.url;
-    if (config.DEBUG) console.log(url);
+    let url = config.VENTAS.tableList.url;
+    if (config.DEBUG) console.log(url, data);
     return axios({
       method: this.state.values.id ? 'put' : 'post', url, data, headers: {
         Authorization: `Bearer ${this.props.session.authToken}`,
@@ -188,6 +189,7 @@ function handlePromocion(e) {
 
 function handleVisita(e, cb = () => null) {
   const apellidos = e.target.value;
+
   this.setState(current => ({
     ...current,
     values: {
@@ -197,7 +199,7 @@ function handleVisita(e, cb = () => null) {
         apellidos,
       },
     },
-  }, cb));
+  }), cb);
 }
 
 function handleValues(e, which, cb = () => null) {
@@ -220,35 +222,17 @@ function validate(cb = () => (null)) {
   const current = {
     ...this.state,
     errors: {
-      apellido_1: '',
-      email: '',
-      telefono: '',
-      promociones_id_1: '',
-      fecha_visita: '',
+      promociones_tipos_inmuebles: '',
+      visita: '',
     },
   };
   let valid = true;
-  if (values.apellido_1 === '') {
-    current.errors.apellido_1 = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.apellido_1`, defaultMessage: `${i18nComponentKey}.err.apellido_1` });
+  if (values.visita.id === null) {
+    current.errors.visita = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.visita`, defaultMessage: `${i18nComponentKey}.err.visita` });
     valid = false;
   }
-  if (
-    values.email === ''
-    || !/[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}/igm.test(values.email)
-  ) {
-    current.errors.email = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.email`, defaultMessage: `${i18nComponentKey}.err.email` });
-    valid = false;
-  }
-  if (values.telefono === '') {
-    current.errors.telefono = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.telefono`, defaultMessage: `${i18nComponentKey}.err.telefono` });
-    valid = false;
-  }
-  if (values.promociones_id_1 === '') {
-    current.errors.promociones_id_1 = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.promociones_id`, defaultMessage: `${i18nComponentKey}.err.promociones_id` });
-    valid = false;
-  }
-  if (values.fecha_visita === '') {
-    current.errors.fecha_visita = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.fecha_visita`, defaultMessage: `${i18nComponentKey}.err.fecha_visita` });
+  if (values.promociones_tipos_inmuebles === '') {
+    current.errors.promociones_tipos_inmuebles = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.promociones_tipos_inmuebles`, defaultMessage: `${i18nComponentKey}.err.promociones_tipos_inmuebles` });
     valid = false;
   }
 

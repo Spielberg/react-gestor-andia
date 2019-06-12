@@ -1,5 +1,4 @@
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,9 +12,7 @@ import {
   Card,
   Dimmer,
   Form,
-  Grid,
   Header,
-  Table,
 } from 'tabler-react';
 
 import config from './duck/config';

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,10 +9,14 @@ import {
   Form,
   Grid,
   Header,
+  Progress,
+  ProgressCard,
+  Table,
 } from 'tabler-react';
 import {
   each,
   map,
+  round,
 } from 'lodash';
 
 import 'c3/c3.css';
@@ -41,6 +45,7 @@ class Home extends Component {
         conociste: [],
         comerciales: [],
         promociones: [],
+        ventas: [],
       }
     };
     each(homeSelectors, (_, k) => this[k] = homeSelectors[k].bind(this));
@@ -85,6 +90,35 @@ class Home extends Component {
                 <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.comerciales`, defaultMessage: `${i18nComponentKey}.header.stats.comerciales` })}</Card.Header>
                 <C3Chart data={{ columns: this.state.stats.comerciales, type: 'pie' }} element="testchart" />
               </Card>
+            </Grid.Col>
+          </Grid.Row>
+          <Grid.Row cards deck>
+            <Grid.Col>
+              {map(this.state.stats.ventas, promocion => (
+                <Card key={`${i18nComponentKey}-promocion-${promocion.id}`}>
+                  <Card.Header>{promocion.pname}</Card.Header>
+                  <Card.Body>
+                  <Table>
+                    <Table.Header>
+                      <Table.ColHeader>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.table.col.name`, defaultMessage: `${i18nComponentKey}.table.col.name` })}</Table.ColHeader>
+                      <Table.ColHeader>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.table.col.cantidad`, defaultMessage: `${i18nComponentKey}.table.col.cantidad` })}</Table.ColHeader>
+                      <Table.ColHeader>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.table.col.vendidas`, defaultMessage: `${i18nComponentKey}.table.col.vendidas` })}</Table.ColHeader>
+                      <Table.ColHeader>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.table.col.percent`, defaultMessage: `${i18nComponentKey}.table.col.percent` })}</Table.ColHeader>
+                    </Table.Header>
+                    <Table.Body>
+                    {map(promocion.inmuebles, inmueble => (
+                      <Table.Row key={`${i18nComponentKey}-inmueble-${promocion.id}-${inmueble.id}`}>
+                        <Table.Col>{inmueble.name}</Table.Col>
+                        <Table.Col>{inmueble.cantidad}</Table.Col>
+                        <Table.Col>{inmueble.vendidas}</Table.Col>
+                        <Table.Col>{round((inmueble.vendidas * 100) / inmueble.cantidad)}%</Table.Col>
+                      </Table.Row>
+                    ))}
+                    </Table.Body>
+                  </Table>
+                  </Card.Body>
+                </Card>
+              ))}
             </Grid.Col>
           </Grid.Row>
         </Card.Body>

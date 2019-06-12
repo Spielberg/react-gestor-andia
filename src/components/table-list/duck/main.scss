@@ -20,3 +20,14 @@ i.select-icon {
 .form-control.custom-select.input-options {
     margin-right: 1em;
 }
+
+.fe-toggle-left,
+.fe-toggle-right {
+    font-size: 2em;
+    &.danger {
+        color: #cd201f;
+    }
+    &.success {
+        color: #5eba00;
+    }
+}

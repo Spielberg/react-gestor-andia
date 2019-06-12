@@ -18,6 +18,9 @@ export default {
     'app.promociones.index.nuevo': 'Añadir promoción',
     'app.promociones.index.title': 'Listado de promociones',
     'app.promociones.form.zona.pagination': 'ver más resultados',
-    'app.promociones.form.cantidad': 'Inmuebles de tipo: {name}'
+    'app.promociones.form.cantidad': 'Inmuebles de tipo: {name}',
+    'app.promociones.index.column.home.true': 'mostrar',
+    'app.promociones.index.column.home.false': 'ocultar',
+    'app.promociones.index.column.home': 'Portada',
   },
 };

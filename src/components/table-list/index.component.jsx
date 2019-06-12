@@ -177,6 +177,7 @@ class TableList extends Component {
                           column={column}
                           handleActive={() => this.handleActive(obj)}
                           handleSuperuser={() => this.handleSuperuser(obj)}
+                          handleHome={() => this.handleHome(obj)}
                           showModal={() => this.showModal(obj)}
                           i18nKey={i18nKey}
                           obj={obj}
@@ -190,11 +191,11 @@ class TableList extends Component {
                     </Table.Row>))}
                 </Table.Body>
             </Table>
-            <Pagination
+            {pagination.total > pagination.limit && <Pagination
               current={offset + 1}
               last={ceil(pagination.total / pagination.limit)}
               onClick={this.handleOffset}
-            />
+            />}
             {modal.display && <Fragment>
               <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
                 <div className="modal-dialog" role="document">

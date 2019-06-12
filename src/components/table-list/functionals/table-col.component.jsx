@@ -37,6 +37,13 @@ const TableCol = (props) => {
         </span>
       );  
     }
+    if (key === 'home') {
+      return (
+        <span>
+          <Icon prefix="fe"  name={`${value ? 'toggle-right' : 'toggle-left'}`} className={`${value ? 'success' : 'danger'}`} onClick={props.handleHome} />
+        </span>
+      );  
+    }
     return coverage(
           value
             ? intl.formatMessage({ id: `${i18nKey}.column.${i18n(column)}.true`, defaultMessage: `${i18nKey}.column.${i18n(column)}.true` })

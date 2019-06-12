@@ -110,6 +110,10 @@ function handleActive(which, cb = () => null) {
   return this.handleBoolean(which, 'active', cb);
 }
 
+function handleHome(which, cb = () => null) {
+  return this.handleBoolean(which, 'home', cb);
+}
+
 function hideModal() {
   this.setState(current => ({
     ...current,
@@ -196,12 +200,13 @@ export default {
   catchReturn,
   fetch,
   handleActive,
-  handleDelete,
-  handleSelect,
-  handleSuperuser,
   handleBoolean,
+  handleDelete,
+  handleHome,
   handleOffset,
   handleQuery,
+  handleSelect,
+  handleSuperuser,
   hideModal,
   onMount,
   showModal,

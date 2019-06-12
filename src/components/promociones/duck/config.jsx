@@ -26,6 +26,7 @@ config.PROMOCIONES = {
         { key: 'id' },
         { key: 'name' },
         { key: 'zona' },
+        { key: 'home', type: 'boolean' },
         { key: 'active', type: 'boolean' },
       ],
     }

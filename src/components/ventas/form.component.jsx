@@ -3,12 +3,11 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router';
-import moment from 'moment';
 import {
+  ceil,
+  chunk,
   each,
   isEmpty,
-  isNull,
-  range,
   map,
 } from 'lodash';
 import {
@@ -17,9 +16,9 @@ import {
   Card,
   Dimmer,
   Form,
-  List,
+  Grid,
   Header,
-  Notification,
+  List,
 } from 'tabler-react';
 
 import config from './duck/config';
@@ -49,7 +48,7 @@ class VentasForm extends Component {
       },
       errors: {
         promociones_tipos_inmuebles: '',
-        visitas: '',
+        visita: '',
       },
       values: {
         id,
@@ -58,7 +57,7 @@ class VentasForm extends Component {
           id: null,
           apellidos: '',
         },
-        promociones_id: '',
+        promocion_id: '',
         tipos_inmuebles: [],
       },
       loading: false,
@@ -92,9 +91,7 @@ class VentasForm extends Component {
       return <Fragment />;
     }
 
-    const inmuebles_promocion = !values.promociones_id ? [] : promociones[values.promociones_id].inmuebles;
-
-    console.log({ inmuebles_promocion });
+    const inmuebles_promocion = !values.promocion_id ? [] : promociones[values.promocion_id].inmuebles;
 
     if (redirect.enabled) {
       return <Redirect to={redirect.url} />;
@@ -116,97 +113,107 @@ class VentasForm extends Component {
             <Dimmer active={loading} loader>
               <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.visita`, defaultMessage: `${i18nComponentKey}.visita` })}>
                 <Form.Input
-                  feedback={errors.visitas}
-                  invalid={errors.visitas !== ''}
-                  value={values.visita.name}
+                  feedback={errors.visita}
+                  invalid={errors.visita !== ''}
+                  value={values.visita.apellidos}
                   onChange={this.handleVisita}
                   onKeyPress={this.catchReturn}
                 />
               </Form.Group>
               <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })}>
-                  <Form.Select
-                    value={values.promociones_id}
-                    onChange={e => this.handlePromocion(e, 'promociones_id')}
-                  >
-                    <option />
-                    {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
-                  </Form.Select>
-                  {map(inmuebles_promocion, inmueble => (
-                  <Form.Checkbox
-                    key={`${i18nComponentKey}-checkbox-${inmueble.id}`}
-                    label={inmueble.name}
-                    name={inmueble.id}
-                    value={inmueble.id}
-                    checked={values.tipos_inmuebles_1.indexOf(parseInt(inmueble.id, 10)) !== -1}
-                    onChange={e => this.handleInmuebles(inmueble.id, 'tipos_inmuebles_1')}
-                  />
-                ))}
+                <Form.Select
+                  value={values.promocion_id}
+                  onChange={e => this.handlePromocion(e, 'promocion_id')}
+                  feedback={errors.promociones_tipos_inmuebles}
+                  invalid={errors.promociones_tipos_inmuebles !== ''}
+                >
+                  <option />
+                  {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
+                </Form.Select>
+              </Form.Group>
+              <Form.Group>
+                <Grid.Row>
+                  {map(chunk(inmuebles_promocion, ceil(inmuebles_promocion.length / 2)), (arr, i) => (
+                    <Grid.Col key={`${i18nComponentKey}-grid-col-input-${i}`}>
+                      {map(arr, inmueble => (
+                        <Form.Checkbox
+                          key={`${i18nComponentKey}-checkbox-${inmueble.key}`}
+                          label={inmueble.name}
+                          name={inmueble.key}
+                          value={inmueble.key}
+                          checked={inmueble.key === values.promociones_tipos_inmuebles}
+                          onChange={e => this.setValue('promociones_tipos_inmuebles', parseInt(e.target.value, 10))}
+                        />
+                      ))}
+                    </Grid.Col>
+                  ))}
+                  </Grid.Row>
                 </Form.Group>
             </Dimmer>
           </Card.Body>
-          <Card.Footer>
-            <Button.List>
-              <Button square color="success" onClick={this.submit}>
-                {intl.formatMessage({ id: `${i18nComponentKey}.save`, defaultMessage: `${i18nComponentKey}.save` })}
-              </Button>
-            </Button.List>
-          </Card.Footer>
+            <Card.Footer>
+              <Button.List>
+                <Button square color="success" onClick={this.submit}>
+                  {intl.formatMessage({ id: `${i18nComponentKey}.save`, defaultMessage: `${i18nComponentKey}.save` })}
+                </Button>
+              </Button.List>
+            </Card.Footer>
         </Card>
-        {modal.display &&
-          <Fragment> 
-            <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
-              <div className="modal-dialog" role="document">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">{intl.formatMessage({ id: `${i18nComponentKey}.modal.title`, defaultMessage: `${i18nComponentKey}.modal.title` })}</h5>
-                    <button type="button" onClick={this.hideModal} className="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true" />
-                    </button>
-                  </div>
-                  <div className="modal-body">
-                  <List>
-                    {map(modal.candidates, data => {
-                      const li = name => (
-                        <List.Item key={`${i18nComponentKey}.li.${data.id}`}>
-                          <span onClick={e => this.setValue('visita', { id: data.id, name }, () => this.hideModal(new Event('click')))}>
-                            {name}
-                          </span>
-                        </List.Item>);
-                      let name = data.apellido_1;
-                      if (data.name !== '' && data.apellido_1 !== '') {
-                        name = `${data.apellido_1}, ${data.name}`;
-                      } else if (data.name !== '') {
-                        name = data.name;
-                      }
-                      return li(name);
-                    })}
-                  </List>
-                  </div>
-                  <div className="modal-footer">
-                    <button type="button" onClick={this.hideModal} className="btn btn-secondary" data-dismiss="modal">{intl.formatMessage({ id: `${i18nComponentKey}.modal.close`, defaultMessage: `${i18nComponentKey}.modal.close` })}</button>
+          {modal.display &&
+            <Fragment>
+              <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
+                <div className="modal-dialog" role="document">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">{intl.formatMessage({ id: `${i18nComponentKey}.modal.title`, defaultMessage: `${i18nComponentKey}.modal.title` })}</h5>
+                      <button type="button" onClick={this.hideModal} className="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" />
+                      </button>
+                    </div>
+                    <div className="modal-body">
+                      <List>
+                        {map(modal.candidates, data => {
+                          const li = name => (
+                            <List.Item key={`${i18nComponentKey}.li.${data.id}`}>
+                              <span onClick={e => this.setValue('visita', { id: data.id, apellidos: name }, () => this.hideModal(new Event('click')))}>
+                                {name}
+                              </span>
+                            </List.Item>);
+                          let name = data.apellido_1;
+                          if (data.name !== '' && data.apellido_1 !== '') {
+                            name = `${data.apellido_1}, ${data.name}`;
+                          } else if (data.name !== '') {
+                            name = data.name;
+                          }
+                          return li(name);
+                        })}
+                      </List>
+                    </div>
+                    <div className="modal-footer">
+                      <button type="button" onClick={this.hideModal} className="btn btn-secondary" data-dismiss="modal">{intl.formatMessage({ id: `${i18nComponentKey}.modal.close`, defaultMessage: `${i18nComponentKey}.modal.close` })}</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="modal-backdrop fade show" />
-          </Fragment>
-        }
+              <div className="modal-backdrop fade show" />
+            </Fragment>
+          }
       </Fragment>
-    );
-  }
-}
-
-VentasForm.propTypes = propTypes;
-VentasForm.defaultProps = defaultProps;
-
-export default injectIntl(
-  connect(
-    // mapStateToProps
+        );
+      }
+    }
+    
+    VentasForm.propTypes = propTypes;
+    VentasForm.defaultProps = defaultProps;
+    
+    export default injectIntl(
+      connect(
+        // mapStateToProps
     state => ({
-      session: state.session,
-    }),
-    // mapActionsToProps
+          session: state.session,
+      }),
+      // mapActionsToProps
     dispatch => bindActionCreators({
-      //functName,
-    }, dispatch),
-  )(VentasForm));
+          //functName,
+        }, dispatch),
+      )(VentasForm));
