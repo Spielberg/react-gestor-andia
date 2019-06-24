@@ -76,19 +76,19 @@ class Home extends Component {
             <Grid.Col md={4}>
               <Card>
                 <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.promociones`, defaultMessage: `${i18nComponentKey}.header.stats.promociones` })}</Card.Header>
-                <C3Chart data={{ columns: this.state.stats.promociones, type: 'pie' }} element="testchart" />
+                <C3Chart data={{ columns: this.state.stats.promociones, type: 'pie' }} pie={config.HOME.stats.pie} element="testchart" />
               </Card>
             </Grid.Col>
             <Grid.Col md={4}>
               <Card>
                 <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.conociste`, defaultMessage: `${i18nComponentKey}.header.stats.conociste` })}</Card.Header>
-                <C3Chart data={{ columns: this.state.stats.conociste, type: 'pie' }} element="testchart" />  
+                <C3Chart data={{ columns: this.state.stats.conociste, type: 'pie' }} pie={config.HOME.stats.pie} element="testchart" />  
               </Card>
             </Grid.Col>
             <Grid.Col md={4}>
               <Card>
                 <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.comerciales`, defaultMessage: `${i18nComponentKey}.header.stats.comerciales` })}</Card.Header>
-                <C3Chart data={{ columns: this.state.stats.comerciales, type: 'pie' }} element="testchart" />
+                <C3Chart data={{ columns: this.state.stats.comerciales, type: 'pie' }} pie={config.HOME.stats.pie} element="testchart" />
               </Card>
             </Grid.Col>
           </Grid.Row>

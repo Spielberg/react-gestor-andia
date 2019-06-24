@@ -31,6 +31,7 @@ function fetchHomeStats(cb = () => (null)) {
       if (response.status !== 200 && response.status !== 204) {
         return cb(new Error(`Status erros in fetchStats expected 200 or 204 received ${response.status}`));
       }
+      console.log(response.data.data);
       this.setState(current => ({
         ...current,
         stats: {

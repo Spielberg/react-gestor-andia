@@ -1,6 +1,6 @@
 export default {
   es: {
-    'app.ventas.form.err.promociones_tipos_inmuebles': 'Es necesario seleccionar la promoción y el tipo de inmueble vendido',
+    'app.ventas.form.err.tipos_inmuebles_id': 'Es necesario seleccionar la promoción y el tipo de inmueble vendido',
     'app.ventas.form.err.visita': 'Es necesario asociar una visita a la venta',
     'app.ventas.form.modal.close': 'Cerrar',
     'app.ventas.form.modal.title': 'Seleccione una visita',
@@ -14,5 +14,6 @@ export default {
     'app.ventas.index.column.promocion': 'Promoción',
     'app.ventas.index.nuevo': 'Añadir venta',
     'app.ventas.index.title': 'Listado de ventas',
+    'app.ventas.index.no-results': 'No existen ventas en la base de datos'
   },
 };

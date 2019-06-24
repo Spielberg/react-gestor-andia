@@ -10,6 +10,11 @@ config.HOME = {
       month: [1, 'months'],
       year: [7, 'year'],
     },
+    pie: {
+      label: {
+        format: value => value,
+      },
+    },
   },
 };
 

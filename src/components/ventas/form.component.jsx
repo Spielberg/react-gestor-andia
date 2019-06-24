@@ -47,12 +47,12 @@ class VentasForm extends Component {
         message: '',
       },
       errors: {
-        promociones_tipos_inmuebles: '',
+        tipos_inmuebles_id: '',
         visita: '',
       },
       values: {
         id,
-        promociones_tipos_inmuebles: '',
+        tipos_inmuebles_id: '',
         visita: {
           id: null,
           apellidos: '',
@@ -124,8 +124,8 @@ class VentasForm extends Component {
                 <Form.Select
                   value={values.promocion_id}
                   onChange={e => this.handlePromocion(e, 'promocion_id')}
-                  feedback={errors.promociones_tipos_inmuebles}
-                  invalid={errors.promociones_tipos_inmuebles !== ''}
+                  feedback={errors.tipos_inmuebles_id}
+                  invalid={errors.tipos_inmuebles_id !== ''}
                 >
                   <option />
                   {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
@@ -137,12 +137,12 @@ class VentasForm extends Component {
                     <Grid.Col key={`${i18nComponentKey}-grid-col-input-${i}`}>
                       {map(arr, inmueble => (
                         <Form.Checkbox
-                          key={`${i18nComponentKey}-checkbox-${inmueble.key}`}
+                          key={`${i18nComponentKey}-checkbox-${inmueble.id}`}
                           label={inmueble.name}
-                          name={inmueble.key}
-                          value={inmueble.key}
-                          checked={inmueble.key === values.promociones_tipos_inmuebles}
-                          onChange={e => this.setValue('promociones_tipos_inmuebles', parseInt(e.target.value, 10))}
+                          name={inmueble.id}
+                          value={inmueble.id}
+                          checked={inmueble.id === values.tipos_inmuebles_id}
+                          onChange={e => this.setValue('tipos_inmuebles_id', parseInt(e.target.value, 10))}
                         />
                       ))}
                     </Grid.Col>
@@ -171,14 +171,15 @@ class VentasForm extends Component {
                       </button>
                     </div>
                     <div className="modal-body">
-                      <List>
+                      <List.Group className="modal-list">
                         {map(modal.candidates, data => {
                           const li = name => (
-                            <List.Item key={`${i18nComponentKey}.li.${data.id}`}>
-                              <span onClick={e => this.setValue('visita', { id: data.id, apellidos: name }, () => this.hideModal(new Event('click')))}>
-                                {name}
-                              </span>
-                            </List.Item>);
+                            <a
+                              key={`${i18nComponentKey}.li.${data.id}`}
+                              className="list-group-item"
+                              onClick={e => this.setValue('visita', { id: data.id, apellidos: name }, () => this.hideModal(new Event('click')))}>
+                              {name}
+                            </a>);
                           let name = data.apellido_1;
                           if (data.name !== '' && data.apellido_1 !== '') {
                             name = `${data.apellido_1}, ${data.name}`;
@@ -187,7 +188,7 @@ class VentasForm extends Component {
                           }
                           return li(name);
                         })}
-                      </List>
+                      </List.Group>
                     </div>
                     <div className="modal-footer">
                       <button type="button" onClick={this.hideModal} className="btn btn-secondary" data-dismiss="modal">{intl.formatMessage({ id: `${i18nComponentKey}.modal.close`, defaultMessage: `${i18nComponentKey}.modal.close` })}</button>

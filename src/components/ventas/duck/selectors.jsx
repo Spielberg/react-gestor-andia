@@ -144,8 +144,9 @@ function submit(e, cb = () => (null)) {
   this.validate(() => {
     console.log(this.state.values);
     const data = {
-      promociones_tipos_inmuebles: this.state.values.promociones_tipos_inmuebles,
-      visitas_id: this.state.values.visita.id,
+      tipos_inmuebles_id: parseInt(this.state.values.tipos_inmuebles_id, 10),
+      promociones_id: parseInt(this.state.values.promocion_id, 10),
+      visitas_id: parseInt(this.state.values.visita.id, 10),
     };
     let url = config.VENTAS.tableList.url;
     if (config.DEBUG) console.log(url, data);
@@ -222,7 +223,7 @@ function validate(cb = () => (null)) {
   const current = {
     ...this.state,
     errors: {
-      promociones_tipos_inmuebles: '',
+      tipos_inmuebles_id: '',
       visita: '',
     },
   };
@@ -231,8 +232,8 @@ function validate(cb = () => (null)) {
     current.errors.visita = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.visita`, defaultMessage: `${i18nComponentKey}.err.visita` });
     valid = false;
   }
-  if (values.promociones_tipos_inmuebles === '') {
-    current.errors.promociones_tipos_inmuebles = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.promociones_tipos_inmuebles`, defaultMessage: `${i18nComponentKey}.err.promociones_tipos_inmuebles` });
+  if (values.tipos_inmuebles_id === '') {
+    current.errors.tipos_inmuebles_id = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.tipos_inmuebles_id`, defaultMessage: `${i18nComponentKey}.err.tipos_inmuebles_id` });
     valid = false;
   }
 
