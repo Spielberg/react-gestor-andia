@@ -1,25 +1,32 @@
 import axios from 'axios';
 import {
+  isNull,
+  isObject,
   map,
 } from 'lodash';
-import moment from 'moment';
 
 import config from './config';
 
-const i18nComponentKey = 'app.home.index';
-
 function didMount(){
   this.fetchHomeStats();
+  this.fetchPromociones();
 } 
 
 function fetchHomeStats(cb = () => (null)) {
   let url = config.HOME.stats.url;
-  if (this.state.since !== '' && config.HOME.stats.since[this.state.since]) {
-    const since = moment()
-      .subtract(config.HOME.stats.since[this.state.since][0], config.HOME.stats.since[this.state.since][1])
-      .format('YYYY-MM-DD');
-    url = `${url}?since=${since}`; 
+  const params = [];
+  if (!isNull(this.state.since) && isObject(this.state.since)) {
+    params.push(`since=${this.state.since.format('YYYY-MM-DD')}`); 
   }
+  if (!isNull(this.state.until) && isObject(this.state.until)) {
+    params.push(`until=${this.state.until.format('YYYY-MM-DD')}`); 
+  }
+  if (!isNull(this.state.promocionId) && this.state.promocionId !== '') {
+    params.push(`promocionId=${this.state.promocionId}`); 
+  }
+  url = params.length
+    ? `${url}?${params.join('&')}`
+    : url;
   if (config.DEBUG) console.log(url);
   return axios.get(url, {
     headers: {
@@ -50,21 +57,13 @@ function fetchHomeStats(cb = () => (null)) {
     });
 }
 
-function handleSince(e) {
-  e.preventDefault();
-  const value = e.target.value;
-  const { stats: { since } } = config.HOME;
-  if (!since[value]) {
-    return;
-  }
-  this.setState(current => ({
-    ...current,
-    since: value,
-  }), this.fetchHomeStats);
+function handleDates({ startDate, endDate }) {
+  this.setState({ since: startDate, until: endDate }, this.fetchHomeStats);
 }
 
 export default {
   didMount,
   fetchHomeStats,
-  handleSince,
+  handleDates,
+  //handleSince,
 };

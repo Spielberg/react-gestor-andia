@@ -3,6 +3,9 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import C3Chart from 'react-c3js';
+import { DateRangePicker, SingleDatePicker, DayPickerRangeController } from 'react-dates';
+import moment from 'moment';
+import 'moment/locale/es';
 import {
   Card,
   Form,
@@ -24,9 +27,15 @@ import {
   homeSelectors,
 } from './duck';
 
+import {
+  visitasSelectors,
+} from '../visitas/duck';
+
 const i18nComponentKey = 'app.home.index';
 const propTypes = {};
 const defaultProps = {};
+
+moment().locale('es');
 
 class Home extends Component {
   /**
@@ -37,7 +46,12 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      since: config.HOME.defaults.since,
+      since: moment()
+        .subtract(config.HOME.stats.since[config.HOME.defaults.since][0], config.HOME.stats.since[config.HOME.defaults.since][1]),
+      until: moment(),
+      focusedInput: null, 
+      promociones: {},
+      promocionId: null,
       stats: {
         conociste: [],
         comerciales: [],
@@ -46,6 +60,7 @@ class Home extends Component {
       }
     };
     each(homeSelectors, (_, k) => this[k] = homeSelectors[k].bind(this));
+    this.fetchPromociones = visitasSelectors.fetchPromociones.bind(this);
   }
 
   componentDidMount() {
@@ -58,14 +73,26 @@ class Home extends Component {
         <Card.Header>
           <Header.H3>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.title`, defaultMessage: `${i18nComponentKey}.title` })}</Header.H3>
           <Card.Options>
-            <Form.Group label={this.props.intl.formatMessage({ id: `${i18nComponentKey}.select.since`, defaultMessage: `${i18nComponentKey}.select.since` })}>
-              <Form.Select value={this.state.since} onChange={this.handleSince}>
-                {map(config.HOME.stats.since, (_, key) => (
-                  <option key={`${i18nComponentKey}-select-${key}`} value={key}>
-                    {this.props.intl.formatMessage({ id: `${i18nComponentKey}.select.${key}`, defaultMessage: `${i18nComponentKey}.select.${key}` })}
-                  </option>))}
+            <Form.Select
+                className="input-options select-promociones"
+                value={this.state.promocionId}
+                onChange={e => this.setState({ promocionId: e.target.value }, this.fetchHomeStats)}>
+                <option />
+                {map(this.state.promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
               </Form.Select>
-            </Form.Group>
+            <DateRangePicker
+              startDate={this.state.since} // momentPropTypes.momentObj or null,
+              startDateId="since" // PropTypes.string.isRequired,
+              endDate={this.state.until} // momentPropTypes.momentObj or null,
+              endDateId="until" // PropTypes.string.isRequired,
+              onDatesChange={this.handleDates} // PropTypes.func.isRequired,
+              focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+              onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+              startDatePlaceholderText={this.props.intl.formatMessage({ id: `${i18nComponentKey}.desde`, defaultMessage: `${i18nComponentKey}.desde` })}
+              endDatePlaceholderText={this.props.intl.formatMessage({ id: `${i18nComponentKey}.hasta`, defaultMessage: `${i18nComponentKey}.hasta` })}
+              enableOutsideDays={true}
+              isOutsideRange={() => false}
+            />
           </Card.Options>
         </Card.Header>
         <Card.Body>
@@ -73,19 +100,19 @@ class Home extends Component {
             <Grid.Col md={4}>
               <Card>
                 <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.promociones`, defaultMessage: `${i18nComponentKey}.header.stats.promociones` })}</Card.Header>
-                <C3Chart data={{ columns: this.state.stats.promociones, type: 'pie' }} pie={config.HOME.stats.pie} element="testchart" />
+                <C3Chart data={{ columns: this.state.stats.promociones, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="promocioneschart" />
               </Card>
             </Grid.Col>
             <Grid.Col md={4}>
               <Card>
                 <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.conociste`, defaultMessage: `${i18nComponentKey}.header.stats.conociste` })}</Card.Header>
-                <C3Chart data={{ columns: this.state.stats.conociste, type: 'pie' }} pie={config.HOME.stats.pie} element="testchart" />  
+                <C3Chart data={{ columns: this.state.stats.conociste, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="conocistechart" />  
               </Card>
             </Grid.Col>
             <Grid.Col md={4}>
               <Card>
                 <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.comerciales`, defaultMessage: `${i18nComponentKey}.header.stats.comerciales` })}</Card.Header>
-                <C3Chart data={{ columns: this.state.stats.comerciales, type: 'pie' }} pie={config.HOME.stats.pie} element="testchart" />
+                <C3Chart data={{ columns: this.state.stats.comerciales, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="comercialeschart" />
               </Card>
             </Grid.Col>
           </Grid.Row>
