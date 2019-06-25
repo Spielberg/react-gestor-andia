@@ -17,8 +17,9 @@ i.select-icon {
     vertical-align: middle;
 }
 
-.form-control.custom-select.input-options {
-    margin-right: 1em;
+.form-control.custom-select.input-options.select-promociones {
+    margin-right: 8px;
+    width: 250px;
 }
 
 .fe-toggle-left,
@@ -30,4 +31,13 @@ i.select-icon {
     &.success {
         color: #5eba00;
     }
+}
+
+.btn-list.text-right {
+  .btn {
+    margin-bottom: 0;
+    &.btn-secundary {
+      margin-left: 8px;
+    }
+  }
 }

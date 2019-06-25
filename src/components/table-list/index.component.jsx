@@ -17,7 +17,9 @@ import {
 
 import {
   ceil,
+  filter,
   reduce,
+  size,
   each,
   map,
   orderBy,
@@ -36,6 +38,8 @@ import config from './duck/config';
 import TableCol from './functionals/table-col.component';
 
 import Pagination from '../../mixins/pagination.component';
+
+import enviosHOC from '../envios/modal.hoc';
 
 const i18nComponentKey = 'app.table-list.index';
 
@@ -101,8 +105,8 @@ class TableList extends Component {
   render() {
     const { addUrl, filterByPromocion, editUrl, intl, columns, i18nKey, selected } = this.props;
     const { loading, offset, modal, results, pagination, promocion_id, promociones, query } = this.state;
-    const selectedCount = reduce(results, (result, obj) => result + (obj.selected ? 1 : 0), 0);
-
+    const candidates = filter(results, 'selected');
+    const selectedCount = size(candidates);
     const layout = child => (
       <Card>
         <Card.Header>
@@ -110,7 +114,7 @@ class TableList extends Component {
           <Card.Options>
             {filterByPromocion && (
               <Form.Select
-                className="input-options"
+                className="input-options select-promociones"
                 value={promocion_id}
                 onChange={e => this.setState({ promocion_id: e.target.value }, this.fetch)}>
                 <option />
@@ -124,15 +128,14 @@ class TableList extends Component {
                 onChange={this.handleQuery}
                 onKeyPress={this.catchReturn}
               />
-            <Button.List>
+            <Button.List align="right">
               {addUrl && <Link to={addUrl} className="btn-add">
                 <Button color="primary">{intl.formatMessage({ id: `${i18nKey}.nuevo`, defaultMessage: `${i18nKey}.nuevo` })}</Button>
               </Link>}
-              {selectedCount && <Link to={addUrl} className="btn-add">
-                <Button color="secundary" icon="mail">
+              {selectedCount > 0 && 
+                <Button color="secundary" icon="mail" onClick={e => this.props.modalEnvios.open(candidates)}>
                   {intl.formatMessage({ id: `${i18nKey}.send`, defaultMessage: `${i18nKey}.send` })}
-                </Button>
-              </Link>}
+                </Button>}
             </Button.List>
           </Card.Options>
         </Card.Header>
@@ -226,14 +229,15 @@ class TableList extends Component {
 TableList.propTypes = propTypes;
 TableList.defaultProps = defaultProps;
 
-export default injectIntl(
-  connect(
-    // mapStateToProps
-    state => ({
-      session: state.session,
-    }),
-    // mapActionsToProps
-    dispatch => bindActionCreators({
-      //functName,
-    }, dispatch),
-  )(TableList));
+export default enviosHOC(
+  injectIntl(
+    connect(
+      // mapStateToProps
+      state => ({
+        session: state.session,
+      }),
+      // mapActionsToProps
+      dispatch => bindActionCreators({
+        //functName,
+      }, dispatch),
+    )(TableList)));

@@ -1,16 +1,13 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import C3Chart from 'react-c3js';
-import moment from 'moment';
 import {
   Card,
   Form,
   Grid,
   Header,
-  Progress,
-  ProgressCard,
   Table,
 } from 'tabler-react';
 import {
