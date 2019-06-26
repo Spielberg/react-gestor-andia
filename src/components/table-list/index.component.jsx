@@ -36,6 +36,7 @@ import {
 import config from './duck/config';
 
 import TableCol from './functionals/table-col.component';
+import FilterVisitasStatus from './functionals/filter-visitas-status.component';
 
 import Pagination from '../../mixins/pagination.component';
 
@@ -58,6 +59,7 @@ const propTypes = {
     PropTypes.oneOf([null]),
   ]),
   filterByPromocion: PropTypes.bool,
+  filterVisitaByStatus: PropTypes.bool,
   i18nKey: PropTypes.string,
 };
 
@@ -65,6 +67,7 @@ const defaultProps = {
   addUrl: null,
   editUrl: null,
   filterByPromocion: false,
+  filterVisitaByStatus: false,
   i18nKey: i18nComponentKey,
   selected: false,
 };
@@ -85,6 +88,7 @@ class TableList extends Component {
       query: '',
       pagination: {},
       results: {},
+      status: '',
       modal: {
         candidate: null,
         display: false,
@@ -103,8 +107,8 @@ class TableList extends Component {
   * @return {reactElement} - react element itself
   */
   render() {
-    const { addUrl, filterByPromocion, editUrl, intl, columns, i18nKey, selected } = this.props;
-    const { loading, offset, modal, results, pagination, promocion_id, promociones, query } = this.state;
+    const { addUrl, filterByPromocion, filterVisitaByStatus, editUrl, intl, columns, i18nKey, selected } = this.props;
+    const { loading, offset, modal, results, pagination, promocion_id, promociones, query, status } = this.state;
     const candidates = filter(results, 'selected');
     const selectedCount = size(candidates);
     const layout = child => (
@@ -120,6 +124,7 @@ class TableList extends Component {
                 <option />
                 {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
               </Form.Select>)}
+              {filterVisitaByStatus && <FilterVisitasStatus status={status} onChange={e => this.setState({ status: e.target.value }, this.fetch)} />}
               <Form.Input
                 icon="search"
                 placeholder={intl.formatMessage({ id: `${i18nComponentKey}.buscar`, defaultMessage: `${i18nComponentKey}.buscar` })}

@@ -21,6 +21,9 @@ function fetch(cb = () => (null)) {
   if (this.props.filterByPromocion && this.state.promocion_id !== '') {
     url += `&promocion=${this.state.promocion_id}`;
   }
+  if (this.props.filterVisitaByStatus && this.state.status !== '') {
+    url += `&status=${this.state.status}`;
+  }
   if (config.DEBUG) console.log(url);
   return axios.get(url, {
     headers: {
