@@ -18,6 +18,7 @@ config.VISITAS = {
     limit: config.DEFAULT.TABLE_LIMIT,
     addUrl: config.PATHS.visitas_anadir,
     editUrl: config.PATHS.visitas_editar,
+    excelUrl: `${config.API_DOMAIN}/api/excel`,
     columns: {
       defaults: {
         src: (data, key) => data[key],

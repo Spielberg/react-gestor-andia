@@ -6,6 +6,7 @@ import {
   isNull,
 } from 'lodash';
 import config from './config';
+import fileDownload from 'js-file-download';
 
 function catchReturn({ key }) {
   if (key === 'Enter') {
@@ -178,6 +179,33 @@ function onMount() {
   }
 }
 
+function requestExcel(url) {
+  const params = [];
+  if (this.state.query !== '') {
+    params.push(`query=${this.state.query}`);
+  }
+  if (this.props.filterByPromocion && this.state.promocion_id !== '') {
+    params.push(`promocion=${this.state.promocion_id}`);
+  }
+  if (this.props.filterVisitaByStatus && this.state.status !== '') {
+    params.push(`status=${this.state.status}`);
+  }
+  url = params.length ? `${url}?${params.join('&')}` : url;
+  if (config.DEBUG) console.log(url);
+  return axios.get(url, {
+    responseType: 'blob',
+    headers: {
+      Authorization: `Bearer ${this.props.session.authToken}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => {
+      console.log(response.data);
+      fileDownload(response.data, 'visitas.xlsx');
+    })
+    .catch(console.log);
+}
+
 function urlFor(path, params) {
   let to = path;
   const i = to.indexOf(':');
@@ -212,6 +240,7 @@ export default {
   handleSuperuser,
   hideModal,
   onMount,
+  requestExcel,
   showModal,
   urlFor,
 };

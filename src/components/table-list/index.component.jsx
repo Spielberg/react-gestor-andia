@@ -58,6 +58,10 @@ const propTypes = {
     PropTypes.string,
     PropTypes.oneOf([null]),
   ]),
+  excelUrl: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.oneOf([null]),
+  ]),
   filterByPromocion: PropTypes.bool,
   filterVisitaByStatus: PropTypes.bool,
   i18nKey: PropTypes.string,
@@ -66,6 +70,7 @@ const propTypes = {
 const defaultProps = {
   addUrl: null,
   editUrl: null,
+  excelUrl: null,
   filterByPromocion: false,
   filterVisitaByStatus: false,
   i18nKey: i18nComponentKey,
@@ -107,7 +112,7 @@ class TableList extends Component {
   * @return {reactElement} - react element itself
   */
   render() {
-    const { addUrl, filterByPromocion, filterVisitaByStatus, editUrl, intl, columns, i18nKey, selected } = this.props;
+    const { addUrl, excelUrl, filterByPromocion, filterVisitaByStatus, editUrl, intl, columns, i18nKey, selected } = this.props;
     const { loading, offset, modal, results, pagination, promocion_id, promociones, query, status } = this.state;
     const candidates = filter(results, 'selected');
     const selectedCount = size(candidates);
@@ -137,6 +142,9 @@ class TableList extends Component {
               {addUrl && <Link to={addUrl} className="btn-add">
                 <Button color="primary">{intl.formatMessage({ id: `${i18nKey}.nuevo`, defaultMessage: `${i18nKey}.nuevo` })}</Button>
               </Link>}
+              {excelUrl && <Button onClick={() => this.requestExcel(excelUrl)} color="secundary" outline>
+                  {intl.formatMessage({ id: `${i18nKey}.excel`, defaultMessage: `${i18nKey}.excel` })}
+                </Button>}
               {selectedCount > 0 && 
                 <Button color="secundary" icon="mail" onClick={e => this.props.modalEnvios.open(candidates)}>
                   {intl.formatMessage({ id: `${i18nKey}.send`, defaultMessage: `${i18nKey}.send` })}
