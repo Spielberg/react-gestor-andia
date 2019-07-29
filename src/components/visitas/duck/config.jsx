@@ -11,6 +11,16 @@ const config = { ...base, ...promociones };
 config.VISITAS = {
   tiposInmuebles: {
     url: `${config.API_DOMAIN}/api/promociones/<%= id %>`,
+    cases: {
+      1: '1HAB',
+      2: '2HAB',
+      3: '3HAB',
+      4: '4HAB',
+      5: 'Garaje',
+      6: 'Trasteros',
+      7: 'Locales',
+      8: '5HAB',
+    },
   },
   tableList: {
     url: `${config.API_DOMAIN}/api/visitas`,
@@ -46,7 +56,9 @@ config.VISITAS = {
         { key: 'deleted', type: 'boolean' },
         { key: 'fecha_visita', src: (data, key) => moment(data[key]).format(config.DEFAULT.DATE_FORMAT) },
       ],
-    }
+    },
+    selected: true,
+    visitas: true,
   },
   statuses: [
     { key: 'primera' },
@@ -65,7 +77,7 @@ config.VISITAS = {
     'pisos',
     'valla',
     'web',
-  ]
+  ],
 };
 
 // assign default config values

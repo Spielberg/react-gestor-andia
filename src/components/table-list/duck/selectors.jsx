@@ -4,6 +4,7 @@ import {
   each,
   isUndefined,
   isNull,
+  isObject,
 } from 'lodash';
 import config from './config';
 import fileDownload from 'js-file-download';
@@ -19,11 +20,17 @@ function fetch(cb = () => (null)) {
   if (this.state.query !== '') {
     url += `&query=${this.state.query}`;
   }
-  if (this.props.filterByPromocion && this.state.promocion_id !== '') {
+  if (this.props.visitas && this.state.promocion_id !== '') {
     url += `&promocion=${this.state.promocion_id}`;
   }
-  if (this.props.filterVisitaByStatus && this.state.status !== '') {
+  if (this.props.visitas && this.state.status !== '') {
     url += `&status=${this.state.status}`;
+  }
+  if (this.props.visitas && !isNull(this.state.filterVisitas.since) && isObject(this.state.filterVisitas.since)) {
+    url += `&since=${this.state.filterVisitas.since.format('YYYY-MM-DD')}`;
+  }
+  if (this.props.visitas && !isNull(this.state.filterVisitas.until) && isObject(this.state.filterVisitas.until) ) {
+    url += `&until=${this.state.filterVisitas.until.format('YYYY-MM-DD')}`;
   }
   if (config.DEBUG) console.log(url);
   return axios.get(url, {
@@ -140,6 +147,26 @@ function showModal(candidate) {
   }));
 }
 
+function hideFilterVisitas() {
+  this.setState(current => ({
+    ...current,
+    filterVisitas: {
+      ...current.filterVisitas,
+      display: false,
+    }
+  }));
+}
+
+function showFilterVisitas() {
+  this.setState(current => ({
+    ...current,
+    filterVisitas: {
+      ...current.filterVisitas,
+      display: true,
+    }
+  }));
+}
+
 function handleDelete(){
   if (isNull(this.state.modal.candidate) || !this.state.modal.candidate.id) {
     return;
@@ -172,9 +199,20 @@ function handleQuery(e){
   }));
 }
 
+function handleDates({ startDate, endDate }) {
+  this.setState(current => ({
+    ...current,
+    filterVisitas: {
+      ...current.filterVisitas,
+      since: startDate,
+      until: endDate,
+      },
+    }), this.fetch);
+}
+
 function onMount() {
   this.fetch();
-  if (this.props.filterByPromocion) {
+  if (this.props.visitas) {
     this.fetchPromociones();
   }
 }
@@ -184,10 +222,10 @@ function requestExcel(url) {
   if (this.state.query !== '') {
     params.push(`query=${this.state.query}`);
   }
-  if (this.props.filterByPromocion && this.state.promocion_id !== '') {
+  if (this.props.visitas && this.state.promocion_id !== '') {
     params.push(`promocion=${this.state.promocion_id}`);
   }
-  if (this.props.filterVisitaByStatus && this.state.status !== '') {
+  if (this.props.visitas && this.state.status !== '') {
     params.push(`status=${this.state.status}`);
   }
   url = params.length ? `${url}?${params.join('&')}` : url;
@@ -231,6 +269,7 @@ export default {
   catchReturn,
   fetch,
   handleActive,
+  handleDates,
   handleBoolean,
   handleDelete,
   handleHome,
@@ -238,9 +277,11 @@ export default {
   handleQuery,
   handleSelect,
   handleSuperuser,
+  hideFilterVisitas,
   hideModal,
   onMount,
   requestExcel,
+  showFilterVisitas,
   showModal,
   urlFor,
 };

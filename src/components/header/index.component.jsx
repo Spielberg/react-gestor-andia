@@ -46,7 +46,6 @@ const Header = (props) => {
           <div className="col col-lg order-lg-first">
           <Nav>
             <CustomItem to={config.PATHS.visitas} value={intl.formatMessage({ id: `${i18nComponentKey}.visitas`, defaultMessage: `${i18nComponentKey}.visitas` })} icon="book" activeClassName="active" />
-            <CustomItem to={config.PATHS.ventas} value={intl.formatMessage({ id: `${i18nComponentKey}.ventas`, defaultMessage: `${i18nComponentKey}.ventas` })} icon="trending-up" activeClassName="active" />
             <CustomItem to={config.PATHS.configuracion.usuarios} value={intl.formatMessage({ id: `${i18nComponentKey}.usuarios`, defaultMessage: `${i18nComponentKey}.usuarios` })} icon="user" />
             <CustomItem to={config.PATHS.configuracion.promociones} value={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })} icon="home" />
             <CustomItem to={config.PATHS.configuracion.tiposInmuebles} value={intl.formatMessage({ id: `${i18nComponentKey}.tipos-inmuebles`, defaultMessage: `${i18nComponentKey}.tipos-inmuebles` })} icon="settings" />

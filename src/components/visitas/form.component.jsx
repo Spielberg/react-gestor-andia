@@ -88,6 +88,16 @@ class VisitasForm extends Component {
         url: config.PATHS.visitas,
         timeout: config.REDIRECT.timeout,
       },
+      venta: {
+        data: {},
+        modal: {
+          display: false,
+        },
+        candidate: {
+          promocion: {},
+          tipo: {},
+        },
+      },
     };
     each(visitasSelectors, (_, k) => this[k] = visitasSelectors[k].bind(this));
   }
@@ -102,7 +112,8 @@ class VisitasForm extends Component {
   */
   render() {
     const { intl } = this.props;
-    const { values, errors, promociones, alert, redirect, loading, search } = this.state;
+    const { values, errors, promociones, alert, redirect, loading, search, venta } = this.state;
+    const candidatos = this.candidatosVenta();
 
     if (isEmpty(promociones)) {
       return <Fragment />;
@@ -110,6 +121,37 @@ class VisitasForm extends Component {
 
     const inmuebles_promocion_1 = !values.promociones_id_1 ? [] : promociones[values.promociones_id_1].inmuebles;
     const inmuebles_promocion_2 = !values.promociones_id_2 ? [] : promociones[values.promociones_id_2].inmuebles;
+    const ModalVentas = () => (
+      <Fragment>
+        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{intl.formatMessage({ id: `${i18nComponentKey}.modal-ventas.title`, defaultMessage: `${i18nComponentKey}.modal-ventas.title` })}</h5>
+              </div>
+              <div className="modal-body">
+                {map(candidatos, candidato => (
+                    <Form.Radio
+                      key={`${i18nComponentKey}-radios-${candidato.promocion.id}-${candidato.tipo.id}`}
+                      label={`${candidato.promocion.name}: ${candidato.tipo.name}`}
+                      name="candidato-venta"
+                      checked={venta.candidate.promocion.id === candidato.promocion.id && venta.candidate.tipo.id === candidato.tipo.id}
+                      onChange={() => this.selectVenta(candidato)}
+                      isInline
+                    />                  
+                ))}
+              </div>
+              <div className="modal-footer">
+                <button type="button" onClick={e => this.hideModalVentas(() => this.submit(e))} className="btn btn-secondary" data-dismiss="modal">
+                  {intl.formatMessage({ id: `${i18nComponentKey}.modal-ventas.close`, defaultMessage: `${i18nComponentKey}.modal-ventas.close` })}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="modal-backdrop fade show" />
+      </Fragment>
+    );
 
     if (redirect.enabled) {
       return <Redirect to={redirect.url} />;
@@ -117,6 +159,7 @@ class VisitasForm extends Component {
 
     return (
       <Card>
+        {venta.modal.display && ModalVentas()}
         <Card.Header>
           <Header.H3>{
             !values.id
@@ -244,6 +287,7 @@ class VisitasForm extends Component {
                     invalid={false && errors.status !== ''}
                     value={values.status}
                     onChange={e => this.handleValues(e, 'status')}
+                    disabled={!isEmpty(venta.data)}
                   >
                     <option />
                     {map(config.VISITAS.statuses, ({ key }) => <option value={key} key={`${i18nComponentKey}-stats-${key}`}>
@@ -251,6 +295,15 @@ class VisitasForm extends Component {
                     </option>)}
                   </Form.Select>
                 </Form.Group>
+                {!isEmpty(venta.data) && <Alert type="success" icon="check">
+                  <button onClick={e => this.handleDeleteVenta(e, venta.data.id)} class="btn btn-icon close" />
+                  {intl.formatMessage(
+                    { id: `${i18nComponentKey}.venta`, defaultMessage: `${i18nComponentKey}.venta` },
+                    {
+                      promocion: promociones[parseInt(venta.data.promocion, 10)].name || 'promición',
+                      tipo: config.VISITAS.tiposInmuebles.cases[parseInt(venta.data.tipo, 10)] || `tipo inmueble: ${venta.data.tipo}`,
+                    })}
+                </Alert>}
               </Grid.Col>
               <Grid.Col>
                 <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.conociste`, defaultMessage: `${i18nComponentKey}.conociste` })}>

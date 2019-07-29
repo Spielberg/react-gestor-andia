@@ -4,6 +4,9 @@ import { intlShape, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
+import { DateRangePicker } from 'react-dates';
+import moment from 'moment';
+import 'moment/locale/es';
 import {
   Alert,
   Button,
@@ -62,19 +65,17 @@ const propTypes = {
     PropTypes.string,
     PropTypes.oneOf([null]),
   ]),
-  filterByPromocion: PropTypes.bool,
-  filterVisitaByStatus: PropTypes.bool,
   i18nKey: PropTypes.string,
+  visitas: PropTypes.bool,
 };
 
 const defaultProps = {
   addUrl: null,
   editUrl: null,
   excelUrl: null,
-  filterByPromocion: false,
-  filterVisitaByStatus: false,
   i18nKey: i18nComponentKey,
   selected: false,
+  visitas: false,
 };
 
 class TableList extends Component {
@@ -98,6 +99,12 @@ class TableList extends Component {
         candidate: null,
         display: false,
       },
+      filterVisitas: {
+        display: false,
+        since: moment('2019-01-01'),
+        until: moment(),
+      },
+      focusedInput: null,
     };
     each(tableListSelectors, (_, k) => this[k] = tableListSelectors[k].bind(this));
     this.fetchPromociones = visitasSelectors.fetchPromociones.bind(this);
@@ -112,32 +119,92 @@ class TableList extends Component {
   * @return {reactElement} - react element itself
   */
   render() {
-    const { addUrl, excelUrl, filterByPromocion, filterVisitaByStatus, editUrl, intl, columns, i18nKey, selected } = this.props;
-    const { loading, offset, modal, results, pagination, promocion_id, promociones, query, status } = this.state;
+    const { addUrl, excelUrl, editUrl, intl, columns, i18nKey, selected, visitas } = this.props;
+    const { filterVisitas, loading, offset, modal, results, pagination, promocion_id, promociones, query, status } = this.state;
     const candidates = filter(results, 'selected');
     const selectedCount = size(candidates);
+    
+    const ModalVisitas = () => (
+      <Fragment>
+        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{intl.formatMessage({ id: `${i18nKey}.filter-visitas.title`, defaultMessage: `${i18nKey}.filter-visitas.title` })}</h5>
+                <button type="button" onClick={this.hideFilterVisitas} className="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true" />
+                </button>
+              </div>
+              <div className="modal-body">
+                <Form.Group label={intl.formatMessage({ id: `${i18nKey}.filter-visitas.buscar`, defaultMessage: `${i18nKey}.filter-visitas.buscar` })}>
+                  <Form.Input
+                    icon="search"
+                    placeholder={intl.formatMessage({ id: `${i18nKey}.filter-visitas.buscar`, defaultMessage: `${i18nKey}.filter-visitas.buscar` })}
+                    position="append"
+                    value={query}
+                    onChange={this.handleQuery}
+                    onKeyPress={this.catchReturn}
+                  />
+                </Form.Group>
+                <Form.Group label={intl.formatMessage({ id: `${i18nKey}.filter-visitas.promociones`, defaultMessage: `${i18nKey}.filter-visitas.promociones` })}>
+                  <Form.Select
+                    className="input-options select-promociones is-fullwidth"
+                    value={promocion_id}
+                    onChange={e => this.setState({ promocion_id: e.target.value }, this.fetch)}>
+                    <option />
+                    {map(promociones, ({ id, name }) => <option value={id} key={`${i18nKey}-promocion-${id}`}>{name}</option>)}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group label={intl.formatMessage({ id: `${i18nKey}.filter-visitas.status`, defaultMessage: `${i18nKey}.filter-visitas.status` })}>
+                  <FilterVisitasStatus
+                    status={status}
+                    onChange={e => this.setState({ status: e.target.value }, this.fetch)}
+                  />
+                </Form.Group>
+                <Form.Group label={intl.formatMessage({ id: `${i18nKey}.filter-visitas.fechas`, defaultMessage: `${i18nKey}.filter-visitas.fechas` })}>
+                  <DateRangePicker
+                    startDate={this.state.filterVisitas.since} // momentPropTypes.momentObj or null,
+                    startDateId="since" // PropTypes.string.isRequired,
+                    endDate={this.state.filterVisitas.until} // momentPropTypes.momentObj or null,
+                    endDateId="until" // PropTypes.string.isRequired,
+                    onDatesChange={this.handleDates} // PropTypes.func.isRequired,
+                    focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+                    onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+                    startDatePlaceholderText={this.props.intl.formatMessage({ id: `${i18nKey}.desde`, defaultMessage: `${i18nKey}.desde` })}
+                    endDatePlaceholderText={this.props.intl.formatMessage({ id: `${i18nKey}.hasta`, defaultMessage: `${i18nKey}.hasta` })}
+                    enableOutsideDays={true}
+                    isOutsideRange={() => false}
+                  />
+                </Form.Group>
+              </div>
+              <div className="modal-footer">
+                <button type="button" onClick={this.hideFilterVisitas} className="btn btn-secondary" data-dismiss="modal">
+                  {intl.formatMessage({ id: `${i18nKey}.filter-visitas.close`, defaultMessage: `${i18nKey}.filter-visitas.close` })}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="modal-backdrop fade show" />
+      </Fragment>
+    );
+
     const layout = child => (
       <Card>
+        {filterVisitas.display && ModalVisitas()}
         <Card.Header>
           <Header.H3>{intl.formatMessage({ id: `${i18nKey}.title`, defaultMessage: `${i18nKey}.title` })}</Header.H3>
           <Card.Options>
-            {filterByPromocion && (
-              <Form.Select
-                className="input-options select-promociones"
-                value={promocion_id}
-                onChange={e => this.setState({ promocion_id: e.target.value }, this.fetch)}>
-                <option />
-                {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
-              </Form.Select>)}
-              {filterVisitaByStatus && <FilterVisitasStatus status={status} onChange={e => this.setState({ status: e.target.value }, this.fetch)} />}
-              <Form.Input
-                icon="search"
-                placeholder={intl.formatMessage({ id: `${i18nComponentKey}.buscar`, defaultMessage: `${i18nComponentKey}.buscar` })}
-                position="append"
-                value={query}
-                onChange={this.handleQuery}
-                onKeyPress={this.catchReturn}
-              />
+              {!visitas && 
+                <Form.Input
+                  icon="search"
+                  placeholder={intl.formatMessage({ id: `${i18nComponentKey}.buscar`, defaultMessage: `${i18nComponentKey}.buscar` })}
+                  position="append"
+                  value={query}
+                  onChange={this.handleQuery}
+                  onKeyPress={this.catchReturn}
+                />
+              }
             <Button.List align="right">
               {addUrl && <Link to={addUrl} className="btn-add">
                 <Button color="primary">{intl.formatMessage({ id: `${i18nKey}.nuevo`, defaultMessage: `${i18nKey}.nuevo` })}</Button>
@@ -149,6 +216,10 @@ class TableList extends Component {
                 <Button color="secundary" icon="mail" onClick={e => this.props.modalEnvios.open(candidates)}>
                   {intl.formatMessage({ id: `${i18nKey}.send`, defaultMessage: `${i18nKey}.send` })}
                 </Button>}
+              {visitas && 
+                <button type="button" onClick={this.showFilterVisitas} className="btn btn-warning">
+                  {intl.formatMessage({ id: `${i18nKey}.filter-visitas.filter`, defaultMessage: `${i18nKey}.filter-visitas.filter` })}
+                </button>}
             </Button.List>
           </Card.Options>
         </Card.Header>

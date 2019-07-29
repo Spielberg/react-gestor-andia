@@ -1,13 +1,19 @@
 import axios from 'axios';
 import moment from 'moment';
 import {
+  each,
   chain,
   first,
   remove,
   template,
+  isEmpty,
 } from 'lodash';
 
-import config from './config';
+import base from './config';
+
+import ventas from '../../ventas/duck/config';
+
+const config = { ...base, ...ventas };
 
 const i18nComponentKey = 'app.visitas.form';
 
@@ -165,6 +171,10 @@ function fetchVisita(id, cb = () => (null)) {
           status: values.status,
           users_id: parseInt(values.users_id, 10),
         },
+        venta: {
+          ...current.venta,
+          data: values.venta,
+        },
       }), () => {
         return cb(null, response.data);
       });
@@ -198,6 +208,34 @@ function displaySuccess(message) {
   return this.displayAlert(message, 'success');
 }
 
+function submitVenta(visitas_id, cb = () => (null)) {
+  const data = {
+      tipos_inmuebles_id: parseInt(this.state.venta.candidate.tipo.id, 10),
+      promociones_id: parseInt(this.state.venta.candidate.promocion.id, 10),
+      visitas_id: parseInt(visitas_id, 10),
+    };
+    let url = config.VENTAS.tableList.url;
+    if (config.DEBUG) console.log(url, data);
+    return axios({
+      method: 'post', url, data, headers: {
+        Authorization: `Bearer ${this.props.session.authToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (response.status !== 200 && response.status !== 204) {
+          return cb(new Error(`Status erros in fetchStats expected 200 or 204 received ${response.status}`));
+        }
+        if (response.data.error) {
+          return this.displayError(response.data.message);
+        }
+        cb(null);
+      })
+      .catch((error) => {
+        return cb(error);
+      });
+}
+
 function submit(e, cb = () => (null)) {
   e.preventDefault();
   this.validate(() => {
@@ -221,16 +259,26 @@ function submit(e, cb = () => (null)) {
           return this.displayError(response.data.message);
         }
         this.displaySuccess(this.props.intl.formatMessage({ id: `${i18nComponentKey}.submit.success`, defaultMessage: `${i18nComponentKey}.submit.success` }, { timeout: this.state.redirect.timeout }));
-        window.scrollTo(0,0);
-        setTimeout(() => {
-          this.setState(current => ({
-            ...current,
-            redirect: {
-              ...current.redirect,
-              enabled: true,
+        const postSubmit = () => {
+          window.scrollTo(0,0);
+          setTimeout(() => {
+            this.setState(current => ({
+              ...current,
+              redirect: {
+                ...current.redirect,
+                enabled: true,
+              }
+            }));
+          }, this.state.redirect.timeout * 1000);
+        };
+        if (data.status === 'compra' && isEmpty(this.state.venta.data)) {
+          return this.submitVenta(response.data.data.id, (err) => {
+            if (!err) {
+              postSubmit();    
             }
-          }));
-        }, this.state.redirect.timeout * 1000);
+          });
+        }
+        postSubmit();
       })
       .catch((error) => {
         return cb(error);
@@ -261,7 +309,7 @@ function setValue(which, value, cb = () => null) {
 }
 
 function validate(cb = () => (null)) {
-  const { values } = this.state;
+  const { values, venta } = this.state;
   const current = {
     ...this.state,
     errors: {
@@ -288,12 +336,16 @@ function validate(cb = () => (null)) {
     current.errors.telefono = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.telefono`, defaultMessage: `${i18nComponentKey}.err.telefono` });
     valid = false;
   }
-  if (values.promociones_id_1 === '') {
+  if (values.promociones_id_1 === '' || values.tipos_inmuebles_1.length === 0) {
     current.errors.promociones_id_1 = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.promociones_id`, defaultMessage: `${i18nComponentKey}.err.promociones_id` });
     valid = false;
   }
   if (values.fecha_visita === '') {
     current.errors.fecha_visita = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.fecha_visita`, defaultMessage: `${i18nComponentKey}.err.fecha_visita` });
+    valid = false;
+  }
+  if (values.status === 'compra' && isEmpty(venta.candidate.promocion) && valid &&  isEmpty(venta.data)) {
+    current.venta.modal.display = true;
     valid = false;
   }
 
@@ -304,7 +356,90 @@ function validate(cb = () => (null)) {
   });
 }
 
+function hideModalVentas(cb = () => null) {
+  this.setState(current => ({
+    ...current,
+    venta: {
+      ...current.venta,
+      modal: {
+        ...current.venta.modal,
+        display: false,
+      },
+    },
+  }), cb);  
+}
+
+function showModalVentas() {
+  this.setState(current => ({
+    ...current,
+    venta: {
+      ...current.venta,
+      modal: {
+        ...current.venta.modal,
+        display: true,
+      },
+    },
+  }));  
+}
+
+function selectVenta(candidate) {
+  this.setState(current => ({
+    ...current,
+    venta: {
+      ...current.venta,
+      candidate,
+    },
+  }));  
+}
+
+function candidatosVenta() {
+  const { promociones } = this.state;
+  const arr = [];
+  if (isEmpty(promociones)) {
+    return [];
+  }
+
+  each([1,2], n => {
+    const promocion = promociones[this.state.values[`promociones_id_${n}`]];
+    each (this.state.values[`tipos_inmuebles_${n}`], tipo => {
+      arr.push({
+        promocion,
+        tipo: {
+          id: tipo,
+          name: config.VISITAS.tiposInmuebles.cases[tipo] || `please updated configuration file for ${tipo}`,
+          },
+        });
+    });
+  });
+  return arr;
+}
+
+function handleDeleteVenta(e, id){
+  e.preventDefault();
+  const url = `${config.VENTAS.tableList.url}/${id}`;
+  if (config.DEBUG) console.log(url);
+  return axios.delete(url, {
+    headers: {
+      Authorization: `Bearer ${this.props.session.authToken}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => {
+      this.setState(current => ({
+        ...current,
+        venta: {
+          ...current.venta,
+          data: {},
+        },
+      }));
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
 export default {
+  candidatosVenta,
   catchReturn,
   didMout,
   displayAlert,
@@ -313,10 +448,15 @@ export default {
   fetchPromociones,
   fetchTiposInmuebles,
   fetchVisita,
+  handleDeleteVenta,
   handleInmuebles,
   handlePromocion,
   handleValues,
+  hideModalVentas,
+  selectVenta,
   setValue,
+  showModalVentas,
   submit,
+  submitVenta,
   validate,
 };
