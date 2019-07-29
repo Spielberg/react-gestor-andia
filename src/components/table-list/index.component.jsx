@@ -252,12 +252,18 @@ class TableList extends Component {
                     <Table.Row key={`${i18nKey}.row.${obj.id}`}>
                       {selected && 
                         <Table.Col>
-                          <Icon
-                            className="select-icon"
-                            key={`${i18nKey}.selected.${obj.id}`}
-                            onClick={() => this.handleSelect(obj)}
-                            name={obj.selected ? 'check-circle' : 'circle'}
-                          />
+                          {!obj.publicidad
+                          ? <Icon
+                              className="select-icon disabled"
+                              key={`${i18nKey}.selected.${obj.id}`}
+                              name="alert-circle"
+                            />                          
+                          : <Icon
+                              className="select-icon"
+                              key={`${i18nKey}.selected.${obj.id}`}
+                              onClick={() => this.handleSelect(obj)}
+                              name={obj.selected ? 'check-circle' : 'circle'}
+                            />}
                       </Table.Col>}
                       {map(columns.payload, column => <Table.Col key={`${i18nKey}.col.${obj.id}.${column.key}`}>
                         <TableCol
