@@ -33,14 +33,29 @@ function enviosHOC(WrappedComponent) {
         display: false,
         templates: {},
         template: '',
+        newsletter: false,
       };
       map(enviosSelectors, (_,w) => this[w] = enviosSelectors[w].bind(this));
     }
 
     render() {
       const { intl } = this.props;
-      const { display } = this.state;
+      const { alert, display, newsletter } = this.state;
       const count = size(this.state.candidates);
+      const body = () => {
+        switch (count) {
+          case 0:
+            return (
+              <Alert type="danger" icon="alert-triangle">
+                {intl.formatMessage({ id: `${i18nComponentKey}.modal.body.zero`, defaultMessage: `${i18nComponentKey}.modal.body.zero` })}
+              </Alert>
+            );
+          case 1:
+            return intl.formatMessage({ id: `${i18nComponentKey}.modal.body.one`, defaultMessage: `${i18nComponentKey}.modal.body.one` });
+          default:
+            return intl.formatMessage({ id: `${i18nComponentKey}.modal.body.many`, defaultMessage: `${i18nComponentKey}.modal.body.many` });
+        }
+      };
 
       return (
         <Fragment>
@@ -56,9 +71,7 @@ function enviosHOC(WrappedComponent) {
                     </div>
                     <div className="modal-body">
                       {alert.display && <Alert type={alert.type} icon="alert-triangle">{alert.message}</Alert>}
-                      <p>{count === 1                        
-                        ? intl.formatMessage({ id: `${i18nComponentKey}.modal.body.one`, defaultMessage: `${i18nComponentKey}.modal.body.one` })
-                        : intl.formatMessage({ id: `${i18nComponentKey}.modal.body.many`, defaultMessage: `${i18nComponentKey}.modal.body.many` }, { count })}
+                      <p>{body()}
                       </p>
                       <Form.Group label={this.props.intl.formatMessage({ id: `${i18nComponentKey}.select.template`, defaultMessage: `${i18nComponentKey}.select.template` })}>
                         <Form.Select value={this.state.template} onChange={this.handleTemplate}>
@@ -71,9 +84,9 @@ function enviosHOC(WrappedComponent) {
                       </Form.Group>
                     </div>
                     <div className="modal-footer">
-                      {count === 0 || this.state.template === ''
+                      {this.state.template === '' && (!newsletter || count === 0)
                         ? <button type="button" disabled className="btn btn-primary">{intl.formatMessage({ id: `${i18nComponentKey}.modal.confirm`, defaultMessage: `${i18nComponentKey}.modal.confirm` })}</button>
-                        : <button type="button" onClick={this.handleConfirm} className="btn btn-primary">{intl.formatMessage({ id: `${i18nComponentKey}.modal.confirm`, defaultMessage: `${i18nComponentKey}.modal.confirm` })}</button>
+                        : <button type="button" onClick={newsletter ? this.handleNewsletter : this.handleConfirm} className="btn btn-primary">{intl.formatMessage({ id: `${i18nComponentKey}.modal.confirm`, defaultMessage: `${i18nComponentKey}.modal.confirm` })}</button>
                       }                      
                       <button type="button" onClick={this.close} className="btn btn-secondary" data-dismiss="modal">{intl.formatMessage({ id: `${i18nComponentKey}.modal.close`, defaultMessage: `${i18nComponentKey}.modal.close` })}</button>
                     </div>

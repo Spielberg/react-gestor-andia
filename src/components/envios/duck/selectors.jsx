@@ -12,7 +12,6 @@ function displayAlert(message, type) {
   this.setState(current => ({
     ...current,
     alert: {
-      ...current.alert,
       display: true,
       type,
       message,
@@ -52,31 +51,31 @@ function fetchTemplates(cb = () => (null)) {
     });
 }
 
-function handleModal(e, candidates, display, cb = () => (null)) {
+function handleModal(e, candidates, display, cb = () => (null), newsletter) {
   e.preventDefault();
   this.setState(current => ({
     ...current,
     template: '',
     candidates,
     display,
+    newsletter,
+    alert: {
+      ...current.alert,
+      display: false,
+    }
   }), cb);
 }
 
-function open(candidates) {
-  this.fetchTemplates(() => this.handleModal(new Event('click'), candidates, true));
+function open(candidates, newsletter = false) {
+  this.fetchTemplates(() => this.handleModal(new Event('click'), candidates, true, () => null, newsletter));
 }
 
 function close(e , cb = () => (null)) {
-  this.handleModal(e, [], false, cb);
+  this.handleModal(e, [], false, cb, false);
 }
 
-function handleConfirm() {
-  const body = {
-    to: map(this.state.candidates, 'email'),
-    template: this.state.template,
-  };
-  const url = config.ENVIOS.mails.url;
-  if (config.DEBUG) console.log(url);
+function handleSend(url, body) {
+  if (config.DEBUG) console.log(url, JSON.stringify(body));
   return axios.post(url, body, {
     headers: {
       Authorization: `Bearer ${this.props.session.authToken}`,
@@ -85,13 +84,30 @@ function handleConfirm() {
   })
     .then((response) => {
       if (response.status !== 200 && response.status !== 204) {
-        return this.close(new Event('click'), this.displayError(`Status erros in fetchStats expected 200 or 204 received ${response.status}`));
+        return this.displayError(`Status erros in fetchStats expected 200 or 204 received ${response.status}`);
       }
-      return this.close(new Event('click'), this.displaySuccess(response.data.data));
+      return this.displaySuccess(this.props.intl.formatMessage({ id: `${i18nComponentKey}.alert.success`, defaultMessage: `${i18nComponentKey}.alert.success` }));
     })
     .catch((error) => {
-      return this.close(new Event('click'), this.displayError(error.message));
+      return this.displayError(error.message);
     });
+}
+
+function handleConfirm() {
+  const body = {
+    to: map(this.state.candidates, 'email'),
+    template: this.state.template,
+  };
+  const url = config.ENVIOS.mails.url;
+  return this.handleSend(url, body);
+}
+
+function handleNewsletter() {
+  const body = {
+    template: this.state.template,
+  };
+  const url = config.ENVIOS.newsletter.url;
+  return this.handleSend(url, body);
 }
 
 function handleTemplate(e) {
@@ -108,8 +124,10 @@ export default {
   displayError,
   displaySuccess,
   fetchTemplates,
-  handleTemplate,
   handleConfirm,
+  handleSend,
+  handleTemplate,
   handleModal,
+  handleNewsletter,
   open,
 };

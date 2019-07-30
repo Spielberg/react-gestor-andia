@@ -8,6 +8,9 @@ config.ENVIOS = {
   },
   mails: {
     url: `${config.API_DOMAIN}/api/mail/send`,
+  },
+  newsletter: {
+    url: `${config.API_DOMAIN}/api/mail/newsletter`,
   }
 };
 

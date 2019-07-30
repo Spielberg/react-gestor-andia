@@ -217,6 +217,10 @@ class TableList extends Component {
                   {intl.formatMessage({ id: `${i18nKey}.send`, defaultMessage: `${i18nKey}.send` })}
                 </Button>}
               {visitas && 
+                <Button color="secundary" icon="mail" onClick={e => this.props.modalEnvios.open([], true)}>
+                  {intl.formatMessage({ id: `${i18nKey}.newsletter`, defaultMessage: `${i18nKey}.newsletter` })}
+                </Button>}
+              {visitas && 
                 <button type="button" onClick={this.showFilterVisitas} className="btn btn-warning">
                   {intl.formatMessage({ id: `${i18nKey}.filter-visitas.filter`, defaultMessage: `${i18nKey}.filter-visitas.filter` })}
                 </button>}
