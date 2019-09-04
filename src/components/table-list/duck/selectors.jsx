@@ -254,7 +254,6 @@ function requestExcel(url) {
     },
   })
     .then((response) => {
-      console.log(response.data);
       fileDownload(response.data, 'visitas.xlsx');
     })
     .catch(console.log);

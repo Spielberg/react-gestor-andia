@@ -67,5 +67,9 @@ export default {
     'app.visitas.index.no-results': 'No existen visitas para los criterios seleccionados',
     'app.visitas.index.nuevo': 'Añadir visita',
     'app.visitas.index.title': 'Listado de visitas',
+    'app.visitas.form.contactado': 'Cómo desea ser contactado',
+    'app.visitas.form.contactado.mail': 'Email',
+    'app.visitas.form.contactado.phone': 'Teléfono',
+    'app.visitas.form.contactado.no': 'No desea ser contactado',
   },
 };

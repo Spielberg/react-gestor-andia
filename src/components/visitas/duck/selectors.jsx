@@ -170,7 +170,7 @@ function fetchVisita(id, cb = () => (null)) {
           conociste: values.conociste,
           status: values.status,
           users_id: parseInt(values.users_id, 10),
-          publicidad: values.publicidad,
+          contactado: values.contactado,
         },
         venta: {
           ...current.venta,
@@ -242,7 +242,6 @@ function submit(e, cb = () => (null)) {
   this.validate(() => {
     const data = {
       ...this.state.values,
-      publicidad: this.state.values.publicidad ? 1 : 0,
       fecha_visita: moment(this.state.values.fecha_visita).format('YYYY-MM-DD'),
     };
     let url = config.VISITAS.tableList.url;

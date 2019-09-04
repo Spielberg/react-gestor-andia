@@ -60,6 +60,11 @@ config.VISITAS = {
     selected: true,
     visitas: true,
   },
+  constactado: [
+    { key: 'mail' },
+    { key: 'phone' },
+    { key: 'no' },
+  ],
   statuses: [
     { key: 'primera' },
     { key: 'reserva' },

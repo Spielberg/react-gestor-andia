@@ -72,7 +72,7 @@ class VisitasForm extends Component {
         promociones_id_2: '',
         tipos_inmuebles_1: [],
         tipos_inmuebles_2: [],
-        publicidad: true,
+        contactado: 'mail',
         observacion: '',
         observaciones: [],
         fecha_visita: new Date(),
@@ -334,14 +334,20 @@ class VisitasForm extends Component {
                 </Form.Group>
               </Grid.Col>
               <Grid.Col>
-                <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.publicidad`, defaultMessage: `${i18nComponentKey}.publicidad` })}>
-                  <Form.Checkbox
-                    label={intl.formatMessage({ id: `${i18nComponentKey}.si`, defaultMessage: `${i18nComponentKey}.si` })}
-                    onChange={() => this.setValue('publicidad', !values.publicidad)}
-                    name="publicidad"
-                    checked={values.publicidad}
-                    value={values.publicidad}
-                  />
+                <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.contactado`, defaultMessage: `${i18nComponentKey}.contactado` })}>
+                  <Form.Select
+                    feedback={errors.contactado}
+                    invalid={false && errors.contactado !== ''}
+                    value={values.contactado}
+                    onChange={e => this.handleValues(e, 'contactado')}
+                  >
+                    <option />
+                    {map(config.VISITAS.constactado, ({ key }) => <option value={key} key={`${i18nComponentKey}-contactado-${key}`}>
+                      {intl.formatMessage({ id: `${i18nComponentKey}.contactado.${key}`, defaultMessage: `${i18nComponentKey}.contactado.${key}` })}
+                    </option>)}
+                  </Form.Select>
+
+
                 </Form.Group>
               </Grid.Col>
             </Grid.Row>
