@@ -224,6 +224,10 @@ class TableList extends Component {
                 <button type="button" onClick={this.showFilterVisitas} className="btn btn-warning">
                   {intl.formatMessage({ id: `${i18nKey}.filter-visitas.filter`, defaultMessage: `${i18nKey}.filter-visitas.filter` })}
                 </button>}
+              {visitas && 
+              <button type="button" onClick={this.clearFilterVisitas} className="btn btn-info">
+                {intl.formatMessage({ id: `${i18nKey}.filter-visitas.clear`, defaultMessage: `${i18nKey}.filter-visitas.clear` })}
+              </button>}
             </Button.List>
           </Card.Options>
         </Card.Header>

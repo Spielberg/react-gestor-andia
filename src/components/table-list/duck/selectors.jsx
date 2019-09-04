@@ -8,11 +8,27 @@ import {
 } from 'lodash';
 import config from './config';
 import fileDownload from 'js-file-download';
+import moment from 'moment';
 
 function catchReturn({ key }) {
   if (key === 'Enter') {
     this.fetch();
   }
+}
+
+function clearFilterVisitas() {
+  this.setState(current => ({
+    ...current,
+    promocion_id: '',
+    offset: 0,
+    query: '',
+    status: '',
+    filterVisitas: {
+      ...current.filterVisitas,
+      since: moment('2019-01-01'),
+      until: moment(),
+    },
+  }), this.fetch);
 }
 
 function fetch(cb = () => (null)) {
@@ -267,6 +283,7 @@ function urlFor(path, params) {
 
 export default {
   catchReturn,
+  clearFilterVisitas,
   fetch,
   handleActive,
   handleDates,

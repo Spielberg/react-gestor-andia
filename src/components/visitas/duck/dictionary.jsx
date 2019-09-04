@@ -51,6 +51,7 @@ export default {
     'app.visitas.index.desde': 'desde',
     'app.visitas.index.excel': 'excel',
     'app.visitas.index.filter-visitas.buscar': 'Buscar',
+    'app.visitas.index.filter-visitas.clear': 'limpiar filtros',
     'app.visitas.index.filter-visitas.close': 'Cerrar',
     'app.visitas.index.filter-visitas.fechas': 'Fechas',
     'app.visitas.index.filter-visitas.filter': 'filtra visitas',
