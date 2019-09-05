@@ -8,7 +8,7 @@ config.HOME = {
     since: {
       week: [7, 'days'],
       month: [1, 'months'],
-      year: [7, 'year'],
+      year: [1, 'year'],
     },
     pie: {
       label: {
@@ -19,7 +19,7 @@ config.HOME = {
 };
 
 config.HOME.defaults = {
-  since: 'week',
+  since: 'year', // week
 };
 
 export default config;

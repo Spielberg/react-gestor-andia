@@ -1,16 +1,52 @@
 import axios from 'axios';
 import {
+  chain,
   isNull,
   isObject,
   map,
 } from 'lodash';
 
-import config from './config';
+import base from './config';
+import promo from '../../promociones/duck/config';
+
+const config = { ...base, ...promo };
 
 function didMount(){
   this.fetchHomeStats();
   this.fetchPromociones();
 } 
+
+function fetchPromociones(cb = () => (null)) {
+  const url = `${config.PROMOCIONES.tableList.url}?limit=100&home=1`;
+  if (config.DEBUG) console.log(url);
+  return axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${this.props.session.authToken}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => {
+      if (response.status !== 200 && response.status !== 204) {
+        return cb(new Error(`Status erros in fetchStats expected 200 or 204 received ${response.status}`));
+      }
+      this.setState(current => ({
+        ...current,
+        promociones: chain(response.data.data.results)
+                      .map(promocion => ({
+                        ...promocion,
+                        inmuebles: [],
+                      }))
+                      .orderBy('name', 'desc')
+                      .keyBy('id')
+                      .value(),
+      }), () => {
+        return cb(null, response.data.data);
+      });
+    })
+    .catch((error) => {
+      return cb(error);
+    });
+}
 
 function fetchHomeStats(cb = () => (null)) {
   let url = config.HOME.stats.url;
@@ -43,8 +79,8 @@ function fetchHomeStats(cb = () => (null)) {
         ...current,
         stats: {
           ...response.data.data,
-          conociste: map(response.data.data.conociste, arr => ([
-            this.props.intl.formatMessage({ id: `app.conociste.${arr[0]}`, defaultMessage: `app.conociste.${arr[0]}`}),
+          counts: map(response.data.data.counts, arr => ([
+            this.props.intl.formatMessage({ id: `app.home.index.counts.${arr[0]}`, defaultMessage: `app.home.index.counts.${arr[0]}`}),
             arr[1],
           ])),
         },
@@ -64,6 +100,7 @@ function handleDates({ startDate, endDate }) {
 export default {
   didMount,
   fetchHomeStats,
+  fetchPromociones,
   handleDates,
   //handleSince,
 };

@@ -16,6 +16,7 @@ import {
 import {
   each,
   map,
+  reduce,
   round,
 } from 'lodash';
 
@@ -26,10 +27,6 @@ import config from './duck/config';
 import {
   homeSelectors,
 } from './duck';
-
-import {
-  visitasSelectors,
-} from '../visitas/duck';
 
 const i18nComponentKey = 'app.home.index';
 const propTypes = {};
@@ -47,20 +44,23 @@ class Home extends Component {
     super(props);
     this.state = {
       since: moment()
-        .subtract(config.HOME.stats.since[config.HOME.defaults.since][0], config.HOME.stats.since[config.HOME.defaults.since][1]),
+        .subtract(
+          config.HOME.stats.since[config.HOME.defaults.since][0],
+          config.HOME.stats.since[config.HOME.defaults.since][1],
+          ),
       until: moment(),
       focusedInput: null, 
       promociones: {},
       promocionId: null,
       stats: {
         conociste: [],
+        counts: [],
         comerciales: [],
         promociones: [],
         ventas: [],
       }
     };
     each(homeSelectors, (_, k) => this[k] = homeSelectors[k].bind(this));
-    this.fetchPromociones = visitasSelectors.fetchPromociones.bind(this);
   }
 
   componentDidMount() {
@@ -68,6 +68,8 @@ class Home extends Component {
   }
 
   render() {
+    const sum = source => reduce(this.state.stats[source], (sum, [_, n]) => sum + parseInt(n, 10), 0);
+    const columnKey = which => `${i18nComponentKey}-${which}-${this.state.since}-${this.state.until}-${this.state.promocionId}`;
     return (
       <Card>
         <Card.Header>
@@ -77,7 +79,7 @@ class Home extends Component {
                 className="input-options select-promociones"
                 value={this.state.promocionId}
                 onChange={e => this.setState({ promocionId: e.target.value }, this.fetchHomeStats)}>
-                <option />
+                <option value="">{this.props.intl.formatMessage({ id: `${i18nComponentKey}.select-promociones-all`, defaultMessage: `${i18nComponentKey}.select-promociones-all` })}</option>
                 {map(this.state.promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
               </Form.Select>
             <DateRangePicker
@@ -97,22 +99,25 @@ class Home extends Component {
         </Card.Header>
         <Card.Body>
           <Grid.Row cards deck>
-            <Grid.Col md={4}>
+            <Grid.Col md={4} key={columnKey('promociones')}>
               <Card>
-                <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.promociones`, defaultMessage: `${i18nComponentKey}.header.stats.promociones` })}</Card.Header>
+                <Card.Header>
+                  {this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.promociones`, defaultMessage: `${i18nComponentKey}.header.stats.promociones` })}
+                  <h3 className="number-total">{sum('promociones')}</h3>
+                </Card.Header>
                 <C3Chart data={{ columns: this.state.stats.promociones, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="promocioneschart" />
               </Card>
             </Grid.Col>
-            <Grid.Col md={4}>
+            <Grid.Col md={4} key={columnKey('conociste')}>
               <Card>
                 <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.conociste`, defaultMessage: `${i18nComponentKey}.header.stats.conociste` })}</Card.Header>
                 <C3Chart data={{ columns: this.state.stats.conociste, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="conocistechart" />  
               </Card>
             </Grid.Col>
-            <Grid.Col md={4}>
+            <Grid.Col md={4} key={columnKey('counts')}>
               <Card>
-                <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.comerciales`, defaultMessage: `${i18nComponentKey}.header.stats.comerciales` })}</Card.Header>
-                <C3Chart data={{ columns: this.state.stats.comerciales, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="comercialeschart" />
+                <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.counts`, defaultMessage: `${i18nComponentKey}.header.stats.counts` })}</Card.Header>
+                <C3Chart data={{ columns: this.state.stats.counts, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="countschart" />
               </Card>
             </Grid.Col>
           </Grid.Row>
