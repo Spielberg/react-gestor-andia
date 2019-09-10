@@ -15,6 +15,7 @@ export default {
     'app.home.index.select.since': 'Rango temporal:',
     'app.home.index.select.week': 'Última semana',
     'app.home.index.select.year': 'Último año',
+    'app.home.index.status-promociones': 'Status',
     'app.home.index.table.col.cantidad': 'Cantidad',
     'app.home.index.table.col.name': 'Tipo',
     'app.home.index.table.col.percent': '%',

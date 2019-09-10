@@ -19,6 +19,9 @@ config.PATHS = {
   ventas_anadir: '/ventas/anadir',
   ventas: '/ventas',
 
+  // status
+  status_promociones: '/status-promociones',
+
   configuracion: {
     // usuarios
     usuarios_anadir: '/configuracion/usuarios/anadir',

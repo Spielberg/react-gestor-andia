@@ -48,6 +48,7 @@ const Header = (props) => {
             <CustomItem to={config.PATHS.visitas} value={intl.formatMessage({ id: `${i18nComponentKey}.visitas`, defaultMessage: `${i18nComponentKey}.visitas` })} icon="book" activeClassName="active" />
             <CustomItem to={config.PATHS.configuracion.usuarios} value={intl.formatMessage({ id: `${i18nComponentKey}.usuarios`, defaultMessage: `${i18nComponentKey}.usuarios` })} icon="user" />
             <CustomItem to={config.PATHS.configuracion.promociones} value={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })} icon="home" />
+            <CustomItem to={config.PATHS.status_promociones} value={intl.formatMessage({ id: `${i18nComponentKey}.status-promociones`, defaultMessage: `${i18nComponentKey}.status-promociones` })} icon="layout" />
             <CustomItem to={config.PATHS.configuracion.tiposInmuebles} value={intl.formatMessage({ id: `${i18nComponentKey}.tipos-inmuebles`, defaultMessage: `${i18nComponentKey}.tipos-inmuebles` })} icon="settings" />
             <li className="nav-item logout">
               <a className="nav-link" onClick={props.requestLogout}>

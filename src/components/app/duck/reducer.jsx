@@ -7,6 +7,7 @@ import headerDiccionary from '../../header/duck/dictionary';
 import homeDictionary from '../../home/duck/dictionary';
 import loginDiccionary from '../../login/duck/dictionary';
 import promocionesDictionary from '../../promociones/duck/dictionary';
+import statusPromocionesDictionary from '../../status-promociones/duck/dictionary';
 import tableListDictionary from '../../table-list/duck/dictionary';
 import tiposInmueblesDiccionary from '../../tipos-inmuebles/duck/dictionary';
 import usuariosDictionary from '../../usuarios/duck/dictionary';
@@ -24,6 +25,7 @@ const defaultState = {
         ...homeDictionary.es,
         ...loginDiccionary.es,
         ...promocionesDictionary.es,
+        ...statusPromocionesDictionary.es,
         ...tableListDictionary.es,
         ...tiposInmueblesDiccionary.es,
         ...usuariosDictionary.es,

@@ -17,6 +17,7 @@ import Loading from '../loading/index.component';
 import Login from '../login/index.component';
 import Promociones from '../promociones/index.component';
 import PromocionesForm from '../promociones/form.component';
+import StatusPromociones from '../status-promociones/index.component';
 import TiposInmuebles from '../tipos-inmuebles/index.component';
 import Usuarios from '../usuarios/index.component';
 import UsuariosForm from '../usuarios/form.component';
@@ -82,6 +83,9 @@ const App = (props) => {
             <Route path={config.PATHS.configuracion.promociones_editar} component={PromocionesForm} />
             <Route path={config.PATHS.configuracion.promociones} component={Promociones} />
             
+            {/* promociones */}
+            <Route path={config.PATHS.status_promociones} component={StatusPromociones} />
+
             {/* tipos de inmuebles */}
             <Route path={config.PATHS.configuracion.tiposInmuebles} component={TiposInmuebles} />
             <Route component={Home} />
