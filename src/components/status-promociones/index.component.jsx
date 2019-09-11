@@ -143,6 +143,7 @@ class StatusPromociones extends Component {
                     </Table.Row>
                   </Table.Body>
                 </Table>
+                {/*
                 <Table>
                   <Table.Header>
                     <Table.ColHeader>{intl.formatMessage({ id: `${i18nComponentKey}.visitas`, defaultMessage: `${i18nComponentKey}.visitas` })}</Table.ColHeader>
@@ -167,6 +168,8 @@ class StatusPromociones extends Component {
                         </Table.Col>
                       ))}
                     </Table.Row>
+                    {map(data.ventas_by_month[promocionId], (ventasMonth, year) => {
+                    })}
                     <Table.Row>
                       <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-vendidas`, defaultMessage: `${i18nComponentKey}.viviendas-vendidas` })}</Table.Col>
                       <Table.Col>###</Table.Col>
@@ -189,6 +192,7 @@ class StatusPromociones extends Component {
                     </Table.Row>
                   </Table.Body>
                 </Table>
+                */}
                 <hr />
               </Fragment>
             ))}

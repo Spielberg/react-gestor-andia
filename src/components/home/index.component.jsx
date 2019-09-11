@@ -116,7 +116,10 @@ class Home extends Component {
             </Grid.Col>
             <Grid.Col md={4} key={columnKey('counts')}>
               <Card>
-                <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.counts`, defaultMessage: `${i18nComponentKey}.header.stats.counts` })}</Card.Header>
+                <Card.Header>
+                  {this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.counts`, defaultMessage: `${i18nComponentKey}.header.stats.counts` })}
+                  <h3 className="number-total">{sum('counts')}</h3>
+                </Card.Header>
                 <C3Chart data={{ columns: this.state.stats.counts, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="countschart" />
               </Card>
             </Grid.Col>

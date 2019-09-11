@@ -1,8 +1,9 @@
 export default {
   es: {
-    'app.home.index.counts.reservadas': 'Número total de viviendas reservadas',
-    'app.home.index.counts.totales': 'Número total de viviendas',
-    'app.home.index.counts.vendidas': 'Número total de viviendas vendidas',
+    'app.home.index.counts.libres': 'Viviendas libres',
+    'app.home.index.counts.reservadas': 'Viviendas reservadas',
+    'app.home.index.counts.totales': 'Viviendas',
+    'app.home.index.counts.vendidas': 'Viviendas vendidas',
     'app.home.index.desde': 'Fecha inicio',
     'app.home.index.hasta': 'Fecha fin',
     'app.home.index.header.stats.comerciales': 'Visitas por comercial',
