@@ -1,16 +1,20 @@
 export default {
   es: {
+    'app.home.index.count': 'Total',
     'app.home.index.counts.libres': 'Viviendas libres',
     'app.home.index.counts.reservadas': 'Viviendas reservadas',
     'app.home.index.counts.totales': 'Viviendas',
     'app.home.index.counts.vendidas': 'Viviendas vendidas',
     'app.home.index.desde': 'Fecha inicio',
+    'app.home.index.estatus': 'Estado',
     'app.home.index.hasta': 'Fecha fin',
     'app.home.index.header.stats.comerciales': 'Visitas por comercial',
     'app.home.index.header.stats.conociste': 'Cómo nos han conocido',
     'app.home.index.header.stats.counts': 'Venta de viviendas',
     'app.home.index.header.stats.promociones': 'Visitas por promoción',
     'app.home.index.logotipo': 'Logotipo construcciones Andia',
+    'app.home.index.medio': 'Medio',
+    'app.home.index.promocion': 'Promoción',
     'app.home.index.select-promociones-all': 'Todas las promociones',
     'app.home.index.select.month': 'Último mes',
     'app.home.index.select.since': 'Rango temporal:',
@@ -23,5 +27,6 @@ export default {
     'app.home.index.table.col.vendidas': 'Ventas',
     'app.home.index.title': 'Panel de administración',
     'app.home.index.ventas': 'Ventas',
+    'app.home.index.visita': 'Visita',
   },
 };

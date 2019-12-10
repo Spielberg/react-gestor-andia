@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import C3Chart from 'react-c3js';
+import { Chart } from 'react-google-charts';
 import { DateRangePicker } from 'react-dates';
 import moment from 'moment';
 import 'moment/locale/es';
@@ -19,8 +19,6 @@ import {
   reduce,
   round,
 } from 'lodash';
-
-import 'c3/c3.css';
 
 import config from './duck/config';
 
@@ -69,7 +67,7 @@ class Home extends Component {
 
   render() {
     const sum = source => reduce(this.state.stats[source], (sum, [_, n]) => sum + parseInt(n, 10), 0);
-    const columnKey = which => `${i18nComponentKey}-${which}-${this.state.since}-${this.state.until}-${this.state.promocionId}`;
+    const columnKey = which => `${i18nComponentKey}-${which}-${moment(this.state.since).format('X')}-${moment(this.state.until).format('X')}-${this.state.promocionId}`;
     return (
       <Card>
         <Card.Header>
@@ -99,19 +97,31 @@ class Home extends Component {
         </Card.Header>
         <Card.Body>
           <Grid.Row cards deck>
-            <Grid.Col md={4} key={columnKey('promociones')}>
-              <Card>
+            <Grid.Col md={4}>
+              <Card key={columnKey('promociones')}>
                 <Card.Header>
                   {this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.promociones`, defaultMessage: `${i18nComponentKey}.header.stats.promociones` })}
                   <h3 className="number-total">{sum('promociones')}</h3>
                 </Card.Header>
-                <C3Chart data={{ columns: this.state.stats.promociones, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="promocioneschart" />
+                <Chart
+                  chartType={config.HOME.chart.chartType}
+                  data={config.HOME.chart.charts.promociones(this.state.stats.promociones, this.props.intl)}
+                  width={config.HOME.chart.width}
+                  height={config.HOME.chart.height}
+                  options={config.HOME.chart.options}
+                />
               </Card>
             </Grid.Col>
             <Grid.Col md={4} key={columnKey('conociste')}>
               <Card>
                 <Card.Header>{this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.conociste`, defaultMessage: `${i18nComponentKey}.header.stats.conociste` })}</Card.Header>
-                <C3Chart data={{ columns: this.state.stats.conociste, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="conocistechart" />  
+                <Chart
+                  chartType={config.HOME.chart.chartType}
+                  data={config.HOME.chart.charts.conociste(this.state.stats.conociste, this.props.intl)}
+                  width={config.HOME.chart.width}
+                  height={config.HOME.chart.height}
+                  options={config.HOME.chart.options}
+                />
               </Card>
             </Grid.Col>
             <Grid.Col md={4} key={columnKey('counts')}>
@@ -120,7 +130,13 @@ class Home extends Component {
                   {this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.counts`, defaultMessage: `${i18nComponentKey}.header.stats.counts` })}
                   <h3 className="number-total">{sum('counts')}</h3>
                 </Card.Header>
-                <C3Chart data={{ columns: this.state.stats.counts, type: 'pie', unload: true }} pie={config.HOME.stats.pie} element="countschart" />
+                <Chart
+                  chartType={config.HOME.chart.chartType}
+                  data={config.HOME.chart.charts.counts(this.state.stats.counts, this.props.intl)}
+                  width={config.HOME.chart.width}
+                  height={config.HOME.chart.height}
+                  options={config.HOME.chart.options}
+                />
               </Card>
             </Grid.Col>
           </Grid.Row>

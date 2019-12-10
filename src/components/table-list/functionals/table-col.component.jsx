@@ -14,7 +14,7 @@ const defaultProps = {};
 
 const TableCol = (props) => {
   const { i18nKey, column, column: { src, key, i18n }, intl, obj } = props;
-  const value = src(obj, key);
+  const value = src(obj, key, intl);
   if (props.column.type === 'boolean') {
     const coverage = (child) => (
       <Badge color={`${value ? 'success' : 'danger'}`} className="mr-1">
@@ -50,7 +50,7 @@ const TableCol = (props) => {
             : intl.formatMessage({ id: `${i18nKey}.column.${i18n(column)}.false`, defaultMessage: `${i18nKey}.column.${i18n(column)}.false` })
           );
   }
-  return column.src(obj, column.key);
+  return column.src(obj, column.key, intl);
 }
 
 TableCol.propTypes = propTypes;

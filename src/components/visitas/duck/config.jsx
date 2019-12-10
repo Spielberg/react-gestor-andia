@@ -50,7 +50,7 @@ config.VISITAS = {
           }
           return data.apellido_1;
         }},
-        { key: 'email' },
+        { key: 'status', src: (data, key, intl) => intl.formatMessage({ id: `app.visitas.form.status.${data[key]}`, defaultMessage: `app.visitas.form.status.${data[key]}` }) },
         { key: 'telefono' },
         { key: 'comercial' },
         { key: 'deleted', type: 'boolean' },
