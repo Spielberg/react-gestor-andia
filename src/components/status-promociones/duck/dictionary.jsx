@@ -8,5 +8,6 @@ export default {
     'app.status-promociones.index.viviendas-promocion': 'Viviendas promoción',
     'app.status-promociones.index.viviendas-reservadas': 'Viviendas reservadas',
     'app.status-promociones.index.viviendas-vendidas': 'Viviendas vendidas',
+    'app.status-promociones.index.viviendas-venta': 'Viviendas a la venta',
   },
 };

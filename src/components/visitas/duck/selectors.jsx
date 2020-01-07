@@ -9,11 +9,9 @@ import {
   isEmpty,
 } from 'lodash';
 
-import base from './config';
+import config from './config';
 
-import ventas from '../../ventas/duck/config';
-
-const config = { ...base, ...ventas };
+//import reservas from '../../reservas/duck/config';
 
 const i18nComponentKey = 'app.visitas.form';
 
@@ -172,9 +170,9 @@ function fetchVisita(id, cb = () => (null)) {
           users_id: parseInt(values.users_id, 10),
           contactado: values.contactado,
         },
-        venta: {
-          ...current.venta,
-          data: values.venta,
+        reserva: {
+          ...current.reserva,
+          data: values.reserva,
         },
       }), () => {
         return cb(null, response.data);
@@ -209,13 +207,13 @@ function displaySuccess(message) {
   return this.displayAlert(message, 'success');
 }
 
-function submitVenta(visitas_id, cb = () => (null)) {
+function submitReserva(visitas_id, cb = () => (null)) {
   const data = {
-      tipos_inmuebles_id: parseInt(this.state.venta.candidate.tipo.id, 10),
-      promociones_id: parseInt(this.state.venta.candidate.promocion.id, 10),
+      tipos_inmuebles_id: parseInt(this.state.reserva.candidate.tipo.id, 10),
+      promociones_id: parseInt(this.state.reserva.candidate.promocion.id, 10),
       visitas_id: parseInt(visitas_id, 10),
     };
-    let url = config.VENTAS.tableList.url;
+    let url = config.RESERVAS.url;
     if (config.DEBUG) console.log(url, data);
     return axios({
       method: 'post', url, data, headers: {
@@ -272,8 +270,8 @@ function submit(e, cb = () => (null)) {
             }));
           }, this.state.redirect.timeout * 1000);
         };
-        if (data.status === 'compra' && isEmpty(this.state.venta.data)) {
-          return this.submitVenta(response.data.data.id, (err) => {
+        if (data.status === 'reserva' && isEmpty(this.state.reserva.data)) {
+          return this.submitReserva(response.data.data.id, (err) => {
             if (!err) {
               postSubmit();    
             }
@@ -310,7 +308,7 @@ function setValue(which, value, cb = () => null) {
 }
 
 function validate(cb = () => (null)) {
-  const { values, venta } = this.state;
+  const { values, reserva } = this.state;
   const current = {
     ...this.state,
     errors: {
@@ -345,8 +343,8 @@ function validate(cb = () => (null)) {
     current.errors.fecha_visita = this.props.intl.formatMessage({ id: `${i18nComponentKey}.err.fecha_visita`, defaultMessage: `${i18nComponentKey}.err.fecha_visita` });
     valid = false;
   }
-  if (values.status === 'compra' && isEmpty(venta.candidate.promocion) && valid &&  isEmpty(venta.data)) {
-    current.venta.modal.display = true;
+  if (values.status === 'reserva' && isEmpty(reserva.candidate.promocion) && valid &&  isEmpty(reserva.data)) {
+    current.reserva.modal.display = true;
     valid = false;
   }
 
@@ -357,43 +355,43 @@ function validate(cb = () => (null)) {
   });
 }
 
-function hideModalVentas(cb = () => null) {
+function hideModalReservas(cb = () => null) {
   this.setState(current => ({
     ...current,
-    venta: {
-      ...current.venta,
+    reserva: {
+      ...current.reserva,
       modal: {
-        ...current.venta.modal,
+        ...current.reserva.modal,
         display: false,
       },
     },
   }), cb);  
 }
 
-function showModalVentas() {
+function showModalReservas() {
   this.setState(current => ({
     ...current,
-    venta: {
-      ...current.venta,
+    reserva: {
+      ...current.reserva,
       modal: {
-        ...current.venta.modal,
+        ...current.reserva.modal,
         display: true,
       },
     },
   }));  
 }
 
-function selectVenta(candidate) {
+function selectReserva(candidate) {
   this.setState(current => ({
     ...current,
-    venta: {
-      ...current.venta,
+    reserva: {
+      ...current.reserva,
       candidate,
     },
   }));  
 }
 
-function candidatosVenta() {
+function candidatosReserva() {
   const { promociones } = this.state;
   const arr = [];
   if (isEmpty(promociones)) {
@@ -417,22 +415,34 @@ function candidatosVenta() {
 
 function handleDeleteVenta(e, id){
   e.preventDefault();
-  const url = `${config.VENTAS.tableList.url}/${id}`;
+  const url = `${config.RESERVAS.url}/${id}`;
   if (config.DEBUG) console.log(url);
   return axios.delete(url, {
+    headers: {
+      Authorization: `Bearer ${this.props.session.authToken}`,
+      'Content-Type': 'application/json',
+      }
+    })
+    .then((response) => {
+      this.fetchVisita(this.state.values.id);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+function vendido(e, which) {
+  e.preventDefault();
+  const url = `${config.RESERVAS.url}/${which}`;
+  if (config.DEBUG) console.log(url);
+  return axios.put(url, { visita_id: this.state.values.id }, {
     headers: {
       Authorization: `Bearer ${this.props.session.authToken}`,
       'Content-Type': 'application/json',
     },
   })
     .then((response) => {
-      this.setState(current => ({
-        ...current,
-        venta: {
-          ...current.venta,
-          data: {},
-        },
-      }));
+      this.fetchVisita(this.state.values.id);
     })
     .catch((error) => {
       console.error(error);
@@ -440,7 +450,7 @@ function handleDeleteVenta(e, id){
 }
 
 export default {
-  candidatosVenta,
+  candidatosReserva,
   catchReturn,
   didMout,
   displayAlert,
@@ -453,11 +463,12 @@ export default {
   handleInmuebles,
   handlePromocion,
   handleValues,
-  hideModalVentas,
-  selectVenta,
+  hideModalReservas,
+  selectReserva,
   setValue,
-  showModalVentas,
+  showModalReservas,
   submit,
-  submitVenta,
+  submitReserva,
   validate,
+  vendido,
 };

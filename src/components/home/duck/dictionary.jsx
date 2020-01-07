@@ -1,5 +1,8 @@
 export default {
   es: {
+    'app.home.index.alert.historical': 'Existen unos datos historicos de {historico, number} inmuebles vendidos o reservados y {reservadas, number} reservas.',
+    'app.home.index.btn.historical-display': 'Descontar histórico y reservas de las ventas',
+    'app.home.index.btn.historical-hide': 'Aplicar histórico y reservas a las ventas',
     'app.home.index.count': 'Total',
     'app.home.index.counts.libres': 'Viviendas libres',
     'app.home.index.counts.reservadas': 'Viviendas reservadas',

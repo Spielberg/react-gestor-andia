@@ -79,6 +79,16 @@ function fetchPromocion(id, cb = () => (null)) {
           ...current.values,
           name: promocion.name,
           zona: promocion.zona,
+          historico: {
+            reserva: chain(promocion.historico.reserva)
+                      .keyBy('id')
+                      .mapValues('cantidad')
+                      .value(),
+            venta: chain(promocion.historico.venta)
+                      .keyBy('id')
+                      .mapValues('cantidad')
+                      .value(),
+          },
           inmuebles: chain(promocion.inmuebles)
                       .keyBy('id')
                       .mapValues('cantidad')
@@ -132,6 +142,23 @@ function handleInmuebles (e, which) {
   }));
 }
 
+function handleHistorico (e, type, which) {
+  const value = parseInt(e.target.value, 10);
+  this.setState(current => ({
+    ...current,
+    values: {
+      ...current.values,
+      historico: {
+        ...current.values.historico,
+        [type]: {
+          ...current.values.historico[type],
+          [which]: value,
+        },
+      },
+    }
+  }));
+}
+
 function displayError (message) {
   return this.displayAlert(message, 'danger');
 }
@@ -145,6 +172,10 @@ function submit(e, cb = () => (null)) {
   const body = {
     ...this.state.values,
     inmuebles: omitBy(this.state.values.inmuebles, (val, key) => val === 0 || isNaN(val)),
+    historico: {
+      reserva: omitBy(this.state.values.historico.reserva, (val, key) => val === 0 || isNaN(val)),
+      venta: omitBy(this.state.values.historico.venta, (val, key) => val === 0 || isNaN(val)),
+    },
   };
   this.validate(() => {
     let url = config.PROMOCIONES.tableList.url;
@@ -231,6 +262,7 @@ export default {
   fetchInmuebles,
   fetchPromocion,
   fetchZonas,
+  handleHistorico,
   handleInmuebles,
   handleValues,
   handleZona,

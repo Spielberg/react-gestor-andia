@@ -45,6 +45,7 @@ class StatusPromociones extends Component {
       data: {
         promociones: {},
         tipos_inmuebles: {},
+        reservas: {},
         ventas: {},
         visitas: {},
       },
@@ -88,114 +89,101 @@ class StatusPromociones extends Component {
           </Alert>,
         );
       }
-
-      const handleViviendasVendidas = (promocionId, tipoInmuebleId) => (
-        data.ventas[promocionId]
-          ? data.ventas[promocionId][tipoInmuebleId] || 0
-          : 0
-      );
+      const handleViviendasVendidas = (promocionId, tipoInmuebleId, historico) => {
+        const ventas = data.ventas[promocionId] && data.ventas[promocionId][tipoInmuebleId] 
+          ? data.ventas[promocionId][tipoInmuebleId]
+          : 0;
+        const histor = historico.venta[tipoInmuebleId]
+          ? historico.venta[tipoInmuebleId]
+          : 0;
+        return ventas + histor;
+      }
+      const handleViviendasReservadas = (promocionId, tipoInmuebleId, historico) => {
+        const reservas = data.reservas[promocionId] && data.reservas[promocionId][tipoInmuebleId] 
+          ? data.reservas[promocionId][tipoInmuebleId]
+          : 0;
+        const histor = historico.reserva && historico.reserva[tipoInmuebleId]
+          ? historico.reserva[tipoInmuebleId]
+          : 0;
+        return reservas + histor;
+      }
+      const returnCountViviendaReservada = (data, promocionId, historico) => {
+        const rsd = reduce(data.reservas[promocionId] || {}, (sum, n) => sum + n, 0);
+        const hst = reduce(historico.reserva || {}, (sum, n) => sum + n, 0);
+        return rsd + hst;
+      };
+      const returnCountViviendaVendidas = (data, promocionId, historico) => {
+        const rsd = reduce(data.ventas[promocionId] || {}, (sum, n) => sum + n, 0);
+        const hst = reduce(historico.venta || {}, (sum, n) => sum + n, 0);
+        return rsd + hst;
+      };
       return layout(
           <div id="status-body">
-            {map(data.promociones, ({ id: promocionId, name: promocionName, inmuebles }) => (
-              <Fragment key={`${i18nComponentKey}-promocion-${promocionId}`}>
-                <Header.H4>{promocionName}</Header.H4>
-                <Table>
-                  <Table.Header>
-                    <Table.ColHeader />
-                    <Table.ColHeader>{intl.formatMessage({ id: `${i18nComponentKey}.totales`, defaultMessage: `${i18nComponentKey}.totales` })}</Table.ColHeader>
-                    {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
-                      <Table.ColHeader
-                        key={`${i18nComponentKey}-header-${promocionId}-${tipoInmuebleId}`}>
-                          {data.tipos_inmuebles[tipoInmuebleId].name}
-                      </Table.ColHeader>
-                    ))}
-                  </Table.Header>
-                  <Table.Body>
-                    <Table.Row>
-                      <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-promocion`, defaultMessage: `${i18nComponentKey}.viviendas-promocion` })}</Table.Col>
-                      <Table.Col>{reduce(inmuebles, (sum, n) => sum + n, 0)}</Table.Col>
+            {map(data.promociones, ({ id: promocionId, name: promocionName, inmuebles, historico }) => {
+              const countViviendaPromocion = reduce(inmuebles, (sum, n) => sum + n, 0);
+              const countViviendaReservada = returnCountViviendaReservada(data, promocionId, historico);
+              const countViviendaVendidas = returnCountViviendaVendidas(data, promocionId, historico);
+              return (
+                <Fragment key={`${i18nComponentKey}-promocion-${promocionId}`}>
+                  <Header.H4>{promocionName}</Header.H4>
+                  <Table>
+                    <Table.Header>
+                      <Table.ColHeader />
+                      <Table.ColHeader>{intl.formatMessage({ id: `${i18nComponentKey}.totales`, defaultMessage: `${i18nComponentKey}.totales` })}</Table.ColHeader>
                       {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
-                        <Table.Col
-                          key={`${i18nComponentKey}-totales-${promocionId}-${tipoInmuebleId}`}>
-                            {inmuebles[tipoInmuebleId] || 0}
-                        </Table.Col>
+                        <Table.ColHeader
+                          key={`${i18nComponentKey}-header-${promocionId}-${tipoInmuebleId}`}>
+                            {data.tipos_inmuebles[tipoInmuebleId].name}
+                        </Table.ColHeader>
                       ))}
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-vendidas`, defaultMessage: `${i18nComponentKey}.viviendas-vendidas` })}</Table.Col>
-                      <Table.Col>{reduce(data.ventas[promocionId] || {}, (sum, n) => sum + n, 0)}</Table.Col>
-                      {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
-                        <Table.Col
-                          key={`${i18nComponentKey}-vendidas-${promocionId}-${tipoInmuebleId}`}>
-                            {handleViviendasVendidas(promocionId, tipoInmuebleId)}
-                        </Table.Col>
-                      ))}
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-libres`, defaultMessage: `${i18nComponentKey}.viviendas-libres` })}</Table.Col>
-                      <Table.Col>{reduce(inmuebles, (sum, n) => sum + n, 0) - reduce(data.ventas[promocionId] || {}, (sum, n) => sum + n, 0)}</Table.Col>
-                      {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
-                        <Table.Col
-                          key={`${i18nComponentKey}-libres-${promocionId}-${tipoInmuebleId}`}>
-                            {(inmuebles[tipoInmuebleId] || 0) - handleViviendasVendidas(promocionId, tipoInmuebleId)}
-                        </Table.Col>
-                      ))}
-                    </Table.Row>
-                  </Table.Body>
-                </Table>
-                {/*
-                <Table>
-                  <Table.Header>
-                    <Table.ColHeader>{intl.formatMessage({ id: `${i18nComponentKey}.visitas`, defaultMessage: `${i18nComponentKey}.visitas` })}</Table.ColHeader>
-                    <Table.ColHeader />
-                    <Table.ColHeader>{intl.formatMessage({ id: `${i18nComponentKey}.ventas`, defaultMessage: `${i18nComponentKey}.ventas` })}</Table.ColHeader>
-                    <Table.ColHeader>{intl.formatMessage({ id: `${i18nComponentKey}.totales`, defaultMessage: `${i18nComponentKey}.totales` })}</Table.ColHeader>
-                    {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
-                      <Table.ColHeader
-                        key={`${i18nComponentKey}-header-${promocionId}-${tipoInmuebleId}`}>
-                          {data.tipos_inmuebles[tipoInmuebleId].name}
-                      </Table.ColHeader>
-                    ))}
-                  </Table.Header>
-                  <Table.Body>
-                    <Table.Row>
-                      <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-promocion`, defaultMessage: `${i18nComponentKey}.viviendas-promocion` })}</Table.Col>
-                      <Table.Col>{reduce(inmuebles, (sum, n) => sum + n, 0)}</Table.Col>
-                      {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
-                        <Table.Col
-                          key={`${i18nComponentKey}-totales-${promocionId}-${tipoInmuebleId}`}>
-                            {inmuebles[tipoInmuebleId] || 0}
-                        </Table.Col>
-                      ))}
-                    </Table.Row>
-                    {map(data.ventas_by_month[promocionId], (ventasMonth, year) => {
-                    })}
-                    <Table.Row>
-                      <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-vendidas`, defaultMessage: `${i18nComponentKey}.viviendas-vendidas` })}</Table.Col>
-                      <Table.Col>###</Table.Col>
-                      {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
-                        <Table.Col
-                          key={`${i18nComponentKey}-vendidas-${promocionId}-${tipoInmuebleId}`}>
-                            {handleViviendasVendidas(promocionId, tipoInmuebleId)}
-                        </Table.Col>
-                      ))}
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-libres`, defaultMessage: `${i18nComponentKey}.viviendas-libres` })}</Table.Col>
-                      <Table.Col>{reduce(inmuebles, (sum, n) => sum + n, 0) - reduce(data.ventas[promocionId] || {}, (sum, n) => sum + n, 0)}</Table.Col>
-                      {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
-                        <Table.Col
-                          key={`${i18nComponentKey}-libres-${promocionId}-${tipoInmuebleId}`}>
-                            {(inmuebles[tipoInmuebleId] || 0) - handleViviendasVendidas(promocionId, tipoInmuebleId)}
-                        </Table.Col>
-                      ))}
-                    </Table.Row>
-                  </Table.Body>
-                </Table>
-                */}
-                <hr />
-              </Fragment>
-            ))}
+                    </Table.Header>
+                    <Table.Body>
+                      <Table.Row>
+                        <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-promocion`, defaultMessage: `${i18nComponentKey}.viviendas-promocion` })}</Table.Col>
+                        <Table.Col>{countViviendaPromocion}</Table.Col>
+                        {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
+                          <Table.Col
+                            key={`${i18nComponentKey}-totales-${promocionId}-${tipoInmuebleId}`}>
+                              {inmuebles[tipoInmuebleId] || 0}
+                          </Table.Col>
+                        ))}
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-vendidas`, defaultMessage: `${i18nComponentKey}.viviendas-vendidas` })}</Table.Col>
+                        <Table.Col>{countViviendaVendidas}</Table.Col>
+                        {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
+                          <Table.Col
+                            key={`${i18nComponentKey}-vendidas-${promocionId}-${tipoInmuebleId}`}>
+                              {handleViviendasVendidas(promocionId, tipoInmuebleId, historico)}
+                          </Table.Col>
+                        ))}
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-reservadas`, defaultMessage: `${i18nComponentKey}.viviendas-reservadas` })}</Table.Col>
+                        <Table.Col>{countViviendaReservada}</Table.Col>
+                        {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
+                          <Table.Col
+                            key={`${i18nComponentKey}-reservadas-${promocionId}-${tipoInmuebleId}`}>
+                              {handleViviendasReservadas(promocionId, tipoInmuebleId, historico)}
+                          </Table.Col>
+                        ))}
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Col>{intl.formatMessage({ id: `${i18nComponentKey}.viviendas-venta`, defaultMessage: `${i18nComponentKey}.viviendas-venta` })}</Table.Col>
+                        <Table.Col>{countViviendaPromocion - countViviendaReservada - countViviendaVendidas}</Table.Col>
+                        {map(config.STATUS.promocion.header, (tipoInmuebleId) => (
+                          <Table.Col
+                            key={`${i18nComponentKey}-libres-${promocionId}-${tipoInmuebleId}`}>
+                              {(inmuebles[tipoInmuebleId] || 0) - handleViviendasVendidas(promocionId, tipoInmuebleId, historico) - handleViviendasReservadas(promocionId, tipoInmuebleId, historico)}
+                          </Table.Col>
+                        ))}
+                      </Table.Row>
+                    </Table.Body>
+                  </Table>
+                  <hr />
+                </Fragment>
+              );
+            })}
           </div>,
         );
   };

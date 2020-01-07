@@ -6,10 +6,18 @@
 .select-promociones {
   height: 39px !important;
   margin-right: 8px;
-  max-width: 200px;
+  max-width: 190px;
 }
 
 h3.number-total {
   position: absolute;
   right: 15px;
+}
+
+.alert.historical-alert {
+  margin-bottom: 0;
+}
+
+.btn-historical {
+  margin-top: 8px;
 }

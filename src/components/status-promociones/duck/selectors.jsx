@@ -57,6 +57,7 @@ function fetchData(cb = () => (null)) {
           ...response.data.data,          
           promociones: keyBy(response.data.data.promociones, 'id'),
           tipos_inmuebles: keyBy(response.data.data.tipos_inmuebles, 'id'),
+          reservas_by_month: keyBy(response.data.data.reservas_by_month, 'promocion_id'),
           ventas_by_month: keyBy(response.data.data.ventas_by_month, 'promocion_id'),
           },
         }), () => {

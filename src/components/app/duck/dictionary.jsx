@@ -15,5 +15,6 @@ export default {
     'app.conociste.pisos': 'pisos.com',
     'app.conociste.valla': 'Valla de obra',
     'app.conociste.web': 'Página web',
+    'app.conociste.oficina': 'Oficina',
   },
 };

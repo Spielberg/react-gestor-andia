@@ -88,7 +88,7 @@ class VisitasForm extends Component {
         url: config.PATHS.visitas,
         timeout: config.REDIRECT.timeout,
       },
-      venta: {
+      reserva: {
         data: {},
         modal: {
           display: false,
@@ -112,8 +112,8 @@ class VisitasForm extends Component {
   */
   render() {
     const { intl } = this.props;
-    const { values, errors, promociones, alert, redirect, loading, search, venta } = this.state;
-    const candidatos = this.candidatosVenta();
+    const { values, errors, promociones, alert, redirect, loading, search, reserva } = this.state;
+    const candidatos = this.candidatosReserva();
 
     if (isEmpty(promociones)) {
       return <Fragment />;
@@ -121,29 +121,29 @@ class VisitasForm extends Component {
 
     const inmuebles_promocion_1 = !values.promociones_id_1 ? [] : promociones[values.promociones_id_1].inmuebles;
     const inmuebles_promocion_2 = !values.promociones_id_2 ? [] : promociones[values.promociones_id_2].inmuebles;
-    const ModalVentas = () => (
+    const ModalReservas = () => (
       <Fragment>
         <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">{intl.formatMessage({ id: `${i18nComponentKey}.modal-ventas.title`, defaultMessage: `${i18nComponentKey}.modal-ventas.title` })}</h5>
+                <h5 className="modal-title">{intl.formatMessage({ id: `${i18nComponentKey}.modal-reservas.title`, defaultMessage: `${i18nComponentKey}.modal-reservas.title` })}</h5>
               </div>
               <div className="modal-body">
                 {map(candidatos, candidato => (
                     <Form.Radio
                       key={`${i18nComponentKey}-radios-${candidato.promocion.id}-${candidato.tipo.id}`}
                       label={`${candidato.promocion.name}: ${candidato.tipo.name}`}
-                      name="candidato-venta"
-                      checked={venta.candidate.promocion.id === candidato.promocion.id && venta.candidate.tipo.id === candidato.tipo.id}
-                      onChange={() => this.selectVenta(candidato)}
+                      name="candidato-reserva"
+                      checked={reserva.candidate.promocion.id === candidato.promocion.id && reserva.candidate.tipo.id === candidato.tipo.id}
+                      onChange={() => this.selectReserva(candidato)}
                       isInline
                     />                  
                 ))}
               </div>
               <div className="modal-footer">
-                <button type="button" onClick={e => this.hideModalVentas(() => this.submit(e))} className="btn btn-secondary" data-dismiss="modal">
-                  {intl.formatMessage({ id: `${i18nComponentKey}.modal-ventas.close`, defaultMessage: `${i18nComponentKey}.modal-ventas.close` })}
+                <button type="button" onClick={e => this.hideModalReservas(() => this.submit(e))} className="btn btn-secondary" data-dismiss="modal">
+                  {intl.formatMessage({ id: `${i18nComponentKey}.modal-reservas.close`, defaultMessage: `${i18nComponentKey}.modal-reservas.close` })}
                 </button>
               </div>
             </div>
@@ -159,7 +159,7 @@ class VisitasForm extends Component {
 
     return (
       <Card>
-        {venta.modal.display && ModalVentas()}
+        {reserva.modal.display && ModalReservas()}
         <Card.Header>
           <Header.H3>{
             !values.id
@@ -214,8 +214,6 @@ class VisitasForm extends Component {
               </Form.Group>
               </Grid.Col>
             </Grid.Row>
-
-
             <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.email`, defaultMessage: `${i18nComponentKey}.email` })}>
               <Form.Input
                 feedback={errors.email}
@@ -287,21 +285,42 @@ class VisitasForm extends Component {
                     invalid={false && errors.status !== ''}
                     value={values.status}
                     onChange={e => this.handleValues(e, 'status')}
-                    disabled={!isEmpty(venta.data)}
+                    disabled={!isEmpty(reserva.data)}
                   >
                     <option />
-                    {map(config.VISITAS.statuses, ({ key }) => <option value={key} key={`${i18nComponentKey}-stats-${key}`}>
-                      {intl.formatMessage({ id: `${i18nComponentKey}.status.${key}`, defaultMessage: `${i18nComponentKey}.status.${key}` })}
-                    </option>)}
+                    {map(config.VISITAS.statuses, ({ key }) => {
+                      if (key !== 'compra' || values.status === 'compra') {
+                        return (
+                          <option value={key} key={`${i18nComponentKey}-stats-${key}`}>
+                            {intl.formatMessage({ id: `${i18nComponentKey}.status.${key}`, defaultMessage: `${i18nComponentKey}.status.${key}` })}
+                          </option>
+                        );
+                      }                    
+                    })}
                   </Form.Select>
                 </Form.Group>
-                {!isEmpty(venta.data) && <Alert type="success" icon="check">
-                  <button onClick={e => this.handleDeleteVenta(e, venta.data.id)} class="btn btn-icon close" />
+                {!isEmpty(reserva.data) && reserva.data.reserva && 
+                <Fragment>
+                  <Button block square color="success" onClick={(e) => this.vendido(e, reserva.data.id)} className="btn-marcar-vendido">
+                    {intl.formatMessage({ id: `${i18nComponentKey}.marcar-vendido`, defaultMessage: `${i18nComponentKey}.marcar-vendido` })}
+                  </Button>
+                  <Alert type="success" icon="check">
+                    <button onClick={e => this.handleDeleteVenta(e, reserva.data.id)} class="btn btn-icon close" />
+                    {intl.formatMessage(
+                      { id: `${i18nComponentKey}.reserva`, defaultMessage: `${i18nComponentKey}.reserva` },
+                      {
+                        promocion: promociones[parseInt(reserva.data.promocion, 10)].name || 'promición',
+                        tipo: config.VISITAS.tiposInmuebles.cases[parseInt(reserva.data.tipo, 10)] || `tipo inmueble: ${reserva.data.tipo}`,
+                      })}
+                  </Alert>
+                </Fragment>}
+                {!isEmpty(reserva.data) && !reserva.data.reserva && <Alert type="success" icon="check">
+                  <button onClick={e => this.handleDeleteVenta(e, reserva.data.id)} class="btn btn-icon close" />
                   {intl.formatMessage(
                     { id: `${i18nComponentKey}.venta`, defaultMessage: `${i18nComponentKey}.venta` },
                     {
-                      promocion: promociones[parseInt(venta.data.promocion, 10)].name || 'promición',
-                      tipo: config.VISITAS.tiposInmuebles.cases[parseInt(venta.data.tipo, 10)] || `tipo inmueble: ${venta.data.tipo}`,
+                      promocion: promociones[parseInt(reserva.data.promocion, 10)].name || 'promición',
+                      tipo: config.VISITAS.tiposInmuebles.cases[parseInt(reserva.data.tipo, 10)] || `tipo inmueble: ${reserva.data.tipo}`,
                     })}
                 </Alert>}
               </Grid.Col>
@@ -329,7 +348,7 @@ class VisitasForm extends Component {
                     invalid={errors.fecha_visita !== ''}
                     value={values.fecha_visita}
                     onChange={fecha => this.setValue('fecha_visita', fecha)}
-                    monthLabels={map(range(11), i => intl.formatMessage({ id: `${i18nComponentKey}.months.${i}`, defaultMessage: `${i18nComponentKey}.months.${i}` }))}
+                    monthLabels={map(range(12), i => intl.formatMessage({ id: `${i18nComponentKey}.months.${i}`, defaultMessage: `${i18nComponentKey}.months.${i}` }))}
                   />
                 </Form.Group>
               </Grid.Col>
@@ -346,8 +365,6 @@ class VisitasForm extends Component {
                       {intl.formatMessage({ id: `${i18nComponentKey}.contactado.${key}`, defaultMessage: `${i18nComponentKey}.contactado.${key}` })}
                     </option>)}
                   </Form.Select>
-
-
                 </Form.Group>
               </Grid.Col>
             </Grid.Row>

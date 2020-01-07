@@ -60,6 +60,10 @@ class PromocionForm extends Component {
         id: parseInt(props.match.params.id, 10) || null,
         name: '',
         zona: '',
+        historico: {
+          reserva: {},
+          venta: {},
+        },
         inmuebles: {}
       },
       inmuebles: [],
@@ -138,6 +142,56 @@ class PromocionForm extends Component {
                             name={inmueble.id}
                             value={values.inmuebles[inmueble.id] || ''}
                             onChange={e => this.handleInmuebles(e, inmueble.id)}
+                            placeholder={intl.formatMessage({ id: `${i18nComponentKey}.cantidad`, defaultMessage: `${i18nComponentKey}.cantidad` }, { ...inmueble })}
+                            type="number"
+                          />
+                        </div>
+                      </Fragment>
+                    ))}
+                  </Grid.Col>
+                ))}
+              </Grid.Row>
+            </Dimmer>
+            </Form.Group>
+            <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.historico.reservas`, defaultMessage: `${i18nComponentKey}.historico.reservas`})}>
+            <Dimmer active={isEmpty(inmuebles)} loader>
+              <Grid.Row>
+                {map(chunk(inmuebles, ceil(inmuebles.length / 2)), (arr, i) => (
+                  <Grid.Col key={`${i18nComponentKey}-grid-col-input-historico-${i}`}>
+                    {map(arr, inmueble => (
+                      <Fragment key={`${i18nComponentKey}-input-${inmueble.id}`}>
+                        <div className="input-icon tipos-inmuebles">
+                          <span className="input-icon-addon">{inmueble.name}</span>
+                          <Form.Input
+                            className="cantidad-tipo-inmueble"
+                            name={inmueble.id}
+                            value={values.historico.reserva[inmueble.id] || ''}
+                            onChange={e => this.handleHistorico(e, 'reserva', inmueble.id)}
+                            placeholder={intl.formatMessage({ id: `${i18nComponentKey}.cantidad`, defaultMessage: `${i18nComponentKey}.cantidad` }, { ...inmueble })}
+                            type="number"
+                          />
+                        </div>
+                      </Fragment>
+                    ))}
+                  </Grid.Col>
+                ))}
+              </Grid.Row>
+            </Dimmer>
+            </Form.Group>
+            <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.historico.venta`, defaultMessage: `${i18nComponentKey}.historico.venta`})}>
+            <Dimmer active={isEmpty(inmuebles)} loader>
+              <Grid.Row>
+                {map(chunk(inmuebles, ceil(inmuebles.length / 2)), (arr, i) => (
+                  <Grid.Col key={`${i18nComponentKey}-grid-col-input-historico-${i}`}>
+                    {map(arr, inmueble => (
+                      <Fragment key={`${i18nComponentKey}-input-${inmueble.id}`}>
+                        <div className="input-icon tipos-inmuebles">
+                          <span className="input-icon-addon">{inmueble.name}</span>
+                          <Form.Input
+                            className="cantidad-tipo-inmueble"
+                            name={inmueble.id}
+                            value={values.historico.venta[inmueble.id] || ''}
+                            onChange={e => this.handleHistorico(e, 'venta', inmueble.id)}
                             placeholder={intl.formatMessage({ id: `${i18nComponentKey}.cantidad`, defaultMessage: `${i18nComponentKey}.cantidad` }, { ...inmueble })}
                             type="number"
                           />

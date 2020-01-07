@@ -14,8 +14,8 @@ export default {
     'app.visitas.form.err.promociones_id': 'La promoción es un campo obligatorio',
     'app.visitas.form.err.telefono': 'El teléfono es un campo obligatorio',
     'app.visitas.form.fecha_visita': 'Fecha visita',
-    'app.visitas.form.modal-ventas.close': 'guardar',
-    'app.visitas.form.modal-ventas.title': 'Seleccione el inmueble vendido',
+    'app.visitas.form.modal-reservas.close': 'guardar',
+    'app.visitas.form.modal-reservas.title': 'Seleccione el inmueble reservado',
     'app.visitas.form.months.0': 'Enero',
     'app.visitas.form.months.1': 'Febrero',
     'app.visitas.form.months.10': 'Noviembre',
@@ -72,5 +72,7 @@ export default {
     'app.visitas.index.no-results': 'No existen visitas para los criterios seleccionados',
     'app.visitas.index.nuevo': 'Añadir visita',
     'app.visitas.index.title': 'Listado de visitas',
+    'app.visitas.form.reserva': 'Reserva asociada a la visita: {promocion} {tipo}',
+    'app.visitas.form.marcar-vendido': 'Confirmar reserva como venta',
   },
 };

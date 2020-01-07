@@ -8,6 +8,10 @@ import promociones from '../../promociones/duck/config';
 
 const config = { ...base, ...promociones };
 
+config.RESERVAS = {
+  url: `${config.API_DOMAIN}/api/reservas`,
+};
+
 config.VISITAS = {
   tiposInmuebles: {
     url: `${config.API_DOMAIN}/api/promociones/<%= id %>`,
@@ -81,6 +85,7 @@ config.VISITAS = {
     'lista',
     'pisos',
     'valla',
+    'oficina',
     'web',
   ],
 };

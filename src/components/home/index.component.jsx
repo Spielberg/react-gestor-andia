@@ -7,6 +7,8 @@ import { DateRangePicker } from 'react-dates';
 import moment from 'moment';
 import 'moment/locale/es';
 import {
+  Alert,
+  Button,
   Card,
   Form,
   Grid,
@@ -50,6 +52,7 @@ class Home extends Component {
       focusedInput: null, 
       promociones: {},
       promocionId: null,
+      aplicarHistorico: false,
       stats: {
         conociste: [],
         counts: [],
@@ -128,15 +131,26 @@ class Home extends Component {
               <Card>
                 <Card.Header>
                   {this.props.intl.formatMessage({ id: `${i18nComponentKey}.header.stats.counts`, defaultMessage: `${i18nComponentKey}.header.stats.counts` })}
-                  <h3 className="number-total">{sum('counts')}</h3>
+                  <h3 className="number-total">{/*sum('counts')*/}</h3>
                 </Card.Header>
                 <Chart
                   chartType={config.HOME.chart.chartType}
-                  data={config.HOME.chart.charts.counts(this.state.stats.counts, this.props.intl)}
+                  data={config.HOME.chart.charts.counts(this.state.stats.counts, this.props.intl, this.state.aplicarHistorico)}
                   width={config.HOME.chart.width}
                   height={config.HOME.chart.height}
                   options={config.HOME.chart.options}
                 />
+                {(this.state.stats.counts.historico > 0 || this.state.stats.counts.reservadas > 0) && <Alert className="historical-alert" type="warning" icon="alert-triangle">
+                  {this.props.intl.formatMessage({ id: `${i18nComponentKey}.alert.historical`, defaultMessage: `${i18nComponentKey}.alert.historical` },
+                  { historico: this.state.stats.counts.historico, reservadas: this.state.stats.counts.reservadas })}
+                  <br />
+                  <Button className="btn-historical" square size="sm" color="warning" onClick={() => this.setState({ aplicarHistorico: !this.state.aplicarHistorico })}>
+                    {this.state.aplicarHistorico
+                      ? this.props.intl.formatMessage({ id: `${i18nComponentKey}.btn.historical-display`, defaultMessage: `${i18nComponentKey}.btn.historical-display` })
+                      : this.props.intl.formatMessage({ id: `${i18nComponentKey}.btn.historical-hide`, defaultMessage: `${i18nComponentKey}.btn.historical-hide` })
+                    }
+                  </Button>
+                </Alert>}
               </Card>
             </Grid.Col>
           </Grid.Row>
