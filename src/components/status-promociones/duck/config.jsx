@@ -4,10 +4,6 @@ const config = { ...base };
 
 config.STATUS = {
   url: `${config.API_DOMAIN}/api/status_promociones`,
-  order: {
-    by: 'createdAt',
-    desc: false,
-  },
   promocion: {
     header: [
       1, 
@@ -20,6 +16,10 @@ config.STATUS = {
       7,   
     ],
   }
+};
+
+config.SCEENSHOTS = {
+  url: `${config.API_DOMAIN}/api/sceenshots`,
 };
 
 export default { ...config, ...base };

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   each,
+  filter,
   isEmpty,
   map,
   reduce,
@@ -20,6 +21,8 @@ import {
 } from 'tabler-react';
 
 import config from './duck/config';
+
+import Screenshot from './screenshot';
 
 import {
   statusPromocionesSelectors,
@@ -42,6 +45,7 @@ class StatusPromociones extends Component {
     super(props);
     this.state = {
       loading: true,
+      screenshots: {},
       data: {
         promociones: {},
         tipos_inmuebles: {},
@@ -54,6 +58,7 @@ class StatusPromociones extends Component {
         type: null,
         message: null,
       },
+      screenshot: null,
     };
     each(statusPromocionesSelectors, (_, k) => this[k] = statusPromocionesSelectors[k].bind(this));
   }
@@ -68,12 +73,27 @@ class StatusPromociones extends Component {
   */
   render() {
     const { intl } = this.props;
-    const { data, loading } = this.state;
-
+    const { alert, data, loading, screenshot, screenshots } = this.state;
+    const doSuccess = (message) => {
+      this.displaySuccess(message);
+      this.fetchScreenshot();
+    };
     const layout = child => (
       <Card>
         <Card.Header>
-          <Header.H3>{intl.formatMessage({ id: `${i18nComponentKey}.title`, defaultMessage: `${i18nComponentKey}.title` })}</Header.H3>
+          <Header.H3>{screenshot
+            ? screenshots[screenshot].label
+            : intl.formatMessage({ id: `${i18nComponentKey}.title`, defaultMessage: `${i18nComponentKey}.title` })}</Header.H3>
+          <Card.Options>
+            <Screenshot displaySuccess={doSuccess} />
+            <Form.Select value={screenshot} onChange={this.handleScreenshot}>
+              <option />
+              {map(filter(screenshots, 'visible'), (obj) => (
+                <option key={`${i18nComponentKey}-select-${obj.id}`} value={obj.id}>
+                  {obj.label}
+                </option>))}
+            </Form.Select>
+          </Card.Options>          
         </Card.Header>
         <Dimmer active={loading} loader className="table-container">
           {alert.display && <Alert type={alert.type} icon="alert-triangle">{alert.message}</Alert>}
