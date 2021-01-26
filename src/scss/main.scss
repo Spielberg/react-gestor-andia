@@ -32,6 +32,10 @@ i.open-menu {
     display: none;
 }
 
+.is-margin-left-15 {
+  margin-left: 1.5rem;
+}
+
 @media only screen and (max-width: $screen-lg-min) {
     i.open-menu {
         //display: none;

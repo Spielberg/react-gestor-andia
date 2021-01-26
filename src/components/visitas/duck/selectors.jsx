@@ -70,11 +70,11 @@ function didMout() {
       this.setState({ loading: false });
     });
   }
-  this.fetchPromociones();
+  this.fetchPromociones(0);
 }
 
-function fetchPromociones(cb = () => (null)) {
-  const url = `${config.PROMOCIONES.tableList.url}?limit=100`;
+function fetchPromociones(active = 1, cb = () => (null)) {
+  const url = `${config.PROMOCIONES.tableList.url}?limit=100&active=${active}`;
   if (config.DEBUG) console.log(url);
   return axios.get(url, {
     headers: {

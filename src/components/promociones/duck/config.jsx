@@ -29,7 +29,8 @@ config.PROMOCIONES = {
         { key: 'home', type: 'boolean' },
         { key: 'active', type: 'boolean' },
       ],
-    }
+    },
+    isPromociones: true,
   },
 };
 

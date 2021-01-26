@@ -31,6 +31,16 @@ function clearFilterVisitas() {
   }), this.fetch);
 }
 
+function handleFilterPromociones() {
+    this.setState(current => ({
+      ...current,
+      filterPromociones: {
+        ...current.filterPromociones,
+        active: !current.filterPromociones.active,
+      },
+    }), this.fetch);
+  }
+
 function fetch(cb = () => (null)) {
   let url = `${this.props.url}?offset=${this.state.offset}&limit=${this.props.limit}`;
   if (this.state.query !== '') {
@@ -47,6 +57,9 @@ function fetch(cb = () => (null)) {
   }
   if (this.props.visitas && !isNull(this.state.filterVisitas.until) && isObject(this.state.filterVisitas.until) ) {
     url += `&until=${this.state.filterVisitas.until.format('YYYY-MM-DD')}`;
+  }
+  if (this.props.isPromociones) {
+    url += `&active=${this.state.filterPromociones.active ? 1 : 0}`;
   }
   if (config.DEBUG) console.log(url);
   return axios.get(url, {
@@ -285,6 +298,7 @@ export default {
   clearFilterVisitas,
   fetch,
   handleActive,
+  handleFilterPromociones,
   handleDates,
   handleBoolean,
   handleDelete,

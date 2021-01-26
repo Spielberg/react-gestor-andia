@@ -66,6 +66,7 @@ const propTypes = {
     PropTypes.oneOf([null]),
   ]),
   i18nKey: PropTypes.string,
+  isPromociones: PropTypes.bool,
   visitas: PropTypes.bool,
 };
 
@@ -74,6 +75,7 @@ const defaultProps = {
   editUrl: null,
   excelUrl: null,
   i18nKey: i18nComponentKey,
+  isPromociones: false,
   selected: false,
   visitas: false,
 };
@@ -99,6 +101,9 @@ class TableList extends Component {
         candidate: null,
         display: false,
       },
+      filterPromociones: {
+        active: true,
+      },
       filterVisitas: {
         display: false,
         since: moment('2019-01-01'),
@@ -119,8 +124,8 @@ class TableList extends Component {
   * @return {reactElement} - react element itself
   */
   render() {
-    const { addUrl, excelUrl, editUrl, intl, columns, i18nKey, selected, visitas } = this.props;
-    const { filterVisitas, loading, offset, modal, results, pagination, promocion_id, promociones, query, status } = this.state;
+    const { addUrl, excelUrl, editUrl, intl, columns, i18nKey, isPromociones, selected, visitas } = this.props;
+    const { filterPromociones, filterVisitas, loading, offset, modal, results, pagination, promocion_id, promociones, query, status } = this.state;
     const candidates = filter(results, 'selected');
     const selectedCount = size(candidates);
     
@@ -206,6 +211,13 @@ class TableList extends Component {
                 />
               }
             <Button.List align="right">
+              {isPromociones &&
+                <Button className="is-margin-left-15" color={filterPromociones.active ? 'warning' : 'success'} onClick={this.handleFilterPromociones}>{!filterPromociones.active
+                  ? intl.formatMessage({ id: `${i18nKey}.hide-active`, defaultMessage: `${i18nKey}.hide-active` })
+                  : intl.formatMessage({ id: `${i18nKey}.display-active`, defaultMessage: `${i18nKey}.display-active` })
+                }
+                </Button>
+              }
               {addUrl && <Link to={addUrl} className="btn-add">
                 <Button color="primary">{intl.formatMessage({ id: `${i18nKey}.nuevo`, defaultMessage: `${i18nKey}.nuevo` })}</Button>
               </Link>}
