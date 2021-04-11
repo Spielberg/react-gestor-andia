@@ -114,6 +114,15 @@ class VisitasForm extends Component {
     const { intl } = this.props;
     const { values, errors, promociones, alert, redirect, loading, search, reserva } = this.state;
     const candidatos = this.candidatosReserva();
+    const status1 = !values.promociones_id_1 || Object.keys(promociones).length === 0
+      ? true
+      : promociones[values.promociones_id_1].active;
+    const status2 = !values.promociones_id_2 || Object.keys(promociones).length === 0
+      ? true
+      : promociones[values.promociones_id_2].active;
+
+    console.log(values.promociones_id_1, values.promociones_id_2, Object.keys(promociones).length);
+    console.log({ status1, status2 });
 
     if (isEmpty(promociones)) {
       return <Fragment />;
@@ -233,6 +242,7 @@ class VisitasForm extends Component {
                     onChange={e => this.handlePromocion(e, 'promociones_id_1')}
                   >
                     <option />
+                    
                     {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
                   </Form.Select>
                 </Form.Group>
