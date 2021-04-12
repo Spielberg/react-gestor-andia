@@ -8,7 +8,7 @@ config.VERSION = '20200908-1';
 
 config.PROJECT = process.env.REACT_APP_PROJECT || 'react-gestor-andia';
 
-config.API_DOMAIN = process.env.REACT_APP_API_DOMAIN || 'http://gestion.construccionesandia.com/index.php';
+config.API_DOMAIN = process.env.REACT_APP_API_DOMAIN || 'https://gestion.construccionesandia.com/index.php';
 
 config.STATIC_CONTENT_URL = process.env.REACT_APP_STATIC_CONTENT_URL || '//s3.us-east-2.amazonaws.com/artworks-s3/construcciones-andia';
 

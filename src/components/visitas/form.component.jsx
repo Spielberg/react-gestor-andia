@@ -3,7 +3,6 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router';
-import { Typeahead } from 'react-bootstrap-typeahead';
 import moment from 'moment';
 import {
   ceil,
@@ -28,11 +27,18 @@ import {
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import 'react-bootstrap-typeahead/css/Typeahead-bs4.css';
 
-import config from './duck/config';
+import base from './duck/config';
 
 import {
   visitasSelectors,
 } from './duck';
+
+const config = {
+  ...base,
+  displayPromociones: {
+    criteria: (promocion) => promocion.home,
+  },
+};
 
 const i18nComponentKey = 'app.visitas.form';
 const propTypes = {};
@@ -114,22 +120,22 @@ class VisitasForm extends Component {
     const { intl } = this.props;
     const { values, errors, promociones, alert, redirect, loading, search, reserva } = this.state;
     const candidatos = this.candidatosReserva();
-    const status1 = !values.promociones_id_1 || Object.keys(promociones).length === 0
-      ? true
-      : promociones[values.promociones_id_1].active;
-    const status2 = !values.promociones_id_2 || Object.keys(promociones).length === 0
-      ? true
-      : promociones[values.promociones_id_2].active;
-
-    console.log(values.promociones_id_1, values.promociones_id_2, Object.keys(promociones).length);
-    console.log({ status1, status2 });
 
     if (isEmpty(promociones)) {
       return <Fragment />;
     }
 
-    const inmuebles_promocion_1 = !values.promociones_id_1 ? [] : promociones[values.promociones_id_1].inmuebles;
-    const inmuebles_promocion_2 = !values.promociones_id_2 ? [] : promociones[values.promociones_id_2].inmuebles;
+    const promocion_1 = !values.promociones_id_1 ? {} : promociones[values.promociones_id_1];
+    const promocion_2 = !values.promociones_id_2 ? {} : promociones[values.promociones_id_2];
+    const inmuebles_promocion_1 = promocion_1.inmuebles || [];
+    const inmuebles_promocion_2 = promocion_2.inmuebles || [];
+    const display1 = (values.promociones_id_1 && values.promociones_id_1 !== 0 && values.id)
+      ? config.displayPromociones.criteria(promocion_1)
+      : true;
+    const display2 = (values.promociones_id_2 && values.promociones_id_2 !== 0 && values.id)
+      ? config.displayPromociones.criteria(promocion_2)
+      : true;
+    
     const ModalReservas = () => (
       <Fragment>
         <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
@@ -235,29 +241,62 @@ class VisitasForm extends Component {
             <Grid.Row>
               <Grid.Col>
                 <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })}>
-                  <Form.Select
-                    feedback={errors.promociones_id_1}
-                    invalid={errors.promociones_id_1 !== ''}
-                    value={values.promociones_id_1}
-                    onChange={e => this.handlePromocion(e, 'promociones_id_1')}
-                  >
-                    <option />
-                    
-                    {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
-                  </Form.Select>
+                  {!display1
+                  ?
+                    (
+                      <>
+                        <Form.Input
+                          value={promocion_1.name}
+                          disabled
+                        />
+                        <span class="feedback-notice">No puede editarse debido a que la promoción ya no está activa</span>
+                      </>
+                    )
+                  : 
+                    (
+                    <Form.Select
+                      feedback={errors.promociones_id_1}
+                      invalid={errors.promociones_id_1 !== ''}
+                      value={values.promociones_id_1}
+                      onChange={e => this.handlePromocion(e, 'promociones_id_1')}
+                    >
+                      <option />  
+                      {Object.values(promociones)
+                        .filter(config.displayPromociones.criteria)
+                        .map(({ id, name, home }) => 
+                          (<option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>))}
+                    </Form.Select>
+                    )}
                 </Form.Group>
               </Grid.Col>
               <Grid.Col>
                 <Form.Group label={intl.formatMessage({ id: `${i18nComponentKey}.promociones`, defaultMessage: `${i18nComponentKey}.promociones` })}>
-                  <Form.Select
-                    feedback={false}
-                    invalid={false}
-                    value={values.promociones_id_2}
-                    onChange={e => this.handlePromocion(e, 'promociones_id_2')}
-                  >
-                    <option />
-                    {map(promociones, ({ id, name }) => <option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>)}
-                  </Form.Select>
+                  {!display2
+                  ?
+                    (
+                      <>
+                        <Form.Input
+                          value={promocion_2.name}
+                          disabled
+                        />
+                        <span class="feedback-notice">No puede editarse debido a que la promoción ya no está activa</span>
+                      </>
+                    )
+                  : 
+                    (
+                    <Form.Select
+                      feedback={false}
+                      invalid={false}
+                      value={values.promociones_id_2}
+                      onChange={e => this.handlePromocion(e, 'promociones_id_2')}
+                    >
+                      <option />
+                      {Object.values(promociones)
+                        .filter(config.displayPromociones.criteria)
+                        .map(({ id, name, home }) => 
+                          (<option value={id} key={`${i18nComponentKey}-promocion-${id}`}>{name}</option>))}
+                    </Form.Select>
+                  )}
                 </Form.Group>
               </Grid.Col>
             </Grid.Row>

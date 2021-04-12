@@ -36,6 +36,13 @@ i.open-menu {
   margin-left: 1.5rem;
 }
 
+.feedback-notice {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 87.5%;
+  color: #f59f00;
+}
+
 @media only screen and (max-width: $screen-lg-min) {
     i.open-menu {
         //display: none;
