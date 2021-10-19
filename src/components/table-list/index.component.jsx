@@ -157,7 +157,10 @@ class TableList extends Component {
                     value={promocion_id}
                     onChange={e => this.setState({ promocion_id: e.target.value }, this.fetch)}>
                     <option />
-                    {map(promociones, ({ id, name }) => <option value={id} key={`${i18nKey}-promocion-${id}`}>{name}</option>)}
+                    {Object.values(promociones)
+                      .filter(({ home }) => home)
+                      .sort(({ name: A }, { name: B }) => A === B ? 0 : A < B ? -1 : 1)
+                      .map(({ id, name }) => <option value={id} key={`${i18nKey}-promocion-${id}`}>{name}</option>)}
                   </Form.Select>
                 </Form.Group>
                 <Form.Group label={intl.formatMessage({ id: `${i18nKey}.filter-visitas.status`, defaultMessage: `${i18nKey}.filter-visitas.status` })}>
