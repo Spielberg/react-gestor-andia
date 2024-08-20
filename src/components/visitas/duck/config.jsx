@@ -73,6 +73,9 @@ config.VISITAS = {
     { key: 'primera' },
     { key: 'reserva' },
     { key: 'anulacion' },
+    { key: 'web' },
+    { key: 'telefono' },
+    { key: 'cita-previa' },
     { key: 'compra' },
   ],
   conociste: [
