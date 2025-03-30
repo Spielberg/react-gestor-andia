@@ -64,6 +64,7 @@ export default {
     'app.visitas.index.filter-visitas.fechas': 'Fechas',
     'app.visitas.index.filter-visitas.filter': 'filtra visitas',
     'app.visitas.index.filter-visitas.promociones': 'Promociones',
+    'app.visitas.index.filter-visitas.comercial': 'Comercial',
     'app.visitas.index.filter-visitas.status': 'Estado',
     'app.visitas.index.filter-visitas.title': 'Filtrar visitas',
     'app.visitas.index.hasta': 'hasta',

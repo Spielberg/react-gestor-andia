@@ -49,6 +49,9 @@ function fetch(cb = () => (null)) {
   if (this.props.visitas && this.state.promocion_id !== '') {
     url += `&promocion=${this.state.promocion_id}`;
   }
+  if (this.props.visitas && this.state.user_id !== '') {
+    url += `&user_id=${this.state.user_id}`;
+  }
   if (this.props.visitas && this.state.status !== '') {
     url += `&status=${this.state.status}`;
   }
@@ -243,6 +246,7 @@ function onMount() {
   this.fetch();
   if (this.props.visitas) {
     this.fetchPromociones();
+    this.fetchUsers();
   }
 }
 

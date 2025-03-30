@@ -59,6 +59,31 @@ function fetchUsuario(id, cb = () => (null)) {
     });
 }
 
+function fetchUsuarios(cb = () => (null)) {
+  const url = `${config.USUARIOS.tableList.url}?limit=100`;
+  if (config.DEBUG) console.log(url);
+  return axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${this.props.session.authToken}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => {
+      if (response.status !== 200 && response.status !== 204) {
+        return cb(new Error(`Status erros in fetchStats expected 200 or 204 received ${response.status}`));
+      }
+      this.setState(current => ({
+        ...current,
+        users: response.data.data.results,
+      }), () => {
+        return cb(null, response.data.data);
+      });
+    })
+    .catch((error) => {
+      return cb(error);
+    });
+}
+
 function displayError(message) {
   return this.displayAlert(message, 'danger');
 }
@@ -166,6 +191,7 @@ export default {
   displayError,
   displaySuccess,
   fetchUsuario,
+  fetchUsuarios,
   handleValues,
   submit,
   validate,

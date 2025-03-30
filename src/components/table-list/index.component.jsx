@@ -36,6 +36,10 @@ import {
   visitasSelectors,
 } from '../visitas/duck';
 
+import {
+  usuariosSelectors,
+} from '../usuarios/duck';
+
 import config from './duck/config';
 
 import TableCol from './functionals/table-col.component';
@@ -90,7 +94,9 @@ class TableList extends Component {
     super(props);
     this.state = {
       loading: true,
+      user_id: '',
       promocion_id: '',
+      users: [],
       promociones: [],
       offset: 0,
       query: '',
@@ -113,6 +119,7 @@ class TableList extends Component {
     };
     each(tableListSelectors, (_, k) => this[k] = tableListSelectors[k].bind(this));
     this.fetchPromociones = visitasSelectors.fetchPromociones.bind(this);
+    this.fetchUsers = usuariosSelectors.fetchUsuarios.bind(this);
   }
 
   componentDidMount(){
@@ -125,7 +132,21 @@ class TableList extends Component {
   */
   render() {
     const { addUrl, excelUrl, editUrl, intl, columns, i18nKey, isPromociones, selected, visitas } = this.props;
-    const { filterPromociones, filterVisitas, loading, offset, modal, results, pagination, promocion_id, promociones, query, status } = this.state;
+    const {
+      filterPromociones,
+      filterVisitas,
+      loading,
+      offset,
+      modal,
+      results,
+      pagination,
+      user_id,
+      users,
+      promocion_id,
+      promociones,
+      query,
+      status,
+    } = this.state;
     const candidates = filter(results, 'selected');
     const selectedCount = size(candidates);
     
@@ -150,6 +171,17 @@ class TableList extends Component {
                     onChange={this.handleQuery}
                     onKeyPress={this.catchReturn}
                   />
+                </Form.Group>
+                <Form.Group label={intl.formatMessage({ id: `${i18nKey}.filter-visitas.comercial`, defaultMessage: `${i18nKey}.filter-visitas.comercial` })}>
+                  <Form.Select
+                    className="input-options select-comercial is-fullwidth"
+                    value={user_id}
+                    onChange={e => this.setState({ user_id: e.target.value }, this.fetch)}>
+                    <option />
+                    {Object.values(users)
+                      .sort(({ name: A }, { name: B }) => A === B ? 0 : A < B ? -1 : 1)
+                      .map(({ id, name }) => <option value={id} key={id}>{name}</option>)}
+                  </Form.Select>
                 </Form.Group>
                 <Form.Group label={intl.formatMessage({ id: `${i18nKey}.filter-visitas.promociones`, defaultMessage: `${i18nKey}.filter-visitas.promociones` })}>
                   <Form.Select
